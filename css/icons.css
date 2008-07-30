@@ -1,0 +1,122 @@
+@CHARSET "ISO-8859-1";
+/*
+	Iconos CSS.
+	sintaxis : .icon-X-Y
+	X: resolucion del icono (cuadrado).
+	Y: nombre archivo de imagen.
+*/
+.icon-16-applications-internet {
+	background-image: url(../img/16/applications-internet.png) !important;
+}
+
+.icon-16-computer {
+	background-image: url(../img/16/computer.png) !important;
+}
+
+.icon-16-configure {
+	background-image: url(../img/16/configure.png) !important;
+}
+
+.icon-16-users {
+	background-image: url(../img/16/users.png) !important;
+}
+
+.icon-16-emblem-photos {
+	background-image: url(../img/16/emblem-photos.png) !important;
+}
+
+.icon-16-vlc {
+	background-image: url(../img/16/vlc.png) !important;
+}
+
+.icon-16-user-properties {
+	background-image: url(../img/16/user-properties.png) !important;
+}
+
+.icon-16-view-process-own {
+	background-image: url(../img/16/view-process-own.png) !important;
+}
+
+.icon-16-zoom-in {
+	background-image: url(../img/16/zoom-in.png) !important;
+}
+
+.icon-16-zoom-out {
+	background-image: url(../img/16/zoom-out.png) !important;
+}
+
+.icon-16-zoom-best-fit {
+	background-image: url(../img/16/zoom-best-fit.png) !important;
+}
+
+.icon-16-zoom-original {
+	background-image: url(../img/16/zoom-original.png) !important;
+}
+
+.icon-16-application-exit {
+	background-image: url(../img/16/application-exit.png) !important;
+}
+
+.icon-16-dialog-ok {
+	background-image: url(../img/16/dialog-ok.png) !important;
+}
+
+.icon-16-dialog-close {
+	background-image: url(../img/16/dialog-close.png) !important;
+}
+
+.icon-16-document-encrypt {
+	background-image: url(../img/16/document-encrypt.png) !important;
+}
+
+.icon-16-document-decrypt {
+	background-image: url(../img/16/document-decrypt.png) !important;
+}
+
+.icon-16-home {
+	background-image: url(../img/16/home.png) !important;
+}
+
+.icon-16-dialog-close {
+	background-image: url(../img/16/dialog-close.png) !important;
+}
+
+.icon-16-list-add {
+	background-image: url(../img/16/list-add.png) !important;
+}
+
+.icon-16-list-remove {
+	background-image: url(../img/16/list-remove.png) !important;
+}
+
+.icon-16-list-add-user {
+	background-image: url(../img/16/list-add-user.png) !important;
+}
+
+.icon-16-list-remove-user {
+	background-image: url(../img/16/list-remove-user.png) !important;
+}
+
+.icon-16-gtk-edit {
+	background-image: url(../img/16/gtk-edit.png) !important;
+}
+
+.icon-16-emblem-generic {
+	background-image: url(../img/16/emblem-generic.png) !important;
+}
+
+.icon-16-emblem-system {
+	background-image: url(../img/16/emblem-system.png) !important;
+}
+
+.icon-16-preferences-system {
+	background-image: url(../img/16/preferences-system.png) !important;
+}
+
+.icon-16-format-list-unordered {
+	background-image: url(../img/16/format-list-unordered.png) !important;
+}
+
+.icon-16-emblem-important {
+	background-image: url(../img/16/emblem-important.png) !important;
+}

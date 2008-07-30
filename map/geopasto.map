@@ -1,0 +1,183 @@
+MAP
+  NAME "geopasto"
+  # Map image size
+  SIZE 640 480
+  UNITS METERS
+  EXTENT 974248.875 622098.8125 981266.1875 629678.375
+  SYMBOLSET "../map/res/symbols.sym"
+  FONTSET "../map/res/fonts2.txt"
+ 
+  # Background color for the map canvas -- change as desired
+  IMAGECOLOR 255 255 255
+  IMAGEQUALITY 100
+  IMAGETYPE PNG
+
+  # Legend
+  LEGEND
+      IMAGECOLOR 255 255 255
+    STATUS ON
+    KEYSIZE 18 12
+    LABEL
+      TYPE BITMAP
+      SIZE MEDIUM
+      COLOR 0 0 89
+    END
+  END
+
+  # Web interface definition. Only the template parameter
+  # is required to display a map. See MapServer documentation
+  WEB
+    # Set IMAGEPATH to the path where MapServer should
+    # write its output.
+    IMAGEPATH "C:/ms4w/tmp/ms_tmp/"
+
+    # Set IMAGEURL to the url that points to IMAGEPATH
+    # as defined in your web server configuration
+    IMAGEURL "/ms_tmp/"
+
+    #Scale range at which web interface will operate
+    # Template and header/footer settings
+    # Only the template parameter is required to display a map. See MapServer documentation
+  END
+
+  LAYER
+    NAME "Perimetro"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.perimetro"
+
+    STATUS ON
+    TRANSPARENCY 100
+    CLASS
+       NAME "Perimetro"
+       STYLE
+         SYMBOL 0
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 255 255 255
+       END
+    END
+  END
+
+  LAYER
+    NAME "Zonas"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.zonas"
+
+    STATUS OFF
+    TRANSPARENCY 100
+    CLASS
+       NAME "Zonas"
+       STYLE
+         SYMBOL 0
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 0 158 255
+       END
+    END
+  END
+  
+  LAYER
+    NAME "Comunas"
+    LABELITEM num_comuna
+    LABELMINSCALE 5607
+    LABELMAXSCALE 44855
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.comunas"
+
+    STATUS OFF
+    TRANSPARENCY 80
+    CLASS
+       NAME "Comunas"
+       LABEL
+        TYPE TRUETYPE
+        FONT "arial_black"
+        SIZE 8
+        MINSIZE 8
+        MAXSIZE 12
+        POSITION CC
+        OFFSET 0 0 
+        MINFEATURESIZE -1
+        COLOR 0 0 0
+        OUTLINECOLOR 230 230 230
+        SHADOWCOLOR 230 230 230
+        SHADOWSIZE 0.5 0.5 
+        BACKGROUNDSHADOWSIZE 1.5 1.5 
+        ANTIALIAS TRUE
+        FORCE TRUE
+      END
+       STYLE
+         SYMBOL 0
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 255 158 0
+       END
+    END
+  END
+  
+  LAYER
+    NAME "Predios"
+    LABELITEM num_predio
+    #LABELMINSCALE 5607
+    LABELMAXSCALE 705
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.terrenos"
+
+    STATUS OFF
+    TRANSPARENCY 60
+    CLASS
+       NAME "Predios"
+       LABEL
+        TYPE TRUETYPE
+        FONT "arial_black"
+        SIZE 8
+        MINSIZE 8
+        MAXSIZE 12
+        POSITION CC
+        OFFSET 0 0 
+        MINFEATURESIZE -1
+        COLOR 0 0 0
+        OUTLINECOLOR 230 230 230
+        SHADOWCOLOR 230 230 230
+        SHADOWSIZE 0.5 0.5 
+        BACKGROUNDSHADOWSIZE 1.5 1.5 
+        ANTIALIAS TRUE
+        FORCE TRUE
+      END
+       STYLE
+         SYMBOL 0
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 255 158 255
+       END
+    END
+  END
+  
+  LAYER
+    NAME "Area Construida"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.construcciones"
+
+    STATUS OFF
+    TRANSPARENCY 80
+    CLASS
+       NAME "Area Construida"
+       STYLE
+         SYMBOL 0
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 0 158 0
+       END
+    END
+  END
+
+END

@@ -1,0 +1,27 @@
+.x-mask-loading div {
+	padding: 5px 10px 5px 25px;
+	background: #fbfbfb url( '../img/16/loading-01.gif' ) no-repeat 5px 5px;
+	line-height: 16px;
+}
+
+/*
+	Firefox cursor bug.
+*/
+.ext-gecko .x-panel-body .x-form-element {
+	position: fixed;
+	position: expression("absolute");
+}
+
+#container-login {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top:-100px;
+   	margin-left:-150px;
+}
+
+.map-panel {
+	display: block;
+	margin: 10px auto;
+	border: none;
+}
