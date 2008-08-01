@@ -13,10 +13,13 @@ class AppHome extends AppPage {
 		parent::__construct ();
 		
 		if ($register) {
+			
+			$debugConfig = Config::getByKey ( 'debug' );
+			$debug = ($debugConfig->value == 'true') ? TRUE : FALSE;
 			$xajax = new xajax ( );
 			$xajax->configure ( 'waitCursor', false );
-			//$xajax->configure ( 'debug', true );			
-
+			$xajax->configure ( 'debug', $debug );
+			
 			/**
 			 * 	Register all Classes needed.
 			 */
@@ -27,9 +30,9 @@ class AppHome extends AppPage {
 			}
 			
 			$xajax->processRequest ();
-			$config = Config::_loadConfig ();
+			$themeConfig = Config::getByKey ( 'theme' );
 			
-			$this->tpl->assign ( 'theme_name', $config->getThemeName () );
+			$this->tpl->assign ( 'theme_name', $themeConfig->value );
 			$this->tpl->assign ( 'xajax_js', $xajax->getJavascript ( INCLUDE_DIR . 'xajax/' ) );
 		}
 		
@@ -53,7 +56,7 @@ class AppHome extends AppPage {
 		$objusr = new Usuarios ( );
 		$objusr->Load ( 'id_user=' . AppSession::getData () );
 		$this->tpl->assign ( 'user_name', $objusr->name );
-		$this->tpl->assign ( 'user_time', date('h:i a') );
+		$this->tpl->assign ( 'user_time', date ( 'h:i a' ) );
 		
 		return $this->renderTemplate ( $template_file );
 	}
@@ -122,7 +125,7 @@ class AppHome extends AppPage {
 					$jsCallback = 'UsuariosUI.init();';
 					$ajax = TRUE;
 					
-					$objResponse->redirect ( './' );					
+					$objResponse->redirect ( './' );
 					return $objResponse;
 				}
 			}

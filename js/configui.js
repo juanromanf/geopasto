@@ -3,18 +3,10 @@
  */
 
 var ConfigUI = function() {
-	/*
-	 * do NOT access DOM from here; elements don't exist yet.
-	 * 
-	 * private variables. private functions
-	 */
 
-	var myForm = null;	
-	var _container = null;
-	
 	function _getContainer() {
-		_container = Ext.getCmp('center-panel').getActiveTab();
-		return _container;
+		var container = Ext.getCmp('center-panel').getActiveTab();
+		return container;
 	}
 
 	function _close() {
@@ -22,165 +14,135 @@ var ConfigUI = function() {
 	}
 
 	return {
-		/*
-		 * public properties, e.g. strings to translate public methods.
-		 */
+		init : function() {
+			
+			var r = new Ext.data.Record.create([{
+				name : 'id'
+			}, {
+				name : 'key'
+			}, {
+				name : 'text'
+			}, {
+				name : 'value'
+			}]);
 
-		init : function() {	
+			var ds = new Ext.data.Store({
+				autoLoad : true,
+				reader : new Ext.data.JsonReader({}, r),
+				proxy : new Ext.data.XajaxProxy({
+					xjxcls : 'AppHome',
+					xjxmthd : 'exec'
+				}),
+				baseParams : {
+					action : 'Config.getAllValues',
+					returnvalue : true,
+					args : [true]
+				}
+			});
 
+			var cm = new Ext.grid.ColumnModel([{
+				header : "Propiedad",
+				dataIndex : 'text',
+				align : 'right',
+				menuDisabled : true,
+				sortable : true,
+				width : 230
+			}, {
+				header : "Valor",
+				dataIndex : 'value',
+				menuDisabled : true,
+				sortable : false,
+				width : 120,
+				editor : new Ext.grid.GridEditor(new Ext.form.TextField())
+			}]);
+
+			var grid = new Ext.grid.EditorGridPanel({
+				clicksToEdit : 2,
+				ds : ds,
+				cm : cm,
+				height : _getContainer().getEl().getHeight() - 27,
+				// selModel : new Ext.grid.RowSelectionModel(),
+				frame : true,
+				loadMask : true,
+				autoScroll : true,
+				border : false,
+				trackMouseOver : true,
+				listeners : {
+					afteredit : function(obj) {
+						xajax_AppHome.exec({
+							action : 'Config.setValue',
+							args : [obj.record.get('key'), obj.value]
+						});
+					}
+				}
+			});
+
+			var tb = new Ext.Toolbar({
+				items : ['Theme: ', ConfigUI.getThemesCombo(), '-', {
+					text : 'Cerrar',
+					handler : function() {
+						ConfigUI.closeTab();
+					},
+					tooltip : 'Cerrar esta pesta&ntilde;a.',
+					iconCls : 'icon-16-dialog-close'
+				}]
+			});
+			
+			
+
+			_getContainer().add(tb);
+			_getContainer().add(grid);
+			_getContainer().doLayout();
+			
+		},
+
+		closeTab : function() {
+			_close();
+		},
+
+		getThemesCombo : function() {
+			
 			/*
 			 * Store para Themes disponibles.
 			 */
-			var storeThemes = new Ext.data.SimpleStore({
-				fields : ['theme_key', 'theme_text'],
-				data : [['', 'Default'], ['xtheme-black.css', 'Black'],
+			
+			var ds = new Ext.data.SimpleStore({
+				fields : ['file', 'text'],
+				data : [['ext-all.css', 'Default'],
+						['xtheme-black.css', 'Black'],
 						['xtheme-darkgray.css', 'Dark Gray'],
 						['xtheme-gray.css', 'Gray'],
 						['xtheme-olive.css', 'Olive'],
 						['xtheme-purple.css', 'Purple'],
 						['xtheme-slate.css', 'Slate'],
-						['xtheme-slickness.css', 'Slickness'],]
+						['xtheme-slickness.css', 'Slickness']]
 			});
 
-			// Store para Servidores de mapas disponibles.
-			var store = new Ext.data.SimpleStore({
-				fields : ['server_key', 'server_text'],
-				data : [['atlas', 'AtlasServer'], ['mapserver', 'MapServer 5'],]
+			var cmb = new Ext.form.ComboBox({
+				id : 'theme-combo',
+				store : ds,
+				displayField : 'text',
+				valueField : 'file',
+				mode : 'local',
+				triggerAction : 'all',
+				emptyText : 'Seleccione...',
+				forceSelection : true,
+				editable : false
 			});
 
-			myForm = new Ext.FormPanel({
-				formId : 'frmConfig',
-				labelWidth : 80,
-				monitorValid : true,
-				labelAlign : 'right',
-				title : 'Configuraciones Generales',
-				bodyStyle : 'padding:5px 5px 0',
-				width : 350,
-				items : [{
-					xtype : 'fieldset',
-					title : 'Apariencia de Aplicacion',
-					autoHeight : true,
-					collapsible : false,
-					defaults : {
-						width : 210
-					},
-					items : [{
-						xtype : 'combo',
-						id : 'theme_combo',
-						hiddenName : 'theme_name',
-						fieldLabel : 'Theme',
-						store : storeThemes,
-						displayField : 'theme_text',
-						valueField : 'theme_key',
-						typeAhead : true,
-						editable : false,
-						allowBlank : false,
-						mode : 'local',
-						triggerAction : 'all',
-						emptyText : 'Seleccione un estilo...',
-						selectOnFocus : true,
-						listeners : {
-							select : function(combo, record, index) {
-								var theme = record.get('theme_key');
-								Ext.util.CSS.swapStyleSheet('theme-css',
-										'include/ext/resources/css/' + theme);
-							}
-						}
-					}]
-				}, {
-					xtype : 'fieldset',
-					title : 'Servidor de Mapas',
-					autoHeight : true,
-					collapsible : false,
-					defaults : {
-						width : 210
-					},
-					defaultType : 'textfield',
-					items : [{
-						xtype : 'combo',
-						id : 'server_combo',
-						hiddenName : 'server_name',
-						fieldLabel : 'Utilizar',
-						store : store,
-						displayField : 'server_text',
-						valueField : 'server_key',
-						typeAhead : true,
-						editable : false,
-						allowBlank : false,
-						mode : 'local',
-						triggerAction : 'all',
-						emptyText : 'Seleccione un servidor...',
-						selectOnFocus : true
-					}]
-				}, {
-					xtype : 'fieldset',
-					title : 'Duraci&oacute;n de la Sesion',
-					collapsible : false,
-					autoHeight : true,
-					defaults : {
-						width : 80
-					},
-					defaultType : 'textfield',
-					items : [{
-						xtype : 'numberfield',
-						fieldLabel : 'Minutos',
-						id : 'sesion_time',
-						name : 'sesion_time',
-						value : '30',
-						allowBlank : false,
-						allowDecimals : false,
-						allowNegative : false
-					}]
-				}],
-				buttons : [{
-					text : 'Guardar',
-					iconCls : 'icon-16-dialog-ok',
-					formBind : true,
-					handler : function() {
-						/*
-						 * Guardar los valores del formulacion en la
-						 * configuracion.
-						 */
-						xajax_AppHome.exec({
-							action : 'Config.saveConfig',
-							enableajax : true,
-							args : [xajax.getFormValues(myForm.formId)]
-						});
-					}
-				}, {
-					text : 'Cerrar',
-					iconCls : 'icon-16-dialog-close',
-					handler : function() {
-						_close();
-					}
-				}]
+			cmb.on('select', function(combo, record, index) {
+				var theme = record.get('file');
+				var file = 'include/ext/resources/css/' + theme;
+				Ext.util.CSS.swapStyleSheet('theme-css', file);
+				Ext.util.CSS.refreshCache();
+
+				xajax_AppHome.exec({
+					action : 'Config.setValue',
+					args : ['theme', theme]
+				});
 			});
 
-			/*
-			 * Llamada sincrona para obtener los valores actuales de
-			 * configuracion.
-			 */
-			var xValues = xajax.request({
-				xjxcls : 'AppHome',
-				xjxmthd : 'exec'
-			}, {
-				mode : 'synchronous',
-				parameters : [{
-					action : 'Config.getConfigArray',
-					returnvalue : true
-				}]
-			});
-
-			_getContainer().add(myForm);
-			_getContainer().doLayout();
-
-			// Cargar los valores actuales de configuracion en el formulario.
-			myForm.getForm().setValues(eval(xValues));
-		}, // init end
-
-		closeTab : function() {
-			_close();
+			return cmb;
 		}
-
 	}; // end return
 }();

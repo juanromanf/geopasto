@@ -7,11 +7,11 @@ class AppSession {
 
 	public static function startSession() {
 		
-		$objConfig = Config::_loadConfig();
+		$sessionConfig = Config::getByKey('session_time');
 
 		ini_set('session.gc_divisor', '10');
 		ini_set('session.gc_probability', '100');
-		ini_set('session.gc_maxlifetime', $objConfig->getSesionTime() * 60);
+		ini_set('session.gc_maxlifetime', $sessionConfig->value * 60);
 
 		session_start();
 	}

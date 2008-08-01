@@ -4,6 +4,58 @@
 
 Ext.BLANK_IMAGE_URL = './img/s.gif'; // Url imagen transparente.
 
+Ext.override(Ext.Element, {
+	mask : function(msg, msgCls, maskCls) {
+		if (this.getStyle("position") == "static") {
+			this.setStyle("position", "relative");
+		}
+		if (this._maskMsg) {
+			this._maskMsg.remove();
+		}
+		if (this._mask) {
+			this._mask.remove();
+		}
+
+		this._mask = Ext.DomHelper.append(this.dom, {
+			cls : maskCls || "ext-el-mask"
+		}, true);
+
+		this.addClass("x-masked");
+
+		this._mask.setDisplayed(true);
+
+		if (typeof msg == 'string') {
+			// *** FIX : create element hidden
+
+			this._maskMsg = Ext.DomHelper.append(this.dom, {
+				style : "visibility:hidden",
+				cls : "ext-el-mask-msg",
+				cn : {
+					tag : 'div'
+				}
+			}, true);
+			var mm = this._maskMsg;
+			mm.dom.className = msgCls
+					? "ext-el-mask-msg " + msgCls
+					: "ext-el-mask-msg";
+			mm.dom.firstChild.innerHTML = msg;
+			(function() {
+				mm.setDisplayed(true);
+				mm.center(this);
+				mm.setVisible(true);
+			}).defer(20, this); // *** FIX : defer things a bit, so the mask
+								// sizes over the el properly before centering
+		}
+		if (Ext.isIE && !(Ext.isIE7 && Ext.isStrict)
+				&& this.getStyle('height') == 'auto') { // ie will not expand
+														// full height
+														// automatically
+			this._mask.setSize(this.dom.clientWidth, this.getHeight());
+		}
+		return this._mask;
+	}
+});
+
 var AppHome = function() {
 
 	Ext.QuickTips.init();
@@ -20,7 +72,7 @@ var AppHome = function() {
 		 * Si el arbol del menu aun no ha sido constriudo.
 		 */
 		if (typeof(ctl) == 'undefined') {
-			
+
 			var r = new Ext.data.Record.create([{
 				name : 'id'
 			}, {
@@ -58,16 +110,15 @@ var AppHome = function() {
 				autoScroll : true,
 				border : false,
 				animate : true,
-				rootVisible: false,
-//				height : 500,
+				rootVisible : false,
+				// height : 500,
 				width : 200,
 				containerScroll : true,
 				listeners : {
 					click : function(n) {
 						// Add new Tab to Center Panel
-						var center = Ext.ComponentMgr.get('center-panel');
-						var tab = Ext.ComponentMgr
-								.get(n.attributes.id + '-tab');
+						var center = Ext.getCmp('center-panel');
+						var tab = Ext.getCmp(n.attributes.id + '-tab');
 
 						if (typeof(tab) == 'undefined') {
 							center.add({
@@ -81,7 +132,7 @@ var AppHome = function() {
 							// Ext.MessageBox.alert('action',
 							// n.attributes.action);
 
-							var xaction = String(n.attributes.action)
+							var xaction = new String(n.attributes.action)
 									.split('.');
 
 							xajax_AppHome.exec({
@@ -97,8 +148,8 @@ var AppHome = function() {
 			});
 
 			// set the root node
-			var root = new Ext.tree.AsyncTreeNode({				
-				expanded: true,
+			var root = new Ext.tree.AsyncTreeNode({
+				expanded : true,
 				loader : myloader
 			});
 			tree.setRootNode(root);
