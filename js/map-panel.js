@@ -3,6 +3,10 @@
  */
 
 Ext.MapPanel = Ext.extend(Ext.Panel, {
+	ddImage : false,
+	imageBegin : null,
+	dragBegin : null,
+	mouseBegin : null,
 
 	initComponent : function() {
 		/*
@@ -10,7 +14,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		 */
 		var ds = new Ext.data.SimpleStore({
 			fields : ['text', 'value'],
-			data : [['320 x 240', '320x240'], ['640 x 480', '640x480'],
+			data : [['640 x 480', '640x480'],
 					['800 x 600', '800x600']]
 		});
 
@@ -40,74 +44,63 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		}, this);
 
 		var tb = new Ext.Toolbar({
-			items : [
-					'&nbsp;Tama&ntilde;o: ',
-					cmb,
-					'-',
-					{
-						text : 'Desplazar',
-						iconCls : 'icon-16-zoom-best-fit',
-						pressed : true,
-						enableToggle : true,
-						toggleGroup : 'map-tools',
-						handler : function() {
-							xajax.$(this.mapname + '-action').value = 'pan';
-						},
-						scope : this
-					},
-					'-',
-					{
-						id: this.mapname + '-btn-zi',
-						text : 'Acercar',
-						iconCls : 'icon-16-zoom-in',
-						enableToggle : true,
-						toggleGroup : 'map-tools',
-						handler : function() {
-							xajax.$(this.mapname + '-action').value = 'zoom-in';
-						},
-						scope : this
-					},
-					'-',
-					{
-						id: this.mapname + '-btn-zo',
-						text : 'Alejar',
-						iconCls : 'icon-16-zoom-out',
-						enableToggle : true,
-						toggleGroup : 'map-tools',
-						handler : function() {
-							xajax.$(this.mapname + '-action').value = 'zoom-out';
-						},
-						scope : this
-					},
-					'-',
-					{
-						text : 'Restaurar',
-						iconCls : 'icon-16-zoom-original',
-						handler : function() {
+			items : ['&nbsp;Tama&ntilde;o: ', cmb, '-', {
+				id : this.mapname + '-btn-pan',
+				text : 'Desplazar',
+				iconCls : 'icon-16-zoom-best-fit',
+				pressed : true,
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					xajax.$(this.mapname + '-action').value = 'pan';
+				},
+				scope : this
+			}, '-', {
+				id : this.mapname + '-btn-zi',
+				text : 'Acercar',
+				iconCls : 'icon-16-zoom-in',
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					xajax.$(this.mapname + '-action').value = 'zoom-in';
+				},
+				scope : this
+			}, '-', {
+				id : this.mapname + '-btn-zo',
+				text : 'Alejar',
+				iconCls : 'icon-16-zoom-out',
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					xajax.$(this.mapname + '-action').value = 'zoom-out';
+				},
+				scope : this
+			}, '-', {
+				text : 'Restaurar',
+				iconCls : 'icon-16-zoom-original',
+				handler : function() {
 
-							xajax.$(this.mapname + '-action').value = 'pan';
-							xajax.$(this.mapname + '-ex').value = xajax
-									.$(this.mapname + '-oe').value;
-							xajax.$(this.mapname + '-x').value = xajax
-									.$(this.mapname + '-img').width
-									/ 2;
-							xajax.$(this.mapname + '-y').value = xajax
-									.$(this.mapname + '-img').height
-									/ 2;
-							this.onMouseClick();
-						},
-						scope : this
-					}, '-',
-					'<span id="' + this.mapname + '-scale">&nbsp;</span>', '-',
-					{
-						text : 'Cerrar',
-						tooltip : 'Cerrar esta pesta&ntilde;a.',
-						iconCls : 'icon-16-dialog-close',
-						handler : function() {
-							this.closeTab();
-						},
-						scope : this
-					}]
+					xajax.$(this.mapname + '-action').value = 'pan';
+					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
+							+ '-oe').value;
+					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
+							+ '-img').width
+							/ 2;
+					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
+							+ '-img').height
+							/ 2;
+					this.onMouseClick();
+				},
+				scope : this
+			}, '-', {
+				text : 'Cerrar',
+				tooltip : 'Cerrar esta pesta&ntilde;a.',
+				iconCls : 'icon-16-dialog-close',
+				handler : function() {
+					this.closeTab();
+				},
+				scope : this
+			}, '-', '<span id="' + this.mapname + '-scale">&nbsp;</span>']
 		});
 
 		var tree = this.getLayersTree();
@@ -132,6 +125,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 
 		this.layout = 'border';
+		this.frameElement = true;
 		this.border = false;
 		this.items = [p1, p2];
 		this.height = this.getContainer().getEl().getHeight() - 2;
@@ -171,11 +165,119 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			trackMouse : true
 		});
 
-		var map = Ext.get(this.mapname + '-img');
+		var view = Ext.get(this.mapname + '-div');
+		var img = Ext.get(this.mapname + '-img');
+		img.on('load', function() {
+			img.setOpacity(1, true);
+		});
+		this.imageBegin = [img.getLeft(), img.getTop()];
 
-		map.addListener('click', this.onMouseClick, this);
-		map.addListener('mousemove', this.onMouseMove, this);
-		map.addListener('mousewheel', this.wheel, this);
+		var w = (img.getWidth() + 10) + "px";
+		var h = (img.getHeight() + 10) + "px";
+
+		view.setStyle('width', w);
+		view.setStyle('height', h);
+		view.setStyle('overflow', 'hidden');
+		view.setStyle('margin', '5px auto 5px auto');
+
+		view.addListener('click', this.onMouseClick, this);
+		view.addListener('mousewheel', this.wheel, this);
+		view.addListener('mousemove', this.onMouseMove, this);
+
+		if (!Ext.isIE) {
+			view.addListener('mousedown', this.onMouseDown, this);
+			view.addListener('mouseup', this.onMouseUp, this);
+		}
+	},
+
+	onMouseClick : function() {
+		var img = Ext.get(this.mapname + '-img');
+		img.setOpacity(0, true);
+		this.maskPanel(true);
+
+		var js = "var img = Ext.get('" + this.mapname + "-img');" + "img.setX("
+				+ this.imageBegin[0] + "); img.setY(" + this.imageBegin[1]
+				+ ");";
+
+		xajax_AppHome.exec({
+			action : this.classUI + '.doAction',
+			enableajax : true,
+			args : [{
+				action : xajax.$(this.mapname + '-action').value,
+				extent : xajax.$(this.mapname + '-ex').value,
+				x : xajax.$(this.mapname + '-x').value,
+				y : xajax.$(this.mapname + '-y').value
+			}],
+			jscallback : js
+		});
+	},
+
+	onMouseDown : function(e) {
+
+		if (this.getActiveAction() == 'pan') {
+			var img = Ext.get(this.mapname + '-img');
+
+			var x = img.getX();
+			var y = img.getY();
+
+			this.ddImage = true;
+			this.dragBegin = [x, y];
+			this.mouseBegin = [e.getPageX(), e.getPageY()];
+
+			e.stopEvent();
+		}
+	},
+
+	onMouseUp : function(e) {
+
+		if (this.ddImage) {
+			var img = Ext.get(this.mapname + '-img');
+			var dx, dy, x, y;
+
+			if (e.getPageX() > this.mouseBegin[0]) {
+				dx = e.getPageX() - this.mouseBegin[0];
+				x = (img.getWidth() / 2) - dx;
+			} else {
+				dx = this.mouseBegin[0] - e.getPageX();
+				x = (img.getWidth() / 2) + dx;
+			}
+
+			if (e.getPageY() > this.mouseBegin[1]) {
+				dy = e.getPageY() - this.mouseBegin[1];
+				y = (img.getHeight() / 2) - dy;
+			} else {
+				dy = this.mouseBegin[1] - e.getPageY();
+				y = (img.getHeight() / 2) + dy;
+			}
+
+			xajax.$(this.mapname + '-x').value = x;
+			xajax.$(this.mapname + '-y').value = y;
+		}
+
+		this.ddImage = false;
+		this.dragBegin = null;
+		this.mouseBegin = null;
+		e.stopEvent();
+	},
+
+	onMouseMove : function(e) {
+		var img = Ext.get(this.mapname + '-img');
+		var x = e.getPageX() - img.getLeft();
+		var y = e.getPageY() - img.getTop();
+
+		if (this.ddImage) {
+			img.setX(this.dragBegin[0] - this.mouseBegin[0] + e.getPageX());
+			img.setY(this.dragBegin[1] - this.mouseBegin[1] + e.getPageY());
+
+			xajax.$(this.mapname + '-action').value = 'pan';
+			Ext.getCmp(this.mapname + '-btn-pan').toggle(true);
+		}
+		xajax.$(this.mapname + '-x').value = x;
+		xajax.$(this.mapname + '-y').value = y;
+
+		var tip = Ext.getCmp(this.mapname + '-ttip');
+		tip.setTitle("<center>(" + Math.round(x) + ", " + Math.round(y)
+				+ ")</center>");
 	},
 
 	/**
@@ -185,13 +287,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var delta = e.getWheelDelta();
 		if (delta < 0) {
 			xajax.$(this.mapname + '-action').value = 'zoom-in';
-			var btn = Ext.getCmp(this.mapname + '-btn-zi').toggle(true);
-
 		} else {
 			xajax.$(this.mapname + '-action').value = 'zoom-out';
-			var btn = Ext.getCmp(this.mapname + '-btn-zo').toggle(true);
 		}
 		this.onMouseClick();
+		xajax.$(this.mapname + '-action').value = 'pan';
 		e.stopEvent();
 	},
 
@@ -237,6 +337,8 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 
 		tree.on('checkchange', function(node, checked) {
+			var img = Ext.get(this.mapname + '-img');
+			img.setOpacity(0, true);
 			this.maskPanel(true);
 
 			xajax_AppHome.exec({
@@ -272,6 +374,10 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		}
 	},
 
+	getActiveAction : function() {
+		return xajax.$(this.mapname + '-action').value;
+	},
+
 	getContainer : function() {
 		var container = Ext.getCmp('center-panel').getActiveTab();
 		return container;
@@ -279,34 +385,6 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 
 	closeTab : function() {
 		Ext.getCmp('center-panel').remove(this.getContainer(), true);
-	},
-
-	onMouseClick : function() {
-		this.maskPanel(true);
-
-		xajax_AppHome.exec({
-			action : this.classUI + '.doAction',
-			enableajax : true,
-			args : [{
-				action : xajax.$(this.mapname + '-action').value,
-				extent : xajax.$(this.mapname + '-ex').value,
-				x : xajax.$(this.mapname + '-x').value,
-				y : xajax.$(this.mapname + '-y').value
-			}]
-		});
-	},
-
-	onMouseMove : function(e) {
-		var m = Ext.get(this.mapname + '-img');
-		var x = e.getPageX() - m.getLeft();
-		var y = e.getPageY() - m.getTop();
-
-		xajax.$(this.mapname + '-x').value = x;
-		xajax.$(this.mapname + '-y').value = y;
-
-		var tip = Ext.getCmp(this.mapname + '-ttip');
-		tip.setTitle("<center>(" + Math.round(x) + ", " + Math.round(y)
-				+ ")</center>");
 	}
 });
 

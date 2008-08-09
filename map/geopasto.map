@@ -13,15 +13,27 @@ MAP
   IMAGETYPE PNG
 
   # Legend
-  LEGEND
-      IMAGECOLOR 255 255 255
-    STATUS ON
-    KEYSIZE 18 12
-    LABEL
-      TYPE BITMAP
-      SIZE MEDIUM
-      COLOR 0 0 89
-    END
+  #LEGEND
+  #	STATUS EMBED
+  #  POSITION LR
+  #  TRANSPARENT TRUE
+  #  IMAGECOLOR 255 255 255
+  #  #STATUS ON
+  #  KEYSIZE 18 12
+  #  LABEL
+  #    TYPE BITMAP
+  #    SIZE MEDIUM
+  #    COLOR 0 0 89
+  #  END
+  #END
+  
+  SCALEBAR
+
+    STATUS EMBED
+    UNITS METERS
+    INTERVALS 4
+    TRANSPARENT TRUE
+    OUTLINECOLOR 0 0 0
   END
 
   # Web interface definition. Only the template parameter
@@ -34,10 +46,6 @@ MAP
     # Set IMAGEURL to the url that points to IMAGEPATH
     # as defined in your web server configuration
     IMAGEURL "/ms_tmp/"
-
-    #Scale range at which web interface will operate
-    # Template and header/footer settings
-    # Only the template parameter is required to display a map. See MapServer documentation
   END
 
   LAYER
@@ -90,10 +98,20 @@ MAP
 	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
 	DATA "the_geom from gis.comunas"
 
-    STATUS OFF
+    STATUS ON
     TRANSPARENCY 80
+    #CLASSITEM "num_comuna"        # Attribute for expressions
+      
     CLASS
-       NAME "Comunas"
+       NAME "Otras comunas"
+       EXPRESSION ([num_comuna] ne 3)       
+       STYLE
+         SYMBOL cross
+         SIZE 5
+         OUTLINECOLOR 0 0 0
+         COLOR 255 158 100
+       END
+       
        LABEL
         TYPE TRUETYPE
         FONT "arial_black"
@@ -111,14 +129,36 @@ MAP
         ANTIALIAS TRUE
         FORCE TRUE
       END
-       STYLE
-         SYMBOL 0
-         SIZE 6
-         OUTLINECOLOR 0 0 0
-         COLOR 255 158 0
-       END
     END
-  END
+    
+    CLASS
+       NAME "Comuna No.3"       
+       EXPRESSION ([num_comuna] = 3)
+       
+       STYLE
+       	 OUTLINECOLOR 255 0 0
+       	 COLOR 255 255 150
+       END
+       
+       LABEL
+        TYPE TRUETYPE
+        FONT "arial_black"
+        SIZE 8
+        MINSIZE 8
+        MAXSIZE 12
+        POSITION CC
+        OFFSET 0 0 
+        MINFEATURESIZE -1
+        COLOR 0 0 0
+        OUTLINECOLOR 230 230 230
+        SHADOWCOLOR 230 230 230
+        SHADOWSIZE 0.5 0.5 
+        BACKGROUNDSHADOWSIZE 1.5 1.5 
+        ANTIALIAS TRUE
+        FORCE TRUE
+      END
+    END
+  END #layer end
   
   LAYER
     NAME "Predios"

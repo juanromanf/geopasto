@@ -19,7 +19,7 @@ abstract class msMapLayout extends AppPage {
 		$output = $this->tpl->fetch ( $template );
 		
 		$js = "Ext.getCmp('" . $mapObj->getName () . "-panel').maskPanel(false); ";
-		$this->getXajaxResponse ()->assign ( $mapObj->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round($mapObj->getMapScale(), 0));
+		$this->getXajaxResponse ()->assign ( $mapObj->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $mapObj->getMapScale (), 0 ) );
 		$this->getXajaxResponse ()->script ( $js );
 		
 		return $output;
@@ -35,8 +35,10 @@ abstract class msMapLayout extends AppPage {
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'width', $map->getMapWidth () );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'height', $map->getMapHeight () );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.width', ($w + 10) . "px" );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.height', ($h + 10) . "px" );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
-		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round($map->getMapScale(), 0));
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		
 		$map->saveMapState ( $_SESSION ['temp_file'] );
 		
@@ -47,7 +49,7 @@ abstract class msMapLayout extends AppPage {
 	public function doAction($args) {
 		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
 		
-		if (isset($args['layer'] )) {
+		if (isset ( $args ['layer'] )) {
 			$layer_name = $args ['layer'];
 			$status = $args ['status'];
 			
@@ -64,7 +66,7 @@ abstract class msMapLayout extends AppPage {
 		}
 		
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
-		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round($map->getMapScale(), 0));
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
 		
 		$map->saveMapState ( $_SESSION ['temp_file'] );
