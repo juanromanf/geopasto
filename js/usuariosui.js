@@ -235,18 +235,21 @@ var UsuariosUI = function() {
 		displayLogin : function() {
 
 			var login = new Ext.FormPanel({
-				id: 'frmLogin',
+				id : 'frmLogin',
 				labelWidth : 80,
 				labelAlign : 'right',
 				formId : 'frmlogin',
 				defaultType : 'textfield',
 				monitorValid : true,
+				bodyStyle :	{position: 'relative'},
 				items : [{
 					fieldLabel : 'Usuario',
+					id	:	'user_txt',
 					name : 'users_login',
 					allowBlank : false
 				}, {
 					fieldLabel : 'Contrase&ntilde;a',
+					id	:	'pass_txt',
 					name : 'users_passwd',
 					inputType : "password",
 					allowBlank : false
@@ -256,7 +259,7 @@ var UsuariosUI = function() {
 					id : 'btnLogin',
 					text : 'Iniciar Sesion',
 					iconCls : 'icon-16-document-decrypt',
-					formBind : true,					
+					formBind : true,
 					handler : function() {
 						xajax_AppHome.exec({
 							action : 'Usuarios.doLogin',
@@ -271,11 +274,17 @@ var UsuariosUI = function() {
 				title : 'Iniciar Sesion',
 				renderTo : 'container-login',
 				iconCls : 'icon-16-document-encrypt',
-				frame: true,
+				frame : true,
 				width : 300,
-				items : login
+				items : login				
 			});
-			
+
+			Ext.get('container-login').center(Ext.getBody());
+			Ext.EventManager.onWindowResize(function() {
+				Ext.getCmp('pass_txt').focus();
+				Ext.getCmp('user_txt').focus();
+			}, p);
+
 			var map = new Ext.KeyMap("frmLogin", {
 				key : 13, // or Ext.EventObject.ENTER
 				fn : Ext.getCmp('btnLogin').handler
