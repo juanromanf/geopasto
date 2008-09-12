@@ -1,0 +1,74 @@
+LAYER
+    NAME "Amenazas"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.amenazas"
+
+    STATUS OFF
+    TRANSPARENCY 100
+    LABELITEM numpredio
+    #LABELMINSCALE 5607
+    LABELMAXSCALE 705
+    
+    CLASS
+       NAME "Deslizamientos"
+       EXPRESSION ([codamenaza] == 1)       
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 250 145 0
+       END
+       INCLUDE "label-style-01.map"
+    END
+    
+    CLASS
+       NAME "Volcanica Baja"
+       EXPRESSION ([codamenaza] == 16)
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 255 0 0
+       END
+       INCLUDE "label-style-01.map"
+    END
+    
+    CLASS
+       NAME "Cuerpos Hidricos Estructurantes"
+       EXPRESSION ([codamenaza] == 19)       
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 0 0 200
+       END
+       INCLUDE "label-style-01.map"
+    END
+    
+    CLASS
+       NAME "Ronda Hidrica"
+       EXPRESSION ([codamenaza] == 18)       
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 255 0 0
+       END
+       INCLUDE "label-style-01.map"
+    END
+    
+    CLASS
+       NAME "Ninguna"
+       EXPRESSION ([codamenaza] == 0)       
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 0 150 0
+       END
+       INCLUDE "label-style-01.map"
+    END
+    
+END

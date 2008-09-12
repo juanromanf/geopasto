@@ -14,8 +14,8 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		 */
 		var ds = new Ext.data.SimpleStore({
 			fields : ['text', 'value'],
-			data : [['640 x 480', '640x480'],
-					['800 x 600', '800x600']]
+			data : [['640 x 480', '640x480'], ['800 x 600', '800x600'],
+					['1024 x 768', '1024x768']]
 		});
 
 		var cmb = new Ext.form.ComboBox({
@@ -27,15 +27,16 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			valueField : 'value',
 			typeAhead : true,
 			editable : false,
-			allowBlank : false,
+			allowBlank : true,
 			mode : 'local',
 			triggerAction : 'all',
-			emptyText : '...',
+			emptyText : 'ancho x alto',
 			selectOnFocus : true
 		});
 
 		cmb.on('select', function(combo, record, index) {
 			this.maskPanel(true);
+
 			xajax_AppHome.exec({
 				action : this.classUI + '.resizeMap',
 				enableajax : true,
@@ -103,19 +104,28 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			}, '-', '<span id="' + this.mapname + '-scale">&nbsp;</span>']
 		});
 
-		var tree = this.getLayersTree();
+		//var tree = this.getLayersTree();
+		//var findForm = this.getSearchForm(this);
 
-		var p1 = new Ext.Panel({
+		var tabs = new Ext.TabPanel({
+			id: this.mapname + '-east',
 			region : 'east',
-			title : 'Informacion',
-			collapsible : true,
+			collapsible : false,
 			collapsed : false,
-			autoScroll : true,
+			border : false,
+			split : true,
 			width : 210,
-			items : tree
+			minTabWidth : 100,
+			tabWidth : 130,
+			enableTabScroll : true,
+			layoutOnTabChange : true,
+			activeTab : 0,
+			defaults : {
+				autoScroll : true
+			}
 		});
 
-		var p2 = new Ext.Panel({
+		var navigation = new Ext.Panel({
 			region : 'center',
 			border : false,
 			tbar : tb,
@@ -127,10 +137,182 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		this.layout = 'border';
 		this.frameElement = true;
 		this.border = false;
-		this.items = [p1, p2];
+		this.items = [navigation, tabs];
 		this.height = this.getContainer().getEl().getHeight() - 2;
 
 		Ext.MapPanel.superclass.initComponent.call(this);
+	},
+
+	getSearchForm : function(panel) {
+
+		var r = new Ext.data.Record.create([{
+			name : 'id'
+		}, {
+			name : 'text'
+		}, {
+			name : 'icon'
+		}, {
+			name : 'leaf'
+		}, {
+			name : 'checked'
+		}]);
+
+		var ds = new Ext.data.Store({
+			autoLoad : true,
+			reader : new Ext.data.JsonReader({}, r),
+			proxy : new Ext.data.XajaxProxy({
+				xjxcls : 'AppHome',
+				xjxmthd : 'exec'
+			}),
+			baseParams : {
+				action : this.classUI + '.getLayers',
+				returnvalue : true
+			}
+		});
+
+		var cmb = new Ext.form.ComboBox({
+			id : panel.mapname + '-layers-combo',
+			hiddenName : panel.mapname + '-active-layer',
+			store : ds,
+			width : 120,
+			fieldLabel : 'Capa',
+			displayField : 'text',
+			valueField : 'text',
+			typeAhead : true,
+			editable : false,
+			allowBlank : false,
+			mode : Ext.isIE ? 'local' : 'remote',
+			triggerAction : 'all',
+			emptyText : '---',
+			selectOnFocus : true
+		});
+
+		var frm = new Ext.FormPanel({
+			id : panel.mapname + '-search-frm',
+			iconCls : 'icon-16-edit-find',
+			title : "Busqueda R&aacute;pida",
+			formId : 'frm-search',
+			labelWidth : 50,
+			height : 30,
+			frame : true,
+			border : false,
+			monitorValid : true,
+			labelAlign : 'right',
+			defaultType : 'textfield',
+			items : [cmb, {
+				fieldLabel : 'Buscar',
+				width : 120,
+				id : 'search-text',
+				name : 'search-value',
+				allowBlank : false
+			}],
+			buttons : [{
+				id : panel.mapname + '-search-btn',
+				iconCls : 'icon-16-edit-find',
+				formBind : true,
+				handler : function() {
+
+					var layer = cmb.getValue();
+					var search = Ext.getCmp('search-text').getValue();
+					this.showSearchResults(layer, search);
+				},
+				scope : panel
+			}]
+		});
+
+		return frm;
+	},
+
+	showSearchResults : function(layer, search) {
+
+		var ds = new Ext.data.Store({
+			autoLoad : true,
+			reader : new Ext.data.JsonReader({
+				root : 'rows',
+				totalProperty : 'total'
+			}),
+			proxy : new Ext.data.XajaxProxy({
+				xjxcls : 'AppHome',
+				xjxmthd : 'exec'
+			}),
+			baseParams : {
+				action : this.classUI + '.quickSearch',
+				returnvalue : true,
+				enableajax : true,
+				args : [{
+					layer : layer,
+					text : search
+				}]
+			}
+		});
+
+		// Create the grid
+		var grid = new Ext.grid.AutoGridPanel({
+			store : ds,
+			loadMask : true,
+			selModel : new Ext.grid.RowSelectionModel(),
+			trackMouseOver : true,
+			viewConfig : {
+				emptyText : 'No hay resultados...'
+			},
+			bbar : [],
+			plugins : [new Ext.ux.grid.Search({
+				searchText : 'Filtro',
+				mode : 'local',
+				iconCls : 'icon-16-edit-find',
+				dateFormat : 'Y-m-d',
+				minLength : 1
+			})]
+		});
+
+		/**
+		 * Ubicar Resultado en el Mapa.
+		 */
+		grid.addListener("celldblclick", function(g, rIndex, cIndex, e) {
+
+			var r = grid.getSelectionModel().getSelected();
+
+			xajax.$(this.mapname + '-action').value = 'pan';
+			xajax.$(this.mapname + '-ex').value = r.get('extent');
+			xajax.$(this.mapname + '-x').value = xajax.$(this.mapname + '-img').width
+					/ 2;
+			xajax.$(this.mapname + '-y').value = xajax.$(this.mapname + '-img').height
+					/ 2;
+			this.onMouseClick();
+
+		}, this);
+
+		var win = new Ext.Window({
+			layout : 'fit',
+			width : 300,
+			height : 170,
+			resizable : true,
+			autoScroll : true,
+			modal : false,
+			title : layer + ' : Resultados para "' + search + '"',
+			closeAction : 'close',
+			plain : true,
+			items : grid
+		});
+
+		win.show();
+
+		ds.on("load", function(store, records, options) {
+			grid.reconfigure(store, grid.colModel);
+		});
+	},
+
+	getSelectedNode : function() {
+		var tree = Ext.getCmp(this.mapname + "-tree");
+		var node = tree.getSelectionModel().getSelectedNode();
+
+		if (!node) {
+			var root = tree.getRootNode();
+			tree.getSelectionModel().select(root);
+			node = tree.getSelectionModel().selectNext();
+		}
+
+		return node;
 	},
 
 	onRender : function(ct, position) {
@@ -150,7 +332,25 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 	},
 
+	getImage : function() {
+		var img = Ext.get(this.mapname + '-img');
+		return img;
+	},
+
+	getView : function() {
+		var view = Ext.get(this.mapname + '-div');
+		return view;
+	},
+
 	addListeners : function() {
+		var tree = this.getLayersTree();
+		var findForm = this.getSearchForm(this);
+		
+		var east = Ext.getCmp(this.mapname + '-east');
+		east.add(tree);
+		east.add(findForm);
+		east.setActiveTab(tree);
+
 		var tip = Ext.getCmp(this.mapname + '-ttip');
 		if (tip) {
 			tip.destroy();
@@ -165,29 +365,96 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			trackMouse : true
 		});
 
-		var view = Ext.get(this.mapname + '-div');
-		var img = Ext.get(this.mapname + '-img');
+		var view = this.getView();
+		var img = this.getImage();
+		this.imageBegin = [img.getLeft(), img.getTop()];
+
 		img.on('load', function() {
 			img.setOpacity(1, true);
 		});
-		this.imageBegin = [img.getLeft(), img.getTop()];
 
 		var w = (img.getWidth() + 10) + "px";
 		var h = (img.getHeight() + 10) + "px";
 
 		view.setStyle('width', w);
 		view.setStyle('height', h);
+		view.setStyle('position', 'relative');
 		view.setStyle('overflow', 'hidden');
 		view.setStyle('margin', '5px auto 5px auto');
+		view.setStyle('border', '1px solid #CCCCCC');
+		img.setStyle('margin', '1px');
 
 		view.addListener('click', this.onMouseClick, this);
-		view.addListener('mousewheel', this.wheel, this);
+		view.addListener('mousewheel', this.onMouseWheel, this);
 		view.addListener('mousemove', this.onMouseMove, this);
 
-		if (!Ext.isIE) {
-			view.addListener('mousedown', this.onMouseDown, this);
-			view.addListener('mouseup', this.onMouseUp, this);
+		var dd = new Ext.dd.DD(img);
+		dd.onMouseDown = this.onMouseDown.createDelegate(this);
+		dd.onDrag = this.onDragImage.createDelegate(this);
+		dd.startDrag = this.onStartDrag.createDelegate(this);
+	},
+
+	onStartDrag : function(x, y) {
+		var img = this.getImage();
+		this.imageBegin = [img.getLeft(), img.getTop()];
+	},
+
+	onDragImage : function(e) {
+
+		var img = this.getImage();
+		var dx, dy, x, y;
+
+		if (e.getPageX() > this.mouseBegin[0]) {
+			dx = e.getPageX() - this.mouseBegin[0];
+			x = (img.getWidth() / 2) - dx;
+		} else {
+			dx = this.mouseBegin[0] - e.getPageX();
+			x = (img.getWidth() / 2) + dx;
 		}
+
+		if (e.getPageY() > this.mouseBegin[1]) {
+			dy = e.getPageY() - this.mouseBegin[1];
+			y = (img.getHeight() / 2) - dy;
+		} else {
+			dy = this.mouseBegin[1] - e.getPageY();
+			y = (img.getHeight() / 2) + dy;
+		}
+
+		xajax.$(this.mapname + '-x').value = x;
+		xajax.$(this.mapname + '-y').value = y;
+	},
+
+	onMouseDown : function(e) {
+
+		this.mouseBegin = [e.getPageX(), e.getPageY()];
+	},
+
+	onMouseMove : function(e) {
+		var img = this.getImage();
+		var x = e.getPageX() - img.getLeft();
+		var y = e.getPageY() - img.getTop();
+
+		xajax.$(this.mapname + '-x').value = x;
+		xajax.$(this.mapname + '-y').value = y;
+
+		var tip = Ext.getCmp(this.mapname + '-ttip');
+		var title = "<center>(" + Math.round(x) + ", " + Math.round(y)
+				+ ")</center>";
+		tip.setTitle(title);
+	},
+
+	onMouseWheel : function(e) {
+		var delta = e.getWheelDelta();
+		if (delta < 0) {
+			xajax.$(this.mapname + '-action').value = 'zoom-in';
+		} else {
+			xajax.$(this.mapname + '-action').value = 'zoom-out';
+		}
+		var img = this.getImage();
+		this.imageBegin = [img.getLeft(), img.getTop()];
+		this.onMouseClick();
+		xajax.$(this.mapname + '-action').value = 'pan';
+		e.stopEvent();
 	},
 
 	onMouseClick : function() {
@@ -212,100 +479,22 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 	},
 
-	onMouseDown : function(e) {
-
-		if (this.getActiveAction() == 'pan') {
-			var img = Ext.get(this.mapname + '-img');
-
-			var x = img.getX();
-			var y = img.getY();
-
-			this.ddImage = true;
-			this.dragBegin = [x, y];
-			this.mouseBegin = [e.getPageX(), e.getPageY()];
-
-			e.stopEvent();
-		}
-	},
-
-	onMouseUp : function(e) {
-
-		if (this.ddImage) {
-			var img = Ext.get(this.mapname + '-img');
-			var dx, dy, x, y;
-
-			if (e.getPageX() > this.mouseBegin[0]) {
-				dx = e.getPageX() - this.mouseBegin[0];
-				x = (img.getWidth() / 2) - dx;
-			} else {
-				dx = this.mouseBegin[0] - e.getPageX();
-				x = (img.getWidth() / 2) + dx;
-			}
-
-			if (e.getPageY() > this.mouseBegin[1]) {
-				dy = e.getPageY() - this.mouseBegin[1];
-				y = (img.getHeight() / 2) - dy;
-			} else {
-				dy = this.mouseBegin[1] - e.getPageY();
-				y = (img.getHeight() / 2) + dy;
-			}
-
-			xajax.$(this.mapname + '-x').value = x;
-			xajax.$(this.mapname + '-y').value = y;
-		}
-
-		this.ddImage = false;
-		this.dragBegin = null;
-		this.mouseBegin = null;
-		e.stopEvent();
-	},
-
-	onMouseMove : function(e) {
-		var img = Ext.get(this.mapname + '-img');
-		var x = e.getPageX() - img.getLeft();
-		var y = e.getPageY() - img.getTop();
-
-		if (this.ddImage) {
-			img.setX(this.dragBegin[0] - this.mouseBegin[0] + e.getPageX());
-			img.setY(this.dragBegin[1] - this.mouseBegin[1] + e.getPageY());
-
-			xajax.$(this.mapname + '-action').value = 'pan';
-			Ext.getCmp(this.mapname + '-btn-pan').toggle(true);
-		}
-		xajax.$(this.mapname + '-x').value = x;
-		xajax.$(this.mapname + '-y').value = y;
-
-		var tip = Ext.getCmp(this.mapname + '-ttip');
-		tip.setTitle("<center>(" + Math.round(x) + ", " + Math.round(y)
-				+ ")</center>");
-	},
-
-	/**
-	 * Event handler for mouse wheel event.
-	 */
-	wheel : function(e) {
-		var delta = e.getWheelDelta();
-		if (delta < 0) {
-			xajax.$(this.mapname + '-action').value = 'zoom-in';
-		} else {
-			xajax.$(this.mapname + '-action').value = 'zoom-out';
-		}
-		this.onMouseClick();
-		xajax.$(this.mapname + '-action').value = 'pan';
-		e.stopEvent();
-	},
-
 	getLayersTree : function() {
+
 		var r = new Ext.data.Record.create([{
 			name : 'id'
 		}, {
 			name : 'text'
 		}, {
-			name : 'icon'
+			name : 'iconCls'
+		}, {
+			name : 'checked'
+		}, {
+			name : 'expanded'
 		}, {
 			name : 'leaf'
 		}, {
-			name : 'checked'
+			name : 'children'
 		}]);
 
 		var ds = new Ext.data.Store({
@@ -324,16 +513,40 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			store : ds
 		});
 
+		// set the root node
+		var root = new Ext.tree.AsyncTreeNode({
+			text : 'Capas',
+			loader : myloader,
+			expanded : true
+		});
+
 		var tree = new Ext.tree.TreePanel({
 			id : this.mapname + "-tree",
+			iconCls : 'icon-16-emblem-photos',
+			title : "Leyenda",
 			useArrows : true,
 			autoScroll : true,
+			root : root,
 			border : false,
 			animate : true,
 			rootVisible : true,
-			// height : 500,
 			width : 200,
-			containerScroll : true
+			containerScroll : true,
+			tbar : [{
+				text : '',
+				tooltip : 'Expandir todas las capas',
+				iconCls : 'icon-16-expand-all',
+				handler : function() {
+					tree.expandAll();
+				}
+			}, '-', {
+				text : '',
+				tooltip : 'Contraer todas las capas',
+				iconCls : 'icon-16-collapse-all',
+				handler : function() {
+					tree.collapseAll();
+				}
+			}]
 		});
 
 		tree.on('checkchange', function(node, checked) {
@@ -350,14 +563,6 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				}]
 			});
 		}, this);
-
-		// set the root node
-		var root = new Ext.tree.AsyncTreeNode({
-			text : 'Capas',
-			expanded : true,
-			loader : myloader
-		});
-		tree.setRootNode(root);
 
 		return tree;
 	},

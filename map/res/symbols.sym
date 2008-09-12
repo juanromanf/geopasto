@@ -1,147 +1,293 @@
-Symbol
-Name 'tent'
-Type VECTOR
-Filled TRUE
-Points
-0 1
-.5 0
-1 1
-.75 1
-.5 .5
-.25 1
-0 1
-END
+SYMBOL
+	TYPE VECTOR
+	TRANSPARENT 0
+	POINTS
+	0 1
+	1 0
+	END
 END 
 
-Symbol
-Name 'star'
-Type VECTOR
-Filled TRUE
-Points
-0 .375
-.35 .375
-.5 0
-.65 .375
-1 .375
-.75 .625
-.875 1
-.5 .75
-.125 1
-.25 .625
-END
+SYMBOL
+	TYPE VECTOR
+	POINTS
+	0 1
+	1 0
+	-99 -99
+	0 0
+	1 1
+	END
 END 
 
-Symbol
-Name 'triangle'
-Type VECTOR
-Filled TRUE
-Points
-0 1
-.5 0
-1 1
-0 1
-END
+SYMBOL
+	TYPE ELLIPSE
+	Filled TRUE
+	POINTS
+	1 1
+	END
 END 
 
-Symbol
-Name 'square'
-Type VECTOR
-Filled TRUE
-Points
-0 1
-0 0
-1 0
-1 1
-0 1
-END
-END 
+#====================================================================================================#
 
-Symbol
-Name 'plus'
-Type VECTOR
-Points
-.5 0
-.5 1
--99 -99
-0 .5
-1 .5
+#=========================                AMENAZAS             ======================================#
+#  CONVENCION DE COLOR (RGB) :  0 153 38
+SYMBOL
+NAME "TRIANGULO"
+TYPE VECTOR
+	POINTS
+	 0.5 1
+	 1.5 1
+	 1 1.8
+	 0.5 1
+	END
 END
-END 
-
-Symbol
-Name 'cross'
-Type VECTOR
-Points
-0 0
-1 1
--99 -99
-0 1
-1 0
-END
+#  CONVENCION DE COLOR (RGB): 95 127 0
+SYMBOL
+NAME "DESLIZAMIENTO"
+TYPE VECTOR
+	POINTS
+	 3 1
+	 2 1
+	 2 2
+	 1 2
+	END
 END
 
-Symbol
-Name 'circle'
-Type ELLIPSE
-Filled TRUE
-Points
-1 1
+#  CONVENCION DE COLOR (RGB): 0 153 38
+SYMBOL
+NAME "SOCABON"
+TYPE VECTOR
+	POINTS
+	 0 1
+	 1 0
+	 -99 -99
+	 0.5 1.5
+	 1.5 0.5
+	 -99 -99
+	 1 2
+	 2 1
+	 -99 -99 
+	 1.5 2.5
+	 2.5 3.5
+	 -99 -99
+	 2 2
+	 3 3
+	 -99 -99
+	 2.5 1.5
+	 3.5 2.5
+	END
 END
-END 
 
-
-Symbol
-Type VECTOR
-TRANSPARENT 0
-Points
-0 1
-1 1
+#  CONVENCION DE COLOR(RGB) : 0 204 0	=	BOSQUE PLANTADO
+#  CONVENCION DE COLOR(RGB) : 0 153 38	=	PROTECT_DESARRO
+SYMBOL
+NAME "TREE"
+TYPE VECTOR
+	POINTS
+	 1 1.5
+	 1.25 1
+	 1.75 1
+	 2 1.5 
+	 1.75 2
+	 1.25 2
+	 1 1.5	  
+	END
+	FILLED FALSE
 END
-END 
 
-Symbol
-Type VECTOR
-TRANSPARENT 0
-Points
-1 0
-1 1
+#  CONVENCION DE COLOR(RGB) : 0 127 31	=	VERDE
+#  CONVENCION DE COLOR(RGB) : 255 63 0	=	COMERCIAL ALTO IMPACTO
+
+SYMBOL
+NAME "ZONA"
+TYPE ELLIPSE
+	POINTS
+	 1 1
+	END
+	STYLE
+	1 10 1 10
+	END
 END
-END 
 
-Symbol
-Type VECTOR
-TRANSPARENT 0
-Points
-0 0
-1 1
+#  CONVENCION DE COLOR(RGB) : 255 127 0	=	MIXTA MEDIANO IMPACTO
+SYMBOL
+NAME "COMERCIAL"
+TYPE VECTOR
+	POINTS
+	
+	0 0.25
+    0.5 0
+    1 0.25
+    1 0.75
+    0.5 1
+    0 0.75
+    -99 -99
+    1 0.25
+    1.5 0
+    2 0.25
+    2 0.75
+    1.5 1
+    1 0.75
+    -99 -99
+    1.5 1
+    1.5 1.5
+    -99 -99
+    0.5 1
+    0.5 1.5
+    -99 -99
+    END
 END
-END 
 
-Symbol
-Type VECTOR
-TRANSPARENT 0
-Points
-0 1
-1 0
+
+
+#=========================           USO DE SUELOS             ======================================#
+
+#  CONVENCION DE COLOR(RGB) : SEGUN CADA AREA
+SYMBOL
+	NAME "AREAMORFOLOGICA"
+	TYPE VECTOR
+	POINTS
+	 0 1
+	 1 0
+	END
 END
-END 
-
-Symbol
-Type VECTOR
-Points
-0 1
-1 0
--99 -99
-0 0
-1 1
+#  CONVENCION DE COLOR(RGB) : 255 255 255
+SYMBOL
+	NAME "IGLESIA"
+	TYPE VECTOR
+	POINTS
+	2 1
+	2 4
+	-99 -99
+	1 2
+	3 2 
+	END
+	FILLED FALSE
 END
-END 
 
-Symbol
-Type ELLIPSE
-Filled TRUE
-Points
-1 1
+#  CONVENCION DE COLOR(RGB) : 127 63 0  = INSTITUCIONAL
+SYMBOL
+	NAME "INSTITUCIONAL"
+	TYPE VECTOR
+	POINTS
+	1 1
+	2 1
+	2 2
+	1 2
+	1 1 
+	END
+	FILLED FALSE
 END
-END 
+#  CONVENCION DE COLOR(RGB) : 255 255 0 =  RESIDENCIAL
+SYMBOL
+	NAME "RESIDENCIAL"
+	TYPE VECTOR
+	POINTS
+	1 1
+	3 1
+	3 3
+	1 3
+	1 1 
+	END
+	FILLED FALSE
+END
 
+#  CONVENCION DE COLOR (RGB) :  255 127 0	= MIXTA CENTRAL
+#  CONVENCION DE COLOR (RGB) :  0 204 204	= INSTITUCIONAL CULTURAL
+SYMBOL
+NAME "ESTRELLA"
+TYPE VECTOR
+	POINTS
+	 2.5 0.5
+	 3 1.5
+	 4 1.5
+	 3.5 2.5
+	 4 3.5
+	 3 3.5
+	 2.5 4.5
+	 2 3.5
+	 1 3.5
+	 1.5 2.5
+	 1 1.5
+	 2 1.5
+	 2.5 0.5
+	END
+	FILLED FALSE
+END
+
+#  CONVENCION DE COLOR (RGB) :  153 153 0	= RECREACIONAL	
+SYMBOL
+NAME "RECREACIONAL"
+TYPE VECTOR
+	POINTS
+	 3 0
+	 3 3
+	 2 3
+	 2 0
+	 -99 -99
+	 2 1
+	 1 1
+	 1 2  
+	 2 2
+	 -99 -99
+	 3 1
+	 4 1
+	 4 2
+	 3 2
+	END
+	FILLED FALSE
+	STYLE
+	  5 25 5 25
+	END
+END
+
+#  CONVENCION DE COLOR (RGB) : 0 153 204  
+SYMBOL
+NAME "ACHURADO"
+TYPE VECTOR
+	POINTS
+	 0 1
+	 0.8 0
+	END
+END
+
+
+#==========================================  CALLES  ================================================#
+#  CONVENCION DE COLOR (RGB) : 0 0 255	ARTERIA MENOR
+#  CONVENCION DE COLOR (RGB) : 255 0 63	ARTERIA MAYOR
+#  CONVENCION DE COLOR (RGB) : 0 204 0	ARTERIA COLECTORA
+#  CONVENCION DE COLOR (RGB) : 255 127 0	VIAS ESPECIALES
+#  CONVENCION DE COLOR (RGB) : 255 0 255	VIAS PROPUESTAS
+#  CONVENCION DE COLOR (RGB) : 153 114 0	VARIANTE PASTO
+#  CONVENCION DE COLOR (RGB) : 255 0 0	VIAS RURALES
+#  CONVENCION DE COLOR (RGB) : 255 191 127	PEATONALES
+  
+SYMBOL
+NAME "ARTERIAS"
+TYPE ELLIPSE
+	POINTS
+	 1 1
+	END
+	FILLED TRUE
+END
+# CONVENCION DE COLOR (RGB) : 0 255 191	RONDAS	
+SYMBOL
+NAME "RONDAS"
+TYPE ELLIPSE
+	POINTS
+	 1 1
+	END
+	FILLED TRUE
+END
+
+#  CONVENCION DE COLOR(RGB) : 255 63 0
+SYMBOL
+	NAME "EJE_COMERCIAL"
+	TYPE VECTOR
+	POINTS
+	0 0
+	1 0 
+	END
+	FILLED true
+END
+
+#====================================================================================================#

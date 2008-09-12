@@ -1,21 +1,23 @@
-/*
- * @author DiMarcello
- */
+
 
 Ext.tree.TreeStoreLoader = function(config) {
 
-	this.baseParams = {};
-	this.test = 'testing';
-	this.requestMethod = "POST";
-	this.storeLoaded = false;
-	
+	/**
+	 * name of the parameter in the HTTP request (QueryString or POST data)
+	 */
+	this.nodeParamName = "node";
+
+	// required to be set to "true" (or non empty string) by the parent class to
+	// work properly
+	this.dataUrl = true;
+
 	Ext.apply(this, config);
-	
+
 	this.dataFields = this.store.reader.recordType.prototype.fields.keys;
-	
-	if (!this.dataFields)
+
+	if (!this.dataFields) {
 		this.dataFields = ['id', 'text', 'children'];
-		
+	}
 	for (var i = 0, l = this.dataFields.length; i < l; i++) {
 		if (typeof this.dataFields[i] == "string") {
 			this.dataFields[i] = {
@@ -23,115 +25,71 @@ Ext.tree.TreeStoreLoader = function(config) {
 			};
 		}
 	}
-	
-	this.addEvents("beforeload", "load", "loadexception", "update");
+
+	if (!this.store) {
+		this.store = new Ext.data.JsonStore({
+			url : this.dataUrl,
+			root : this.dataRoot,
+			fields : ['text']
+		});
+	}
+
 	Ext.tree.TreeStoreLoader.superclass.constructor.call(this);
 };
 
 Ext.extend(Ext.tree.TreeStoreLoader, Ext.tree.TreeLoader, {
-	
-	addChildren : function(parent) {
-		this.store.each(function(rec) {
-			parent.appendChild(this.createChild(rec));
-		}, this);
-		if (parent.attributes.expanded === true)
-			parent.expand();
-	},
 
-	createChild : function(rec) {
-		var attr = {};
-		if (this.baseAttrs)
-			Ext.applyIf(attr, this.baseAttrs);
+	requestData : function(node, callback) {
+		if (this.fireEvent("beforeload", this, node, callback) !== false) {
+			this.store.purgeListeners();
+			this.store.on('load', this.handleResponse.createDelegate(this, [
+					node, callback], 0));
+			this.store.on('loadexception', this.handleFailure.createDelegate(
+					this, [node, callback], 0));
 			
-		if (this.applyLoader !== false)
-			attr.loader = this;
-			
-		for (var i = 0, f = this.dataFields; i < f.length; i++) {
-			if (f[i].mapping !== undefined && f[i].mapping !== null) {
-				if (typeof f[i].mapping == 'function') {
-					attr[f[i].name] = f[i].mapping(rec);
-				} else {
-					attr[f[i].name] = rec.get(f[i].mapping);
-				}
-			} else {
-				attr[f[i].name] = rec.get(f[i].name);
+			var load = (typeof(this.store.autoLoad) == 'undefined') ? true : false;
+			if (load) {
+				this.store.load({
+					params : this.getParams(node),
+					callback : callback
+				});
+			}
+		} else {
+			if (typeof callback == "function") {
+				callback();
 			}
 		}
-		return new Ext.tree.TreeNode(attr);
 	},
 
-	load : function(node, callback) {
-		if (!!this.storeLoaded) {
+	getStore : function() {
+		return this.store;
+	},
+
+	getParams : function(node) {
+		var params = {};
+		var bp = this.baseParams;
+		for (var key in bp) {
+			if (typeof bp[key] != "function") {
+				params[key] = bp[key];
+			}
+		}
+		params[this.nodeParamName] = node.id;
+		return params;
+	},
+
+	processResponse : function(node, callback) {
+		try {
 			if (this.clearOnLoad) {
 				while (node.firstChild) {
 					node.removeChild(node.firstChild);
 				}
 			}
 			this.addChildren(node);
+
 			if (typeof callback == "function")
 				callback();
-		} else {
-			this.bindStore(this.store, node, callback, true);
-		}
-	},
-
-	bindStore : function(store, node, callback, initial) {
-		if (this.store && !initial
-				&& this.fireEvent("beforeload", this, node, callback) !== false) {
-			this.store.un('load', this.handleResponse.createDelegate(this, [
-					node, callback], 0));
-			this.store.un('update', this.handleUpdate.createDelegate(this,
-					[node], 0));
-			this.store.un('loadexception', this.handleFailure.createDelegate(
-					this, [node, callback], 0));
-			if (!store) {
-				this.store = null;
-			}
-			this.storeLoaded = false;
-		}
-
-		if (!store && initial) {
-			this.store = new Ext.data.JsonStore({
-				url : this.dataUrl,
-				root : this.dataRoot,
-				fields : ['text']
-			});
-		}
-		if (store) {
-			this.store = Ext.StoreMgr.lookup(store);
-			this.store.on('load', this.handleResponse.createDelegate(this, [
-					node, callback], 0));
-			this.store.on('update', this.handleUpdate.createDelegate(this,
-					[node], 0));
-			this.store.on('loadexception', this.handleFailure.createDelegate(
-					this, [node, callback], 0));
-			this.storeLoaded = this.store.loaded;
-		}
-		if (!this.storeLoaded) {
-			this.store.load();
-			this.storeLoaded = true;
-		} else {
-			this.load.call(this, node, callback);
-		}
-	},
-
-	processResponse : function(node, callback) {
-		try {
-			this.load.call(this, node, callback);
 		} catch (e) {
 			this.handleFailure(node, callback);
-		}
-	},
-
-	handleUpdate : function(node, s, r, operation) {
-		if (operation == Ext.data.Record.COMMIT) {
-			this.transId = false;
-			/*
-			 * TODO var old = node.findChild('id', r.get('id')); if(old){ var nn =
-			 * this.createChild(r); node.replaceChild(nn, old); nn.highlight(); }
-			 */
-			this.processResponse(node, null);
-			this.fireEvent("update", this, node);
 		}
 	},
 
@@ -144,8 +102,30 @@ Ext.extend(Ext.tree.TreeStoreLoader, Ext.tree.TreeLoader, {
 	handleFailure : function(node, callback) {
 		this.transId = false;
 		this.fireEvent("loadexception", this, node);
-		if (typeof callback == "function")
+		if (typeof callback == "function") {
 			callback(this, node);
+		}
+	},
+
+	addChildren : function(parent) {
+		this.store.each(function(rec) {
+			parent.appendChild(this.createChild(rec));
+		}, this);
+		if (parent.attributes.expanded === true) {
+			parent.expand();
+		}
+	},
+
+	createChild : function(rec) {
+		var attr = {};
+		for (var i = 0, f = this.dataFields; i < f.length; i++) {
+			attr[f[i].name] = Ext.isEmpty(f[i].mapping)
+					? rec.get(f[i].name)
+					: ((typeof f[i].mapping == 'function')
+							? f[i].mapping(rec)
+							: rec.get(f[i].mapping));
+		}
+		return this.createNode(attr);
 	}
 
 });

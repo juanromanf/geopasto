@@ -10,22 +10,22 @@ class Permisos extends AppActiveRecord {
 	 */
 	public function getSecurityTree() {
 		$arraymodulos = AppModules::getAllModules ();
-		$root = array ( );
+		$root = array ();
 		$root ['text'] = "padre";
-		$root ['children'] = array ( );
+		$root ['children'] = array ();
 		
 		/* @var $modulo AppModules */
 		foreach ( $arraymodulos as $modulo ) {
 			
-			$p_modulo = array ( );
+			$p_modulo = array ();
 			$p_modulo ['id_modulo'] = $modulo->id_module;
 			$p_modulo ['text'] = $modulo->title;
 			$p_modulo ['expanded'] = TRUE;
-			$p_modulo ['children'] = array ( );
+			$p_modulo ['children'] = array ();
 			$arraymenus = $modulo->getMenus ();
 			
 			foreach ( $arraymenus as $menu ) {
-				$p_item = array ( );
+				$p_item = array ();
 				$p_item ['id'] = $menu->id_menu;
 				$p_item ['text'] = $menu->text;
 				$p_item ['iconCls'] = $menu->iconcls;
@@ -45,10 +45,12 @@ class Permisos extends AppActiveRecord {
 	 */
 	public function revomeAll($id_user) {
 		try {
-			$permisos = $this->Find ( "id_user= $id_user" );
+			$permisos = $this->Find ( "id_user = $id_user" );
 			/* @var $revoke Permisos */
 			foreach ( $permisos as $revoke ) {
-				$revoke->Delete ();
+				$where = "id_user = ". $revoke->id_user . " and id_menu = ". $revoke->id_menu;
+				$this->Load($where);
+				$this->Delete();
 			}
 		} catch ( Exception $e ) {
 			throw new Exception ( 'Permisos.removeAll() ' . $e->getMessage () );
@@ -90,9 +92,9 @@ class Permisos extends AppActiveRecord {
 		try {
 			$arrayPermisos = $this->Find ( "id_user = $id_user" );
 			if ($asJson) {
-				$arrayJson = array ( );
+				$arrayJson = array ();
 				foreach ( $arrayPermisos as $permiso ) {
-					$item = array ( );
+					$item = array ();
 					$item ['id_menu'] = $permiso->id_menu;
 					$arrayJson [] = $item;
 				}

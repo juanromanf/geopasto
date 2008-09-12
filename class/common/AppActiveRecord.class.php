@@ -8,9 +8,11 @@ class AppActiveRecord extends ADODB_Active_Record {
 	 */
 	private $xResponse = NULL;
 	
-	public function __construct($xajaxResponse = NULL) {
+	public function __construct($xajaxResponse = false, $myTable = false, $myPkeys = false, $myCon = false) {
 		
-		parent::__construct ( FALSE, FALSE, AppSQL::getInstance () );
+		$myCon = $myCon ? $myCon : AppSQL::getInstance ();
+		
+		parent::__construct ( $myTable, $myPkeys, $myCon );
 		$this->xResponse = $xajaxResponse;
 	}
 	

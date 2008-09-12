@@ -484,7 +484,7 @@ input.x-tree-node-cb{margin-left:1px;}
 .x-tree-node a span,.x-dd-drag-ghost a span{text-decoration:none;color:black;padding:1px 3px 1px 2px;}
 .x-tree-node .x-tree-node-disabled a span{color:gray!important;}
 .x-tree-node .x-tree-node-disabled .x-tree-node-icon{-moz-opacity:0.5;opacity:.5;filter:alpha(opacity=50);}
-.x-tree-node .x-tree-node-inline-icon{background:transparent;}
+.x-tree-node .x-tree-node-inline-icon{background:transparent; border:0 none;height:18px;margin:1px;padding:0;vertical-align:top;width:16px;background-position:center;background-repeat:no-repeat;}
 .x-tree-node a:hover,.x-dd-drag-ghost a:hover{text-decoration:none;}
 .x-tree-node div.x-tree-drag-insert-below{border-bottom:1px dotted #36c;}
 .x-tree-node div.x-tree-drag-insert-above{border-top:1px dotted #36c;}

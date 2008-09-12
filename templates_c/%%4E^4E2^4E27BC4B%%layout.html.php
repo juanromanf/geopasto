@@ -1,12 +1,17 @@
+<?php /* Smarty version 2.6.18, created on 2008-09-03 15:22:32
+         compiled from app/layout.html */ ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>|-- $page_title --|</title>
-	|-- $xajax_js --|	
+<title><?php echo $this->_tpl_vars['page_title']; ?>
+</title>
+	<?php echo $this->_tpl_vars['xajax_js']; ?>
+	
 	
 	<link rel="stylesheet" type="text/css" href="./include/ext/resources/css/ext-all.css" />
-	<link id="theme-css" rel="stylesheet" type="text/css" href="./include/ext/resources/css/|-- $theme_name --|" />
+	<link id="theme-css" rel="stylesheet" type="text/css" href="./include/ext/resources/css/<?php echo $this->_tpl_vars['theme_name']; ?>
+" />
 	<!-- GC -->
 	<!-- LIBS -->
 	<script type="text/javascript" src="./include/ext/adapter/ext/ext-base.js"></script>

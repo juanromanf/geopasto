@@ -1,7 +1,6 @@
 <?php
 
 abstract class msMapLayout extends AppPage {
-	protected $name = '';
 	
 	public function createLayout($args) {
 		$mapfile = $args ['map'];
@@ -24,9 +23,23 @@ abstract class msMapLayout extends AppPage {
 		
 		return $output;
 	}
+	/**
+	 * Retorna un objeto de la Clase msMap, desde el archivo
+	 * temporal donde se almacena el estado actual.
+	 *
+	 * @return msMap
+	 */
+	public function getTempMap() {
+		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
+		return $map;
+	}
+	
+	public function saveTempMap(msMap $msMapObj) {
+		$msMapObj->saveMapState ( $_SESSION ['temp_file'] );
+	}
 	
 	public function resizeMap($size) {
-		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
+		$map = $this->getTempMap ();
 		list ( $w, $h ) = explode ( "x", $size );
 		
 		$map->setHeight ( $h );
@@ -40,26 +53,20 @@ abstract class msMapLayout extends AppPage {
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		
-		$map->saveMapState ( $_SESSION ['temp_file'] );
+		$this->saveTempMap ( $map );
 		
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
 	
 	public function doAction($args) {
-		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
+		$map = $this->getTempMap ();
 		
 		if (isset ( $args ['layer'] )) {
 			$layer_name = $args ['layer'];
 			$status = $args ['status'];
 			
-			$layer = $map->getLayer ( $layer_name );
-			
-			if ($status == 'true') {
-				$layer->set ( 'status', MS_ON );
-			} else {
-				$layer->set ( 'status', MS_OFF );
-			}
+			$map->toogleLayer ( $layer_name, $status );
 		
 		} else {
 			$map->processAction ( $args );
@@ -69,14 +76,14 @@ abstract class msMapLayout extends AppPage {
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
 		
-		$map->saveMapState ( $_SESSION ['temp_file'] );
+		$this->saveTempMap ( $map );
 		
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
 	
 	public function getLayers() {
-		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
+		$map = $this->getTempMap ();
 		
 		$arrayLayers = $map->getAllLayers ();
 		$tree = array ();
@@ -85,13 +92,156 @@ abstract class msMapLayout extends AppPage {
 			$node = array ();
 			$node ['id'] = $map->getName () . '-l-' . $layer->name;
 			$node ['text'] = $layer->name;
-			$node ['icon'] = $map->getLayerIcon ( $layer->name );
-			$node ['leaf'] = TRUE;
+			$node ['iconCls'] = 'icon-16-view-presentation';
 			$node ['checked'] = $layer->status ? TRUE : FALSE;
+			$node ['expanded'] = FALSE;
+			$node ['leaf'] = FALSE;
+			$node ['children'] = array ();
+			
+			$arrayIcons = $map->getLayerIcons ( $layer->name );
+			
+			foreach ( $arrayIcons as $icon ) {
+				$item = array ();
+				$item ['text'] = $icon ['name'];
+				$item ['icon'] = $icon ['url'];
+				$item ['leaf'] = TRUE;
+				
+				$node ['children'] [] = $item;
+			}
 			
 			$tree [] = $node;
 		}
 		return json_encode ( $tree );
+	}
+	
+	public function quickSearch($args) {
+		$layer = $args ['layer'];
+		$text = $args ['text'];
+		
+		$map = $this->getTempMap ();
+		$mapLayer = $map->getLayer ( $layer );
+		list ( $the_geom, $table ) = explode ( " from ", $mapLayer->data );
+		
+		$record = new AppActiveRecord ( FALSE, $table );
+		$fields = $record->GetAttributeNames ();
+		
+		$where = "";
+		foreach ( $fields as $field ) {
+			if ($field != $the_geom) {
+				$where .= "$field like '$text' or ";
+			}
+		}
+		$where = substr ( $where, 0, strlen ( $where ) - 3 );
+		
+		$this->getXajaxResponse ()->alert ( $where );
+		
+		$db = AppSQL::getInstance ();
+		$results = $db->GetActiveRecords ( $table, $where );
+		
+		$rows = array ();
+		foreach ( $results as $rec ) {
+			$node = array ();
+			foreach ( $fields as $field ) {
+				if ($field != $the_geom) {
+					$node [$field] = $rec->$field;
+				}
+			}
+			$ext = $db->GetRow ( "select extent($the_geom) from $table where gid = " . $rec->gid );
+			$str = str_replace ( "BOX(", "", $ext [0] );
+			$str = str_replace ( ")", "", $str );
+			$str = str_replace ( ",", " ", $str );
+			$node ['extent'] = $str;
+			
+			$rows [] = $node;
+		}
+		
+		$_reader_fields = array ();
+		foreach ( $fields as $field ) {
+			switch ($field) {
+				case 'gid' :
+					$_reader_fields [] = array ('name' => $field, 'dataIndex' => $field, 'header' => $field, 'hidden' => TRUE );
+					break;
+				
+				case $the_geom :
+					break;
+				
+				default :
+					$_reader_fields [] = array ('name' => $field, 'dataIndex' => $field, 'header' => $field );
+					break;
+			}
+		}
+		$_reader_fields [] = array ('name' => 'extent', 'dataIndex' => 'extent', 'header' => 'extent', 'hidden' => TRUE );
+		
+		$json ['metaData'] = Array ('root' => 'rows', 'totalProperty' => "total", 'fields' => $_reader_fields );
+		$json ['total'] = count ( $results );
+		$json ['rows'] = $rows;
+		
+		return json_encode ( $json );
+	}
+	
+	protected function addSymbols($layers) {
+		
+		$map = $this->getTempMap ();
+		
+		foreach ( $layers as $item ) {
+			$map_name = $item ['map'];
+			$layer_name = $item ['layer'];
+			$cls_item = $item ['clsitem'];
+			$cls_prefix = $item ['clsprefix'];
+			$cls_display = $item ['clsdisplay'];
+			
+			$layer = $map->getLayer ( $layer_name );
+			
+			//-- remove all previous classes
+			for($i = 0; $i <= $layer->numclasses; $i ++) {
+				$layer->removeClass ( 0 );
+			}
+			
+			$convenciones = new Convenciones ( );
+			$arraySym = $convenciones->getAll ( $map_name, $layer_name );
+			
+			$objName = str_replace ( " ", "", $layer_name);
+			$layerObj = new $objName();
+			
+			foreach ( $arraySym as $rec ) {
+				/* @var $rec Convenciones */
+				$key = $rec->keyvalue;
+				$op = $rec->operator;
+				$layerObj->Load ( "$cls_item = $key" );
+				$display = (strlen($rec->display) > 0 )? $rec->display : $cls_prefix . $layerObj->$cls_display;
+				
+				$symbol = $rec->getSymbol ();
+				list ( $cr, $cg, $cb ) = explode ( " ", $symbol->getColor () );
+				list ( $or, $og, $ob ) = explode ( " ", $symbol->getOutLineColor () );
+				
+				//-- class
+				$class = ms_newClassObj ( $layer );
+				$class->set ( "name", $display );
+				$class->setExpression ( "([$cls_item] $op $key)" );
+				
+				//-- label
+				$label = $class->label;
+				$label->set ( "type", MS_TRUETYPE );
+				$label->set ( "font", "trebuc" );
+				$label->set ( "size", 8 );
+				$label->color->setRGB ( 0, 0, 0 );
+				$label->shadowcolor->setRGB ( 230, 230, 230 );
+				$label->outlinecolor->setRGB ( 230, 230, 230 );
+				$label->outlinecolor->setRGB ( 230, 230, 230 );
+				$label->set ( "shadowsizex", 0.5 );
+				$label->set ( "shadowsizey", 0.5 );
+				$label->set ( "backgroundshadowsizex", 1.5 );
+				$label->set ( "backgroundshadowsizey", 1.5 );
+				
+				//-- style
+				$style = ms_newStyleObj ( $class );
+				$style->set ( "symbolname", $symbol->getName () );
+				$style->set ( "size", $symbol->getSize () );
+				$style->color->setRGB ( $cr, $cg, $cb );
+				$style->outlinecolor->setRGB ( $or, $og, $ob );
+			}
+		}
+		$this->saveTempMap ( $map );
 	}
 }
 ?>

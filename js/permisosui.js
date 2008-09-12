@@ -206,9 +206,10 @@ var PermisosUI = function() {
 							for (var index = 0; index < check.length; index++) {
 								menuItems[index] = check[index].id;
 							}
+							var id_user = record.get('id');
 							xajax_AppHome.exec({
 								action : 'Permisos.setRigth',
-								args : [record.get('id'), menuItems],
+								args : [id_user, menuItems],
 								enableajax : true
 							});
 						}

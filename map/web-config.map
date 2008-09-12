@@ -1,0 +1,9 @@
+WEB
+	# Set IMAGEPATH to the path where MapServer should
+	# write its output.
+	IMAGEPATH "C:/ms4w/tmp/ms_tmp/"
+	
+	# Set IMAGEURL to the url that points to IMAGEPATH
+	# as defined in your web server configuration
+	IMAGEURL "/ms_tmp/"
+ END

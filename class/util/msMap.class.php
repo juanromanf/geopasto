@@ -55,6 +55,15 @@ class msMap {
 		return $image->saveWebImage ();
 	}
 	
+	public function toogleLayer($layer_name, $status) {
+		$layer = $this->getLayer ( $layer_name );
+		if ($status == 'true') {
+			$layer->set ( 'status', MS_ON );
+		} else {
+			$layer->set ( 'status', MS_OFF );
+		}
+	}
+	
 	public function processAction($params) {
 		$action = $params ['action'];
 		$extent = explode ( " ", $params ['extent'] );
@@ -78,7 +87,7 @@ class msMap {
 				$zoom = 1;
 				break;
 			
-			default:
+			default :
 				$zoom = 0;
 		}
 		$ptoNewCenter = ms_newpointObj ();
@@ -97,16 +106,21 @@ class msMap {
 		return $arrayLayers;
 	}
 	
-	public function getLayerIcon($layer_name) {
-		$url = "";
-		$layerObj = $this->mapObj->getLayerByName ( $layer_name );
-		$classObj = $layerObj->getClass ( 0 );
+	public function getLayerIcons($layer_name) {
 		
-		if ($classObj) {
-			$imageObj = $classObj->createLegendIcon ( 20, 20 );
+		$arrayIcons = array ();
+		$layerObj = $this->mapObj->getLayerByName ( $layer_name );
+		$numClasses = $layerObj->numclasses;
+		
+		for($i = 0; $i < $numClasses; $i ++) {
+			$classObj = $layerObj->getClass ( $i );
+			$imageObj = $classObj->createLegendIcon ( 16, 18 );
 			$url = $imageObj->saveWebImage ();
+			
+			$arrayIcons [] = array ('name' => $classObj->name, "url" => $url );
 		}
-		return $url;
+		
+		return $arrayIcons;
 	}
 	
 	/**

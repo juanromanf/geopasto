@@ -9,12 +9,32 @@
 	background-image: url(../img/16/applications-internet.png) !important;
 }
 
+.icon-16-expand-all {
+	background-image: url(../img/16/expand-all.gif) !important;
+}
+
+.icon-16-collapse-all {
+	background-image: url(../img/16/collapse-all.gif) !important;
+}
+
+.icon-16-view-preview {
+	background-image: url(../img/16/view-preview.png) !important;
+}
+
+.icon-16-view-presentation {
+	background-image: url(../img/16/view-presentation.png) !important;
+}
+
 .icon-16-computer {
 	background-image: url(../img/16/computer.png) !important;
 }
 
 .icon-16-configure {
 	background-image: url(../img/16/configure.png) !important;
+}
+
+.icon-16-edit-find {
+	background-image: url(../img/16/edit-find.png) !important;
 }
 
 .icon-16-users {

@@ -2,7 +2,7 @@
  * PrediosUI Javascript File.
  */
 
-var PrediosUI = function() {
+var MapaUsoSuelosUI = function() {
 	/*
 	 * do NOT access DOM from here; elements don't exist yet.
 	 * 
@@ -28,10 +28,10 @@ var PrediosUI = function() {
 		init : function() {
 
 			var p = new Ext.MapPanel({
-				id : 'geopasto-panel',
-				mapname : 'geopasto',
-				mapfile : './map/geopasto.map',
-				classUI : 'PrediosUI'
+				id : 'usosuelos-panel',
+				mapname : 'usosuelos',
+				mapfile : './map/usosuelos.map',
+				classUI : 'MapaUsoSuelosUI'
 			});
 
 			_getContainer().add(p);

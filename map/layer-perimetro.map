@@ -1,0 +1,19 @@
+LAYER
+    NAME "Perimetro"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.perimetro"
+
+    STATUS ON
+    TRANSPARENCY 100
+    CLASS
+       NAME "Perimetro"
+       STYLE
+         SYMBOL residencial
+         SIZE 6
+         OUTLINECOLOR 0 0 0
+         COLOR 255 255 255
+       END
+    END
+ END
