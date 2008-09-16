@@ -26,80 +26,58 @@ var UsuariosUI = function() {
 
 	function _getUserRecord() {
 		_record = new Ext.data.Record.create([{
-			name : 'id'
+			name : 'numide'
 		}, {
-			name : 'name'
+			name : 'nombres'
 		}, {
-			name : 'login'
+			name : 'apellidos'
 		}, {
-			name : 'passwd'
-		}, {
-			name : 'created'
-		}, {
-			name : 'modified'
-		}, {
-			name : 'active'
+			name : 'usuario'
 		}]);
 
 		return _record;
 	}
 
 	function _getColumnModel() {
-		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
-			header : "Id",
-			width : 40,
-			hidden : true,
+		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), /*
+																			 * {
+																			 * header :
+																			 * "Id",
+																			 * width :
+																			 * 40,
+																			 * hidden :
+																			 * true,
+																			 * sortable :
+																			 * true,
+																			 * dataIndex :
+																			 * 'id' },
+																			 */
+		{
+			header : 'Identificacion',
+			width : 70,
+			dataIndex : 'numide',
 			sortable : true,
-			dataIndex : 'id'
+			editor : false
 		}, {
-			header : "Nombre",
+			header : "Apellidos",
 			width : 100,
 			sortable : true,
 			renderer : Ext.util.Format.capitalize,
-			dataIndex : 'name',
-			editor : new Ext.form.TextField({
-				allowBlank : false
-			})
+			dataIndex : 'apellidos',
+			editor : false
 		}, {
-			header : "Login",
+			header : "Nombres",
 			width : 100,
 			sortable : true,
-			dataIndex : 'login',
-			editor : new Ext.form.TextField({
-				allowBlank : false
-			})
-		}, {
-			header : "Contrase&ntilde;a",
-			renderer : function() {
-				return '***';
-			},
-			width : 70,
-			sortable : false,
-			dataIndex : 'passwd',
-			editor : new Ext.form.TextField({
-				allowBlank : false,
-				inputType : 'password'
-			})
-		}, {
-			header : "Creado",
-			width : 70,
-			sortable : true,
-			dataIndex : 'created',
+			renderer : Ext.util.Format.capitalize,
+			dataIndex : 'nombres',
 			editor : false
 		}, {
-			header : "Modificado",
-			width : 70,
+			header : "Usuario",
+			width : 100,
 			sortable : true,
-			dataIndex : 'modified',
+			dataIndex : 'usuario',
 			editor : false
-		}, {
-			header : 'Vigente',
-			width : 70,
-			dataIndex : 'active',
-			renderer : function(v) {
-				return (v == 1) ? "Si" : "No";
-			},
-			sortable : true
 		}]);
 
 		return _colmodel;
@@ -127,7 +105,6 @@ var UsuariosUI = function() {
 				id : 'users-grid',
 				clicksToEdit : 2,
 				border : false,
-				title : ' ',
 				store : xstore,
 				loadMask : true,
 				autoScroll : true,
@@ -139,39 +116,32 @@ var UsuariosUI = function() {
 					forceFit : true,
 					emptyText : 'No hay registros...'
 				},
-				listeners : {
-					afteredit : function(obj) {
-						xajax_AppHome.exec({
-							action : 'Usuarios.updateUser',
-							enableajax : true,
-							args : [[{
-								key : 'id',
-								value : obj.record.get('id')
-							}, {
-								key : obj.field,
-								value : obj.value
-							}]]
-						});
-					}
-				}
+				bbar : [],
+				plugins : [new Ext.ux.grid.Search({
+					searchText : 'Filtro',
+					mode : 'local',
+					iconCls : 'icon-16-edit-find',
+					dateFormat : 'Y-m-d',
+					minLength : 1
+				})]
+			/*
+			 * , listeners : { afteredit : function(obj) { xajax_AppHome.exec({
+			 * action : 'Usuarios.updateUser', enableajax : true, args : [[{ key :
+			 * 'id', value : obj.record.get('id') }, { key : obj.field, value :
+			 * obj.value }]] }); } }
+			 */
 			});
 
 			var tb = new Ext.Toolbar({
-				items : [{
-					text : 'Nuevo usuario',
-					tooltip : 'Adicionar un usuario.',
-					iconCls : 'icon-16-list-add-user',
-					handler : function() {
-						UsuariosUI.addUser();
-					}
-				}, {
-					text : 'Eliminar usuario',
-					tooltip : 'Eliminar un usuario del sistema.',
-					iconCls : 'icon-16-list-remove-user',
-					handler : function() {
-						UsuariosUI.deleteUser();
-					}
-				}, '-', {
+				items : [
+				/*
+				 * { text : 'Nuevo usuario', tooltip : 'Adicionar un usuario.',
+				 * iconCls : 'icon-16-list-add-user', handler : function() {
+				 * UsuariosUI.addUser(); } }, { text : 'Eliminar usuario',
+				 * tooltip : 'Eliminar un usuario del sistema.', iconCls :
+				 * 'icon-16-list-remove-user', handler : function() {
+				 * UsuariosUI.deleteUser(); } }, '-',
+				 */{
 					text : 'Cerrar',
 					handler : function() {
 						UsuariosUI.closeTab();
@@ -186,51 +156,20 @@ var UsuariosUI = function() {
 			_getContainer().doLayout();
 
 		},// fin del init
-
-		addUser : function() {
-			xajax_AppHome.exec({
-				action : 'Usuarios.addUser',
-				enableajax : true,
-				args : [[{
-					key : 'name',
-					value : ''
-				}, {
-					key : 'login',
-					value : ''
-				}, {
-					key : 'passwd',
-					value : ''
-				}, {
-					key : 'created',
-					value : ''
-				}, {
-					key : 'modified',
-					value : ''
-				}, {
-					key : 'active',
-					value : 1
-				}, {
-					key : 'locked',
-					value : 0
-				}]]
-			});
-		},
-
-		deleteUser : function() {
-			var g = Ext.getCmp('users-grid');
-			var record = g.getSelectionModel().getSelected();
-			Ext.MessageBox.confirm('Eliminar',
-					'Seguro desea eliminar el usuario "' + record.get('name')
-							+ '" ?', function(btn) {
-						if (btn == 'yes') {
-							xajax_AppHome.exec({
-								action : 'Usuarios.deleteUser',
-								enableajax : true,
-								args : [record.get('id')]
-							});
-						}
-					});
-		},
+		/*
+		 * addUser : function() { xajax_AppHome.exec({ action :
+		 * 'Usuarios.addUser', enableajax : true, args : [[{ key : 'name', value : '' }, {
+		 * key : 'login', value : '' }, { key : 'passwd', value : '' }, { key :
+		 * 'created', value : '' }, { key : 'modified', value : '' }, { key :
+		 * 'active', value : 1 }, { key : 'locked', value : 0 }]] }); },
+		 * 
+		 * deleteUser : function() { var g = Ext.getCmp('users-grid'); var
+		 * record = g.getSelectionModel().getSelected();
+		 * Ext.MessageBox.confirm('Eliminar', 'Seguro desea eliminar el usuario "' +
+		 * record.get('name') + '" ?', function(btn) { if (btn == 'yes') {
+		 * xajax_AppHome.exec({ action : 'Usuarios.deleteUser', enableajax :
+		 * true, args : [record.get('id')] }); } }); },
+		 */
 
 		displayLogin : function() {
 
@@ -241,15 +180,17 @@ var UsuariosUI = function() {
 				formId : 'frmlogin',
 				defaultType : 'textfield',
 				monitorValid : true,
-				bodyStyle :	{position: 'relative'},
+				bodyStyle : {
+					position : 'relative'
+				},
 				items : [{
 					fieldLabel : 'Usuario',
-					id	:	'user_txt',
+					id : 'user_txt',
 					name : 'users_login',
 					allowBlank : false
 				}, {
 					fieldLabel : 'Contrase&ntilde;a',
-					id	:	'pass_txt',
+					id : 'pass_txt',
 					name : 'users_passwd',
 					inputType : "password",
 					allowBlank : false
@@ -276,7 +217,7 @@ var UsuariosUI = function() {
 				iconCls : 'icon-16-document-encrypt',
 				frame : true,
 				width : 300,
-				items : login				
+				items : login
 			});
 
 			Ext.get('container-login').center(Ext.getBody());

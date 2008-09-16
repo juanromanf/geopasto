@@ -1,12 +1,12 @@
 <?php
 
 class Usuarios extends AppActiveRecord {
-	public $_table = 'app_users';
+	public $_table = 'personas';
 	
 	public function doLogin($data) {
 		$login = $data ['users_login'];
 		$passwd = md5 ( $data ['users_passwd'] );
-		$ok = $this->Load ( "login = '$login' and passwd='$passwd'" );
+		$ok = $this->Load ( "usuario = '$login' and r ='$passwd'" );
 		if (! $ok) {
 			$js = "Ext.MessageBox.alert('Error','Compruebe su usuario y contrase&ntilde;a...');";
 			$this->getXajaxResponse ()->script ( $js );
@@ -25,21 +25,18 @@ class Usuarios extends AppActiveRecord {
 	public static function getAllUsers($asJson = false) {
 		try {
 			$obj = new Usuarios ( );
-			$result = $obj->Find ( '1=1 order by name asc' );
+			$result = $obj->Find ( 'activo = '. 'true' .' order by apellidos, nombres asc' );
 			
 			if ($asJson) {
 				$root = array ();
 				
 				foreach ( $result as $user ) {
 					$accordion = array ();
-					$accordion ['id'] = $user->id_user;
-					$accordion ['name'] = $user->name;
-					$accordion ['login'] = $user->login;
-					$accordion ['passwd'] = '';
-					$accordion ['created'] = isset ( $user->created ) ? $user->created : date ( 'Y-m-d' );
-					$accordion ['modified'] = isset ( $user->modified ) ? $user->modified : date ( 'Y-M-D' );
-					$accordion ['active'] = $user->active;
-					$accordion ['locked'] = $user->locked;
+					$accordion ['numide'] = $user->numide;
+					$accordion ['nombres'] = $user->nombres;
+					$accordion ['apellidos'] = $user->apellidos;
+					$accordion ['usuario'] = $user->usuario;
+					$accordion ['activo'] = $user->activo;
 					$root [] = $accordion;
 				}
 				return json_encode ( $root );
@@ -51,7 +48,7 @@ class Usuarios extends AppActiveRecord {
 		
 		return $result;
 	}
-	
+	/*
 	public function updateUser($args) {
 		try {
 			$propertys = $args;
@@ -124,7 +121,7 @@ class Usuarios extends AppActiveRecord {
 			$this->Load ( 'id_user = ' . $data );
 			/*
 			 * Proteger integridad del sistema.
-			 */
+			 *//*
 			if ($this->locked == 1) {
 				throw new Exception ( "El Usuario '" . $this->name . "' no puede ser eliminado." );
 			}
@@ -137,6 +134,6 @@ class Usuarios extends AppActiveRecord {
 			$msg = $e->getMessage ();
 			throw new Exception ( 'Usuarios.deleteUser() ' . $msg );
 		}
-	}
+	}*/
 }
 ?>

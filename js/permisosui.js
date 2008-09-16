@@ -36,17 +36,23 @@ var PermisosUI = function() {
 
 	function _getColumnModel() {
 		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
-			header : "Nombre",
+			header : "Apellidos",
+			width : 100,
+			sortable : true,
+			dataIndex : 'apellidos',
+			editor : false
+		}, {
+			header : "Nombres",
 			width : 100,
 			sortable : true,
 			renderer : Ext.util.Format.capitalize,
-			dataIndex : 'name',
+			dataIndex : 'nombres',
 			editor : false
 		}, {
-			header : "Login",
+			header : "Usuario",
 			width : 100,
 			sortable : true,
-			dataIndex : 'login',
+			dataIndex : 'usuario',
 			editor : false
 		}]);
 
@@ -56,7 +62,7 @@ var PermisosUI = function() {
 	/**
 	 * Marca los permisos del usuario en el arbol.
 	 */
-	function checknodes(id_user) {
+	function checknodes(numide) {
 		var json_usr = xajax.request({
 			xjxcls : 'AppHome',
 			xjxmthd : 'exec'
@@ -65,7 +71,7 @@ var PermisosUI = function() {
 			parameters : [{
 				action : 'Permisos.getRigths',
 				returnvalue : true,
-				args : [id_user, true]
+				args : [numide, true]
 			}]
 		});
 
@@ -102,7 +108,6 @@ var PermisosUI = function() {
 			_grid = new Ext.grid.GridPanel({
 				id : 'privileges-grid',
 				border : false,
-				title : ' ',
 				store : xstore,
 				loadMask : true,
 				autoScroll : true,
@@ -113,7 +118,15 @@ var PermisosUI = function() {
 				viewConfig : {
 					forceFit : true,
 					emptyText : 'No hay registros...'
-				}
+				},
+				bbar : [],
+				plugins : [new Ext.ux.grid.Search({
+					searchText : 'Filtro',
+					mode : 'local',
+					iconCls : 'icon-16-edit-find',
+					dateFormat : 'Y-m-d',
+					minLength : 1
+				})]
 			});
 
 			var tb = new Ext.Toolbar({
@@ -188,7 +201,7 @@ var PermisosUI = function() {
 					modal : true,
 					layout : 'fit',
 					autoScroll : true,
-					title : 'Privilegios de ' + record.get('name'),
+					title : 'Privilegios de ' + record.get('nombres'),
 					closeAction : 'close',
 					plain : true,
 					items : xtree,
@@ -206,10 +219,10 @@ var PermisosUI = function() {
 							for (var index = 0; index < check.length; index++) {
 								menuItems[index] = check[index].id;
 							}
-							var id_user = record.get('id');
+							var numide = record.get('numide');
 							xajax_AppHome.exec({
 								action : 'Permisos.setRigth',
-								args : [id_user, menuItems],
+								args : [numide, menuItems],
 								enableajax : true
 							});
 						}
@@ -221,7 +234,7 @@ var PermisosUI = function() {
 					}]
 				});
 				win.show();
-				checknodes(record.get('id'));
+				checknodes(record.get('numide'));
 			}// fin if
 		}
 

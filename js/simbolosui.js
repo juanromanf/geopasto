@@ -174,7 +174,16 @@ var SimbolosUI = function() {
 							}]]
 						});
 					}
-				}
+				},
+				bbar : [],
+				plugins : [new Ext.ux.grid.Search({
+					searchText : 'Filtro',
+					mode : 'local',
+					iconCls : 'icon-16-edit-find',
+					dateFormat : 'Y-m-d',
+					minLength : 1
+				})]
+
 			});
 
 			var tb = new Ext.Toolbar({
@@ -253,8 +262,8 @@ var SimbolosUI = function() {
 			var s = Ext.getCmp('symbols-grid').getStore();
 			s.reload();
 		},
-		
-		getRecord: function() {
+
+		getRecord : function() {
 			return _getRecord();
 		},
 

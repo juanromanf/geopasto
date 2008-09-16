@@ -54,8 +54,8 @@ class AppHome extends AppPage {
 		$template_file = 'welcome.html';
 		
 		$objusr = new Usuarios ( );
-		$objusr->Load ( 'id_user=' . AppSession::getData () );
-		$this->tpl->assign ( 'user_name', $objusr->name );
+		$objusr->Load ( 'numide=' . AppSession::getData () );
+		$this->tpl->assign ( 'user_name', $objusr->nombres );
 		$this->tpl->assign ( 'user_time', date ( 'h:i a' ) );
 		
 		return $this->renderTemplate ( $template_file );
@@ -188,21 +188,11 @@ class AppHome extends AppPage {
 			/**
 			 * 	Generacion del log de errores del sistema.
 			 */
-			$msj = addslashes($e->getMessage ());
-			$js = "Ext.Msg.show({
-					   title: 'Error',
-					   msg: '$msj',
-					   buttons: Ext.Msg.OK,
-					   icon: Ext.MessageBox.ERROR
-					});";
-			$target = "debug-div";
-			
-//			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
-//			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
-//			$output = $this->tpl->fetch ( 'app.error.html' );
-			
-			$objResponse->script($js);
-//			$objResponse->prepend ( $target, $property, $output );
+			$target = "error-div";
+			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
+			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
+			$output = $this->tpl->fetch ( 'app.error.html' );
+			$objResponse->prepend ( $target, $property, $output );
 		}
 		
 		return $objResponse;

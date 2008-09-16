@@ -43,7 +43,7 @@ var ConvencionesUI = function() {
 	function _getColumnModel() {
 
 		var ds = new Ext.data.Store({
-			//autoLoad : true,
+			// autoLoad : true,
 			reader : new Ext.data.JsonReader({}, SimbolosUI.getRecord()),
 			proxy : new Ext.data.XajaxProxy({
 				xjxcls : 'AppHome',
@@ -129,7 +129,7 @@ var ConvencionesUI = function() {
 				allowBlank : false
 			})
 		}]);
-		
+
 		ds.load();
 
 		return _colmodel;
@@ -185,7 +185,15 @@ var ConvencionesUI = function() {
 							}]]
 						});
 					}
-				}
+				},
+				bbar : [],
+				plugins : [new Ext.ux.grid.Search({
+					searchText : 'Filtro',
+					mode : 'local',
+					iconCls : 'icon-16-edit-find',
+					dateFormat : 'Y-m-d',
+					minLength : 1
+				})]
 			});
 
 			var tb = new Ext.Toolbar({

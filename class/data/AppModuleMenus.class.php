@@ -5,7 +5,7 @@ class AppModuleMenus extends AppActiveRecord {
 	
 	public function isAllowed($id_user) {
 		$obj = new Permisos();
-		$permisos = $obj->Find("id_user = $id_user and id_menu = ". $this->id_menu);
+		$permisos = $obj->Find("numide = $id_user and id_menu = ". $this->id_menu);
 		
 		if (count($permisos) > 0) {
 			return TRUE;

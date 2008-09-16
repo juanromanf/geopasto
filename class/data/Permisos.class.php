@@ -45,10 +45,10 @@ class Permisos extends AppActiveRecord {
 	 */
 	public function revomeAll($id_user) {
 		try {
-			$permisos = $this->Find ( "id_user = $id_user" );
+			$permisos = $this->Find ( "numide = $id_user" );
 			/* @var $revoke Permisos */
 			foreach ( $permisos as $revoke ) {
-				$where = "id_user = ". $revoke->id_user . " and id_menu = ". $revoke->id_menu;
+				$where = "numide = ". $revoke->numide . " and id_menu = ". $revoke->id_menu;
 				$this->Load($where);
 				$this->Delete();
 			}
@@ -60,15 +60,15 @@ class Permisos extends AppActiveRecord {
 	/**
 	 * Asigna los permisos al usuario.
 	 *
-	 * @param int $id_user: id del usuario.
+	 * @param int $numide: id del usuario.
 	 * @param array $arrayPermisos: id's de los menus permitidos al usuario.
 	 */
-	public function setRigth($id_user, $arrayPermisos) {
+	public function setRigth($numide, $arrayPermisos) {
 		
 		try {
-			$this->revomeAll ( $id_user );
+			$this->revomeAll ( $numide );
 			foreach ( $arrayPermisos as $idmenu ) {
-				$this->id_user = $id_user;
+				$this->numide = $numide;
 				$this->id_menu = $idmenu;
 				$this->Insert ();
 			}
@@ -83,14 +83,14 @@ class Permisos extends AppActiveRecord {
 	/**
 	 * Recupera los permisos asignados a un usuario.
 	 *
-	 * @param int $id_user: id del usuario
+	 * @param int $numide: id del usuario
 	 * @param bool $asJson: retornar el resultado en formato JSON.
 	 * @return string|array
 	 */
-	public function getRigths($id_user, $asJson = false) {
+	public function getRigths($numide, $asJson = false) {
 		
 		try {
-			$arrayPermisos = $this->Find ( "id_user = $id_user" );
+			$arrayPermisos = $this->Find ( "numide = $numide" );
 			if ($asJson) {
 				$arrayJson = array ();
 				foreach ( $arrayPermisos as $permiso ) {

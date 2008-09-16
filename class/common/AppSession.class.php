@@ -18,7 +18,7 @@ class AppSession {
 
 	public static function setData($user) {
 
-		$_SESSION['USER_ID'] = $user->id_user;
+		$_SESSION['USER_ID'] = $user->numide;
 	}
 
 	/**
