@@ -44,12 +44,12 @@ Ext.override(Ext.Element, {
 				mm.center(this);
 				mm.setVisible(true);
 			}).defer(20, this); // *** FIX : defer things a bit, so the mask
-								// sizes over the el properly before centering
+			// sizes over the el properly before centering
 		}
 		if (Ext.isIE && !(Ext.isIE7 && Ext.isStrict)
 				&& this.getStyle('height') == 'auto') { // ie will not expand
-														// full height
-														// automatically
+			// full height
+			// automatically
 			this._mask.setSize(this.dom.clientWidth, this.getHeight());
 		}
 		return this._mask;
@@ -221,29 +221,6 @@ var AppHome = function() {
 				id : 'main-view',
 				layout : "border",
 				items : [{
-					region : 'south',
-					id : 'south-panel',
-					split : true,
-					collapsible : true,
-					collapsed : true,
-					height : 150,
-					minSize : 100,
-					maxSize : 200,
-					xtype : 'tabpanel',
-					minTabWidth : 110,
-					tabWidth : 130,
-					enableTabScroll : true,
-					activeTab : 0,
-					defaults : {
-						autoScroll : true
-					},
-					items : [{
-						title : 'Mensajes',
-						id : 'debug-tab',
-						html : '<div id="debug-div">&nbsp;</div>',
-						iconCls : 'icon-16-format-list-unordered'
-					}]
-				}, {
 					region : "west",
 					id : 'west-panel',
 					title : "Modulos",
@@ -281,6 +258,17 @@ var AppHome = function() {
 						html : '<div id = "welcome-div"></div>'
 					}]
 				}]
+			});
+
+			var west = Ext.getCmp('west-panel');
+			var center = Ext.getCmp('center-panel');
+			
+			west.on('expand', function(panel) {
+				center.doLayout();
+			});
+			
+			west.on('collapse', function(panel) {
+				center.doLayout();
 			});
 
 			xajax_AppHome.exec({

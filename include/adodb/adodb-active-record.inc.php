@@ -83,8 +83,7 @@ class ADODB_Active_Record {
 		if ($db == false && is_object($pkeyarr)) {
 			$db = $pkeyarr;
 			$pkeyarr = false;
-		}
-		
+		}		
 		if (!$table) { 
 			if (!empty($this->_table)) $table = $this->_table;
 			else $table = $this->_pluralize(get_class($this));

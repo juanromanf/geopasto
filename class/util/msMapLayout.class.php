@@ -122,7 +122,8 @@ abstract class msMapLayout extends AppPage {
 		$mapLayer = $map->getLayer ( $layer );
 		list ( $the_geom, $table ) = explode ( " from ", $mapLayer->data );
 		
-		$record = new AppActiveRecord ( FALSE, $table );
+		$class = str_replace ( " ", "", $layer );
+		$record = new $class ( );
 		$fields = $record->GetAttributeNames ();
 		
 		$where = "";
@@ -133,10 +134,8 @@ abstract class msMapLayout extends AppPage {
 		}
 		$where = substr ( $where, 0, strlen ( $where ) - 3 );
 		
-		$this->getXajaxResponse ()->alert ( $where );
-		
 		$db = AppSQL::getInstance ();
-		$results = $db->GetActiveRecords ( $table, $where );
+		$results = $record->Find ( $where );
 		
 		$rows = array ();
 		foreach ( $results as $rec ) {
@@ -158,7 +157,7 @@ abstract class msMapLayout extends AppPage {
 		$_reader_fields = array ();
 		foreach ( $fields as $field ) {
 			switch ($field) {
-				case 'gid' :
+				case 'gid' : case 'oid':
 					$_reader_fields [] = array ('name' => $field, 'dataIndex' => $field, 'header' => $field, 'hidden' => TRUE );
 					break;
 				
@@ -200,15 +199,15 @@ abstract class msMapLayout extends AppPage {
 			$convenciones = new Convenciones ( );
 			$arraySym = $convenciones->getAll ( $map_name, $layer_name );
 			
-			$objName = str_replace ( " ", "", $layer_name);
-			$layerObj = new $objName();
+			$objName = str_replace ( " ", "", $layer_name );
+			$layerObj = new $objName ( );
 			
 			foreach ( $arraySym as $rec ) {
 				/* @var $rec Convenciones */
 				$key = $rec->keyvalue;
 				$op = $rec->operator;
 				$layerObj->Load ( "$cls_item = $key" );
-				$display = (strlen($rec->display) > 0 )? $rec->display : $cls_prefix . $layerObj->$cls_display;
+				$display = (strlen ( $rec->display ) > 0) ? $rec->display : $cls_prefix . $layerObj->$cls_display;
 				
 				$symbol = $rec->getSymbol ();
 				list ( $cr, $cg, $cb ) = explode ( " ", $symbol->getColor () );

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18, created on 2008-09-03 15:22:32
+<?php /* Smarty version 2.6.18, created on 2008-09-15 15:58:50
          compiled from app/layout.html */ ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -27,10 +27,10 @@
 	<script type="text/javascript" src="./js/map-panel.js"></script>
 	
 	<script type="text/javascript" src="./js/usuariosui.js"></script>
+	<script type="text/javascript" src="./js/simbolosui.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="./css/geopasto.css" />
 	<link rel="stylesheet" type="text/css" href="./css/icons.css" />
-	
 
 </head>
 <body id='layout-body'>

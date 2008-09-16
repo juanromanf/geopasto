@@ -22,53 +22,5 @@ LAYER
        END
        INCLUDE "label-style-01.map"
     END
-    
-    CLASS
-       NAME "Volcanica Baja"
-       EXPRESSION ([codamenaza] == 16)
-       STYLE
-         SYMBOL 0
-         SIZE 8
-         OUTLINECOLOR 0 0 0
-         COLOR 255 0 0
-       END
-       INCLUDE "label-style-01.map"
-    END
-    
-    CLASS
-       NAME "Cuerpos Hidricos Estructurantes"
-       EXPRESSION ([codamenaza] == 19)       
-       STYLE
-         SYMBOL 0
-         SIZE 8
-         OUTLINECOLOR 0 0 0
-         COLOR 0 0 200
-       END
-       INCLUDE "label-style-01.map"
-    END
-    
-    CLASS
-       NAME "Ronda Hidrica"
-       EXPRESSION ([codamenaza] == 18)       
-       STYLE
-         SYMBOL 0
-         SIZE 8
-         OUTLINECOLOR 0 0 0
-         COLOR 255 0 0
-       END
-       INCLUDE "label-style-01.map"
-    END
-    
-    CLASS
-       NAME "Ninguna"
-       EXPRESSION ([codamenaza] == 0)       
-       STYLE
-         SYMBOL 0
-         SIZE 8
-         OUTLINECOLOR 0 0 0
-         COLOR 0 150 0
-       END
-       INCLUDE "label-style-01.map"
-    END
-    
+      
 END

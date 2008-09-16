@@ -104,22 +104,20 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			}, '-', '<span id="' + this.mapname + '-scale">&nbsp;</span>']
 		});
 
-		//var tree = this.getLayersTree();
-		//var findForm = this.getSearchForm(this);
-
 		var tabs = new Ext.TabPanel({
-			id: this.mapname + '-east',
+			id : this.mapname + '-east',
 			region : 'east',
 			collapsible : false,
 			collapsed : false,
 			border : false,
-			split : true,
-			width : 210,
+			split : false,
+			width : 250,
+			minSize : 150,
+			maxSize : 250,
 			minTabWidth : 100,
 			tabWidth : 130,
 			enableTabScroll : true,
 			layoutOnTabChange : true,
-			activeTab : 0,
 			defaults : {
 				autoScroll : true
 			}
@@ -195,26 +193,39 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			labelWidth : 50,
 			height : 30,
 			frame : true,
-			border : false,
+			border : true,
 			monitorValid : true,
 			labelAlign : 'right',
 			defaultType : 'textfield',
 			items : [cmb, {
-				fieldLabel : 'Buscar',
+				fieldLabel : 'Texto',
 				width : 120,
 				id : 'search-text',
 				name : 'search-value',
 				allowBlank : false
-			}],
-			buttons : [{
+			}, {
+				xtype : 'button',
 				id : panel.mapname + '-search-btn',
+				fieldLabel : '',
+				labelSeparator : '',
+				text : 'Buscar',
 				iconCls : 'icon-16-edit-find',
 				formBind : true,
+				isFormField : true,
 				handler : function() {
 
 					var layer = cmb.getValue();
 					var search = Ext.getCmp('search-text').getValue();
-					this.showSearchResults(layer, search);
+
+					if (layer == '') {
+						Ext.MessageBox.alert('Busqueda rapida',
+								'Seleccione una capa para la busqueda.');
+					} else if (search == '') {
+						Ext.MessageBox.alert('Busqueda rapida',
+								'Escriba un texto para la busqueda.');
+					} else {
+						this.showSearchResults(layer, search);
+					}
 				},
 				scope : panel
 			}]
@@ -343,9 +354,10 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	},
 
 	addListeners : function() {
+
 		var tree = this.getLayersTree();
 		var findForm = this.getSearchForm(this);
-		
+
 		var east = Ext.getCmp(this.mapname + '-east');
 		east.add(tree);
 		east.add(findForm);
@@ -527,7 +539,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			useArrows : true,
 			autoScroll : true,
 			root : root,
-			border : false,
+			border : true,
 			animate : true,
 			rootVisible : true,
 			width : 200,

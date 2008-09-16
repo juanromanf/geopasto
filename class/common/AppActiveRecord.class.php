@@ -24,5 +24,14 @@ class AppActiveRecord extends ADODB_Active_Record {
 	public function getXajaxResponse() {
 		return $this->xResponse;
 	}
+	
+	public function toArray() {
+		$fields = $this->GetAttributeNames();
+		$json = array();
+		foreach ($fields as $field) {
+			$json[$field] = $this->$field;
+		}
+		return $json;
+	}
 }
 ?>
