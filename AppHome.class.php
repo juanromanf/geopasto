@@ -188,11 +188,19 @@ class AppHome extends AppPage {
 			/**
 			 * 	Generacion del log de errores del sistema.
 			 */
-			$target = "error-div";
-			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
-			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
-			$output = $this->tpl->fetch ( 'app.error.html' );
-			$objResponse->prepend ( $target, $property, $output );
+			$msg = addslashes ( $e->getMessage () );
+			$js = "Ext.Msg.show({
+					   title: 'Error',
+					   msg: '$msg',
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.ERROR
+					});";
+			$objResponse->script($js);
+//			$target = "error-div";
+//			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
+//			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
+//			$output = $this->tpl->fetch ( 'app.error.html' );
+//			$objResponse->prepend ( $target, $property, $output );
 		}
 		
 		return $objResponse;
