@@ -7,10 +7,10 @@ abstract class msMapLayout extends AppPage {
 		
 		$mapObj = new msMap ( $mapfile );
 		
-		if (! isset ( $_SESSION ['temp_file'] )) {
-			$_SESSION ['temp_file'] = time () . '.map';
+		if (! isset ( $_SESSION [$this->mapname. '_temp'] )) {
+			$_SESSION [$this->mapname. '_temp'] = $this->mapname. '_temp_'. time () . '.map';
 		}
-		$mapObj->saveMapState ( '../tmp/' . $_SESSION ['temp_file'] );
+		$mapObj->saveMapState ( '../tmp/' . $_SESSION [$this->mapname. '_temp'] );
 		
 		$this->tpl->assign ( 'map', $mapObj );
 		
@@ -30,12 +30,12 @@ abstract class msMapLayout extends AppPage {
 	 * @return msMap
 	 */
 	public function getTempMap() {
-		$map = new msMap ( 'tmp/' . $_SESSION ['temp_file'] );
+		$map = new msMap ( 'tmp/' . $_SESSION [$this->mapname. '_temp'] );
 		return $map;
 	}
 	
 	public function saveTempMap(msMap $msMapObj) {
-		$msMapObj->saveMapState ( $_SESSION ['temp_file'] );
+		$msMapObj->saveMapState ( $_SESSION [$this->mapname. '_temp'] );
 	}
 	
 	public function resizeMap($size) {
@@ -215,7 +215,7 @@ abstract class msMapLayout extends AppPage {
 				
 				//-- class
 				$class = ms_newClassObj ( $layer );
-				$class->set ( "name", $display );
+				$class->set ( "name", htmlentities($display) );
 				$class->setExpression ( "([$cls_item] $op $key)" );
 				
 				//-- label

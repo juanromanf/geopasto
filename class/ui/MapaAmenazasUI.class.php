@@ -2,6 +2,7 @@
 
 class MapaAmenazasUI extends msMapLayout {
 	protected $name = "mapa-amenazas";
+	protected $mapname = "amenazas";
 	
 	public function createLayout($args) {
 		

@@ -2,6 +2,7 @@
 
 class MapaUsoSuelosUI extends msMapLayout {
 	protected $name = "mapa-usosuelos";
+	protected $mapname = "usosuelos";
 	
 	public function createLayout($args) {
 		
