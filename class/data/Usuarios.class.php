@@ -5,7 +5,7 @@ class Usuarios extends AppActiveRecord {
 	
 	public function doLogin($data) {
 		$login = $data ['users_login'];
-		$passwd = md5 ( $data ['users_passwd'] );
+		$passwd = $data ['users_passwd'];
 		$ok = $this->Load ( "usuario = '$login' and r ='$passwd'" );
 		if (! $ok) {
 			$js = "Ext.MessageBox.alert('Error','Compruebe su usuario y contrase&ntilde;a...');";
