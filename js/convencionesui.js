@@ -85,7 +85,6 @@ var ConvencionesUI = function() {
 			header : "Mapa",
 			width : 100,
 			sortable : true,
-			renderer : Ext.util.Format.capitalize,
 			dataIndex : 'map',
 			editor : new Ext.form.TextField({
 				allowBlank : false
@@ -158,7 +157,6 @@ var ConvencionesUI = function() {
 				id : 'conventions-grid',
 				clicksToEdit : 2,
 				border : false,
-				title : ' ',
 				store : xstore,
 				loadMask : true,
 				autoScroll : true,

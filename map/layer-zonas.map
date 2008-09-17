@@ -11,7 +11,7 @@ LAYER
     
     CLASS
        STYLE
-         SYMBOL residencial
+         SYMBOL cuadro_grande
          SIZE 6
          OUTLINECOLOR 0 0 0
          COLOR 0 158 255

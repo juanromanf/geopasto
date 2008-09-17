@@ -32,7 +32,7 @@ LAYER
         FORCE TRUE
       END
        STYLE
-         SYMBOL residencial
+         SYMBOL cuadro_grande
          SIZE 6
          OUTLINECOLOR 0 0 0
          COLOR 255 158 255

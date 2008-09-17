@@ -15,7 +15,7 @@ LAYER
        NAME "Otras comunas"
        EXPRESSION ([num_comuna] ne 3)
        STYLE
-         SYMBOL zona
+         SYMBOL cuadro_grande
          SIZE 5
          OUTLINECOLOR 0 0 0
          COLOR 255 158 100

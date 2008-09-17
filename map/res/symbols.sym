@@ -1,4 +1,5 @@
 SYMBOL
+	NAME "LINEA_45"
 	TYPE VECTOR
 	TRANSPARENT 0
 	POINTS
@@ -8,6 +9,7 @@ SYMBOL
 END 
 
 SYMBOL
+	NAME "MALLA_45"
 	TYPE VECTOR
 	POINTS
 	0 1
@@ -19,12 +21,22 @@ SYMBOL
 END 
 
 SYMBOL
+	NAME "CIRCULO"
 	TYPE ELLIPSE
 	Filled TRUE
 	POINTS
 	1 1
 	END
 END 
+
+SYMBOL
+	NAME "SOLIDO"
+	Filled TRUE
+	TYPE VECTOR
+	POINTS
+	-99 -99
+	END
+END
 
 #====================================================================================================#
 

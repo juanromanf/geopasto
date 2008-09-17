@@ -28,7 +28,6 @@ MAP
   #END
   
   SCALEBAR
-
     STATUS EMBED
     UNITS METERS
     INTERVALS 4
@@ -42,6 +41,6 @@ MAP
   INCLUDE "layer-zonas.map"
   INCLUDE "layer-areas-homogeneas.map"
   INCLUDE "layer-comunas.map"
-  INCLUDE "layer-predios.map"
+  INCLUDE "layer-usosuelos.map"
   
 END

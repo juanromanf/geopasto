@@ -61,6 +61,7 @@ var SimbolosUI = function() {
 			width : 100,
 			sortable : true,
 			dataIndex : 'name',
+			renderer: Ext.util.Format.uppercase,
 			editor : new Ext.form.TextField({
 				allowBlank : false
 			})
@@ -147,7 +148,6 @@ var SimbolosUI = function() {
 				id : 'symbols-grid',
 				clicksToEdit : 2,
 				border : false,
-				title : ' ',
 				store : xstore,
 				loadMask : true,
 				autoScroll : true,

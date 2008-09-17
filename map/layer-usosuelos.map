@@ -1,0 +1,26 @@
+LAYER
+    NAME "Usos Suelos"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+	CONNECTION "dbname=geopasto user=postgres password=postgres host=127.0.0.1 port=5432"
+	DATA "the_geom from gis.usos_suelo"
+
+    STATUS OFF
+    TRANSPARENCY 100
+    LABELITEM numpredio
+    #LABELMINSCALE 5607
+    LABELMAXSCALE 705
+    
+    CLASS
+       NAME "Deslizamientos"
+       EXPRESSION ([codareaactividad] == 1)       
+       STYLE
+         SYMBOL 0
+         SIZE 8
+         OUTLINECOLOR 0 0 0
+         COLOR 250 145 0
+       END
+       INCLUDE "label-style-01.map"
+    END
+      
+END

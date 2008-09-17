@@ -10,7 +10,7 @@ LAYER
     CLASS
        NAME "Perimetro"
        STYLE
-         SYMBOL residencial
+         SYMBOL SOLIDO
          SIZE 6
          OUTLINECOLOR 0 0 0
          COLOR 255 255 255

@@ -13,7 +13,7 @@ LAYER
        NAME "Area 1"
        EXPRESSION ([id_area] == 1)
        STYLE
-       	 SYMBOL residencial
+       	 SYMBOL cuadro_grande
          SIZE 5
          OUTLINECOLOR 0 0 0
          COLOR 222 144 126
