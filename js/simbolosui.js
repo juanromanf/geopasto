@@ -250,7 +250,7 @@ var SimbolosUI = function() {
 							+ '" ?', function(btn) {
 						if (btn == 'yes') {
 							xajax_AppHome.exec({
-								action : 'Simbolo.deleteSym',
+								action : 'Simbolos.deleteSym',
 								enableajax : true,
 								args : [record.get('id_sym')]
 							});

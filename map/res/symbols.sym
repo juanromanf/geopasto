@@ -9,6 +9,16 @@ SYMBOL
 END 
 
 SYMBOL
+	NAME "LINEA_30"
+	TYPE VECTOR
+	TRANSPARENT 0
+	POINTS
+	0 0.5
+	1 0
+	END
+END
+
+SYMBOL
 	NAME "MALLA_45"
 	TYPE VECTOR
 	POINTS
@@ -18,7 +28,19 @@ SYMBOL
 	0 0
 	1 1
 	END
-END 
+END
+
+SYMBOL
+	NAME "MALLA_90"
+	TYPE VECTOR
+	POINTS
+	0.5 0
+	0.5 1
+	-99 -99
+	0 0.5
+	1 0.5
+	END
+END  
 
 SYMBOL
 	NAME "CIRCULO"
@@ -176,6 +198,19 @@ SYMBOL
 	FILLED FALSE
 END
 
+SYMBOL
+	NAME "CRUZ_PEQUENA"
+	TYPE VECTOR
+	POINTS
+	1 0.5
+	1 1.5
+	-99 -99
+	0.5 1
+	1.5 1
+	END
+	FILLED FALSE
+END
+
 #  CONVENCION DE COLOR(RGB) : 127 63 0  = INSTITUCIONAL
 SYMBOL
 	NAME "CUADRO_PEQUENO"
@@ -302,4 +337,63 @@ SYMBOL
 	FILLED true
 END
 
+#====================================================================================================#
+#=================================== TRAMADOS =======================================================#
+
+SYMBOL
+	NAME "TRAMADO_1"
+	TYPE VECTOR
+	TRANSPARENT 0
+	POINTS
+	 0.4 0
+	 0.8 0.4
+	 -99 -99
+	 0 1
+	 0.5 0
+	 -99 -99
+	 1 0
+	 0.5 1
+	 -99 -99
+	
+	END
+		
+END
+
+SYMBOL
+	NAME "TRAMADO_2"
+	TYPE VECTOR
+	TRANSPARENT 0
+	POINTS
+	0.5 2.2
+	2.5 2.2
+	-99 -99
+	0.5 2.7
+	2.5 2.7
+	-99 -99
+	1 0.2
+	1 1.8
+	-99 -99
+	1.5 0.2
+	1.5 1.8
+	-99 -99
+	2 0.2
+	2 1.8
+	-99 -99
+	0.5 3.2
+	2.5 3.2
+	-99 -99
+	END
+END
+SYMBOL
+	NAME "TRAMADO_3"
+	TYPE VECTOR
+	TRANSPARENT 0
+	POINTS
+	0 0
+	1 1
+	-99 -99
+	0 1
+	1 0
+	END
+END
 #====================================================================================================#

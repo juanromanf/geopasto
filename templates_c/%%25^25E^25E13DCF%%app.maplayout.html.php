@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18, created on 2008-08-08 16:00:51
+<?php /* Smarty version 2.6.18, created on 2008-09-17 15:09:46
          compiled from app.maplayout.html */ ?>
 
 <img id="<?php echo $this->_tpl_vars['map']->getName(); ?>

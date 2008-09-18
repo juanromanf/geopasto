@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18, created on 2008-08-01 19:34:15
+<?php /* Smarty version 2.6.18, created on 2008-09-17 15:09:40
          compiled from app/welcome.html */ ?>
 <div class="x-panel-header" style="margin: 5px">	
 	<span class="x-panel-header-text">
