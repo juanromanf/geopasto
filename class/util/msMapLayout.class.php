@@ -7,10 +7,10 @@ abstract class msMapLayout extends AppPage {
 		
 		$mapObj = new msMap ( $mapfile );
 		
-		if (! isset ( $_SESSION [$this->mapname. '_temp'] )) {
-			$_SESSION [$this->mapname. '_temp'] = $this->mapname. '_temp_'. time () . '.map';
+		if (! isset ( $_SESSION [$this->mapname . '_temp'] )) {
+			$_SESSION [$this->mapname . '_temp'] = $this->mapname . '_temp_' . time () . '.map';
 		}
-		$mapObj->saveMapState ( '../tmp/' . $_SESSION [$this->mapname. '_temp'] );
+		$mapObj->saveMapState ( '../tmp/' . $_SESSION [$this->mapname . '_temp'] );
 		
 		$this->tpl->assign ( 'map', $mapObj );
 		
@@ -30,12 +30,12 @@ abstract class msMapLayout extends AppPage {
 	 * @return msMap
 	 */
 	public function getTempMap() {
-		$map = new msMap ( 'tmp/' . $_SESSION [$this->mapname. '_temp'] );
+		$map = new msMap ( 'tmp/' . $_SESSION [$this->mapname . '_temp'] );
 		return $map;
 	}
 	
 	public function saveTempMap(msMap $msMapObj) {
-		$msMapObj->saveMapState ( $_SESSION [$this->mapname. '_temp'] );
+		$msMapObj->saveMapState ( $_SESSION [$this->mapname . '_temp'] );
 	}
 	
 	public function resizeMap($size) {
@@ -157,7 +157,8 @@ abstract class msMapLayout extends AppPage {
 		$_reader_fields = array ();
 		foreach ( $fields as $field ) {
 			switch ($field) {
-				case 'gid' : case 'oid':
+				case 'gid' :
+				case 'oid' :
 					$_reader_fields [] = array ('name' => $field, 'dataIndex' => $field, 'header' => $field, 'hidden' => TRUE );
 					break;
 				
@@ -215,7 +216,7 @@ abstract class msMapLayout extends AppPage {
 				
 				//-- class
 				$class = ms_newClassObj ( $layer );
-				$class->set ( "name", htmlentities($display) );
+				$class->set ( "name", htmlentities ( $display ) );
 				$class->setExpression ( "([$cls_item] $op $key)" );
 				
 				//-- label
@@ -236,6 +237,7 @@ abstract class msMapLayout extends AppPage {
 				$style = ms_newStyleObj ( $class );
 				$style->set ( "symbolname", $symbol->getName () );
 				$style->set ( "size", $symbol->getSize () );
+				$style->set ( "width", $symbol->getWidth () );
 				$style->color->setRGB ( $cr, $cg, $cb );
 				$style->outlinecolor->setRGB ( $or, $og, $ob );
 			}

@@ -1,7 +1,7 @@
 <?php
 
 class Config extends AppActiveRecord {
-	public $_table = 'app_config';
+	public $_table = 'app.configuraciones';
 	
 	public static function getAllValues($asJson = false) {
 		try {

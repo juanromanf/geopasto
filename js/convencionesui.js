@@ -35,6 +35,8 @@ var ConvencionesUI = function() {
 			name : 'operator'
 		}, {
 			name : 'display'
+		}, {
+			name : 'detail'
 		}]);
 
 		return _record;
@@ -43,7 +45,8 @@ var ConvencionesUI = function() {
 	function _getColumnModel() {
 
 		var ds = new Ext.data.Store({
-			// autoLoad : true,
+			autoLoad : true,
+			id : 'foreing-sym',
 			reader : new Ext.data.JsonReader({}, SimbolosUI.getRecord()),
 			proxy : new Ext.data.XajaxProxy({
 				xjxcls : 'AppHome',
@@ -77,6 +80,7 @@ var ConvencionesUI = function() {
 			mode : Ext.isIE ? 'local' : 'remote',
 			triggerAction : 'all',
 			emptyText : '...',
+			lazyRender : true,
 			forceSelection : true,
 			editable : false
 		});
@@ -102,7 +106,7 @@ var ConvencionesUI = function() {
 			width : 40,
 			sortable : true,
 			dataIndex : 'operator',
-			editor : cmbOp,
+			editor : new Ext.grid.GridEditor(cmbOp),
 			renderer : Ext.grid.comboBoxRenderer(cmbOp)
 		}, {
 			header : "Valor",
@@ -117,8 +121,10 @@ var ConvencionesUI = function() {
 			width : 80,
 			sortable : true,
 			dataIndex : 'id_sym',
-			editor : cmbSym,
-			renderer : Ext.grid.comboBoxRenderer(cmbSym)
+			editor : new Ext.grid.GridEditor(cmbSym),
+			renderer : function(v, m, r, rI, cI, s) {
+				return r.data['detail'];
+			}
 		}, {
 			header : "Etiqueta",
 			width : 100,
@@ -128,8 +134,6 @@ var ConvencionesUI = function() {
 				allowBlank : false
 			})
 		}]);
-
-		ds.load();
 
 		return _colmodel;
 	}
@@ -257,7 +261,7 @@ var ConvencionesUI = function() {
 					'Seguro desea eliminar esta convencion ?', function(btn) {
 						if (btn == 'yes') {
 							xajax_AppHome.exec({
-								action : 'Convencion.remove',
+								action : 'Convenciones.remove',
 								enableajax : true,
 								args : [record.get('gid')]
 							});

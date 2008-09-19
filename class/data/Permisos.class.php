@@ -1,7 +1,7 @@
 <?php
 
 class Permisos extends AppActiveRecord {
-	public $_table = 'app_security';
+	public $_table = 'app.seguridad';
 	
 	/**
 	 * funcion para armar el arbol de permisos.

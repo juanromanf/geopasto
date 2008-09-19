@@ -1,7 +1,7 @@
 <?php
 
 class Convenciones extends AppActiveRecord {
-	public $_table = 'symbols.convenciones';
+	public $_table = 'app.convenciones';
 	
 	/**
 	 * @return string
@@ -96,9 +96,16 @@ class Convenciones extends AppActiveRecord {
 		$this->operator = $operator;
 	}
 	
+	public function toArray() {
+		$array = parent::toArray();
+		$array['detail'] = $this->getSymbol()->getDetail();
+		
+		return $array;
+	}
+	
 	public function getAll($map = '%', $layer = '%', $asJson = false) {
 		try {
-			$arrayCon = $this->Find ( "map like '$map' and layer like '$layer' order by keyvalue asc" );
+			$arrayCon = $this->Find ( "map like '$map' and layer like '$layer' order by map, layer, keyvalue asc" );
 			
 			if ($asJson) {
 				$json = array ();

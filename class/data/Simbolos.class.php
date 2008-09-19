@@ -1,7 +1,7 @@
 <?php
 
 class Simbolos extends AppActiveRecord {
-	public $_table = 'symbols.simbolos';
+	public $_table = 'app.simbolos';
 	
 	public function getDetail() {
 		return $this->detail;

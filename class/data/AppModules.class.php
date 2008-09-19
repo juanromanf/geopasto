@@ -1,7 +1,7 @@
 <?php
 
 class AppModules extends AppActiveRecord {
-	public $_table = "app_modules";
+	public $_table = "app.modulos";
 	
 	/**
 	 * Retorna todos los registros de la tabla como un array

@@ -1,7 +1,7 @@
 <?php
 
 class AppModuleMenus extends AppActiveRecord {
-	public $_table = "app_module_menus";
+	public $_table = "app.menus";
 	
 	public function isAllowed($id_user) {
 		$obj = new Permisos();
