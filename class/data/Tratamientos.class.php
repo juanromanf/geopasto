@@ -1,7 +1,7 @@
 <?php
 
-class Amenazas extends AppActiveRecord {
-	public $_table = 'gis.amenazas';
+class Tratamientos extends AppActiveRecord {
+	public $_table = 'gis.tratamientos';
 	
 	public function __construct($xajaxResponse = false) {
 		$keys = array ('oid');

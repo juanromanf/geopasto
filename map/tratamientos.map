@@ -1,0 +1,46 @@
+MAP
+  NAME "tratamientos"
+  # Map image size
+  SIZE 640 480
+  UNITS METERS
+  EXTENT 974248.875 622098.8125 981266.1875 629678.375
+  SYMBOLSET "../map/res/symbols.sym"
+  FONTSET "../map/res/fonts.txt"
+ 
+  # Background color for the map canvas -- change as desired
+  IMAGECOLOR 255 255 255
+  IMAGEQUALITY 100
+  IMAGETYPE PNG
+
+  # Legend
+  #LEGEND
+  #	STATUS EMBED
+  #  POSITION LR
+  #  TRANSPARENT TRUE
+  #  IMAGECOLOR 255 255 255
+  #  #STATUS ON
+  #  KEYSIZE 18 12
+  #  LABEL
+  #    TYPE BITMAP
+  #    SIZE MEDIUM
+  #    COLOR 0 0 89
+  #  END
+  #END
+  
+  SCALEBAR
+
+    STATUS EMBED
+    UNITS METERS
+    INTERVALS 4
+    TRANSPARENT TRUE
+    OUTLINECOLOR 0 0 0
+  END
+
+  # Web config definition  
+  INCLUDE "web-config.map"
+
+  INCLUDE "layer-perimetro.map"
+  INCLUDE "layer-areas-homogeneas.map"
+  INCLUDE "layer-comunas.map"
+  INCLUDE "layer-tratamientos.map"
+END

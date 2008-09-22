@@ -73,6 +73,7 @@ var ConvencionesUI = function() {
 		});
 
 		var cmbSym = new Ext.form.ComboBox({
+			id : 'cmb-sym',
 			store : ds,
 			listClass : 'x-combo-list-small',
 			displayField : 'detail',
@@ -87,7 +88,7 @@ var ConvencionesUI = function() {
 
 		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			header : "Mapa",
-			width : 100,
+			width : 70,
 			sortable : true,
 			dataIndex : 'map',
 			editor : new Ext.form.TextField({
@@ -95,7 +96,7 @@ var ConvencionesUI = function() {
 			})
 		}, {
 			header : "Capa",
-			width : 100,
+			width : 80,
 			sortable : true,
 			dataIndex : 'layer',
 			editor : new Ext.form.TextField({
@@ -103,14 +104,14 @@ var ConvencionesUI = function() {
 			})
 		}, {
 			header : "Condicion",
-			width : 40,
+			width : 30,
 			sortable : true,
 			dataIndex : 'operator',
 			editor : new Ext.grid.GridEditor(cmbOp),
 			renderer : Ext.grid.comboBoxRenderer(cmbOp)
 		}, {
 			header : "Valor",
-			width : 40,
+			width : 30,
 			sortable : true,
 			dataIndex : 'keyvalue',
 			editor : new Ext.form.TextField({
@@ -174,6 +175,12 @@ var ConvencionesUI = function() {
 				},
 				listeners : {
 					afteredit : function(obj) {
+
+						if (obj.field == 'id_sym') {
+							var val = Ext.getCmp('cmb-sym').getRawValue();
+							var rec = obj.record;
+							rec.set('detail', val);
+						}
 
 						xajax_AppHome.exec({
 							action : 'Convenciones.modify',
