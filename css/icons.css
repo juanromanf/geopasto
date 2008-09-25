@@ -13,6 +13,11 @@
 	background-image: url(../img/16/applications-graphics.png) !important;
 }
 
+.icon-16-help-contents {
+	background-image: url(../img/16/help-contents.png) !important;
+	background-repeat: no-repeat;
+}
+
 .icon-16-expand-all {
 	background-image: url(../img/16/expand-all.gif) !important;
 }
@@ -63,18 +68,22 @@
 
 .icon-16-zoom-in {
 	background-image: url(../img/16/zoom-in.png) !important;
+	background-repeat: no-repeat;
 }
 
 .icon-16-zoom-out {
 	background-image: url(../img/16/zoom-out.png) !important;
+	background-repeat: no-repeat;
 }
 
 .icon-16-zoom-best-fit {
 	background-image: url(../img/16/zoom-best-fit.png) !important;
+	background-repeat: no-repeat;
 }
 
 .icon-16-zoom-original {
 	background-image: url(../img/16/zoom-original.png) !important;
+	background-repeat: no-repeat;
 }
 
 .icon-16-application-exit {

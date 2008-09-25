@@ -7,6 +7,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	imageBegin : null,
 	dragBegin : null,
 	mouseBegin : null,
+	queryFunction : Ext.emptyFn,
 
 	initComponent : function() {
 		/*
@@ -45,43 +46,13 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		}, this);
 
 		var tb = new Ext.Toolbar({
-			items : ['&nbsp;Tama&ntilde;o: ', cmb, '-', {
-				id : this.mapname + '-btn-pan',
-				text : 'Desplazar',
-				iconCls : 'icon-16-zoom-best-fit',
-				pressed : true,
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					xajax.$(this.mapname + '-action').value = 'pan';
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-zi',
-				text : 'Acercar',
-				iconCls : 'icon-16-zoom-in',
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					xajax.$(this.mapname + '-action').value = 'zoom-in';
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-zo',
-				text : 'Alejar',
-				iconCls : 'icon-16-zoom-out',
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					xajax.$(this.mapname + '-action').value = 'zoom-out';
-				},
-				scope : this
-			}, '-', {
-				text : 'Restaurar',
+			items : ['&nbsp;Tama&ntilde;o del mapa: ', cmb, '-', {
+				text : '',
+				tooltip : 'Herramienta restaurar',
 				iconCls : 'icon-16-zoom-original',
 				handler : function() {
 
-					xajax.$(this.mapname + '-action').value = 'pan';
+					this.setActiveAction('pan');
 					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
 							+ '-oe').value;
 					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
@@ -94,8 +65,53 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				},
 				scope : this
 			}, '-', {
+				id : this.mapname + '-btn-pan',
+				text : '',
+				tooltip : 'Herramienta navegar',
+				iconCls : 'icon-16-zoom-best-fit',
+				pressed : true,
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					this.setActiveAction('pan');
+				},
+				scope : this
+			}, '-', {
+				id : this.mapname + '-btn-zi',
+				text : '',
+				tooltip : 'Herramienta acercar',
+				iconCls : 'icon-16-zoom-in',
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					this.setActiveAction('zoom-in');
+				},
+				scope : this
+			}, '-', {
+				id : this.mapname + '-btn-zo',
+				text : '',
+				tooltip : 'Herramienta alejar',
+				iconCls : 'icon-16-zoom-out',
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				handler : function() {
+					this.setActiveAction('zoom-out');
+				},
+				scope : this
+			}, '-', {
+				id : this.mapname + '-btn-info',
+				text : '',
+				tooltip : 'Herramienta consulta',
+				enableToggle : true,
+				toggleGroup : 'map-tools',
+				iconCls : 'icon-16-help-contents',
+				handler : function() {
+					this.setActiveAction('query');
+				},
+				scope : this
+			}, '-', {
 				text : 'Cerrar',
-				tooltip : 'Cerrar esta pesta&ntilde;a.',
+				tooltip : 'Cerrar esta pesta&ntilde;a',
 				iconCls : 'icon-16-dialog-close',
 				handler : function() {
 					this.closeTab();
@@ -370,8 +386,9 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		new Ext.ToolTip({
 			id : this.mapname + '-ttip',
 			target : this.mapname + '-img',
-			title : '-',
+			header : true,
 			width : 100,
+			height : 20,
 			dismissDelay : 0,
 			showDelay : 50,
 			trackMouse : true
@@ -395,6 +412,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		view.setStyle('margin', '5px auto 5px auto');
 		view.setStyle('border', '1px solid #CCCCCC');
 		img.setStyle('margin', '1px');
+		img.setStyle('cursor', 'move');
 
 		view.addListener('click', this.onMouseClick, this);
 		view.addListener('mousewheel', this.onMouseWheel, this);
@@ -404,11 +422,19 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		dd.onMouseDown = this.onMouseDown.createDelegate(this);
 		dd.onDrag = this.onDragImage.createDelegate(this);
 		dd.startDrag = this.onStartDrag.createDelegate(this);
+		dd.endDrag = this.onEndDrag.createDelegate(this);
+
 	},
 
 	onStartDrag : function(x, y) {
+
 		var img = this.getImage();
 		this.imageBegin = [img.getLeft(), img.getTop()];
+	},
+
+	onEndDrag : function(e) {
+		this.onDragImage(e);
+		this.onMouseClick();
 	},
 
 	onDragImage : function(e) {
@@ -458,19 +484,30 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	onMouseWheel : function(e) {
 		var delta = e.getWheelDelta();
 		if (delta < 0) {
-			xajax.$(this.mapname + '-action').value = 'zoom-in';
+			this.setActiveAction('zoom-in');
 		} else {
-			xajax.$(this.mapname + '-action').value = 'zoom-out';
+			this.setActiveAction('zoom-out');
 		}
 		var img = this.getImage();
 		this.imageBegin = [img.getLeft(), img.getTop()];
 		this.onMouseClick();
-		xajax.$(this.mapname + '-action').value = 'pan';
+		this.setActiveAction('pan');
 		e.stopEvent();
 	},
 
 	onMouseClick : function() {
-		var img = Ext.get(this.mapname + '-img');
+
+		var action = this.getActiveAction();
+		var x, y;
+		x = xajax.$(this.mapname + '-x').value;
+		y = xajax.$(this.mapname + '-y').value;
+
+		if (action == 'query') {
+			this.queryFunction(x, y);
+			return;
+		}
+
+		var img = this.getImage();
 		img.setOpacity(0, true);
 		this.maskPanel(true);
 
@@ -482,10 +519,10 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			action : this.classUI + '.doAction',
 			enableajax : true,
 			args : [{
-				action : xajax.$(this.mapname + '-action').value,
+				action : action,
 				extent : xajax.$(this.mapname + '-ex').value,
-				x : xajax.$(this.mapname + '-x').value,
-				y : xajax.$(this.mapname + '-y').value
+				x : x,
+				y : y
 			}],
 			jscallback : js
 		});
@@ -595,6 +632,42 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		return xajax.$(this.mapname + '-action').value;
 	},
 
+	setActiveAction : function(action) {
+		var id = this.mapname;
+		xajax.$(this.mapname + '-action').value = action;
+
+		var dd = Ext.dd.DragDropMgr.getDDById(this.mapname + '-img');
+		var img = this.getImage();
+		var ttip = Ext.getCmp(this.mapname + '-ttip');
+
+		switch (action) {
+			case 'zoom-in' :
+				id += '-btn-zi';
+				img.setStyle('cursor', 'crosshair');
+				dd.unlock();
+				break;
+
+			case 'zoom-out' :
+				id += '-btn-zo';
+				img.setStyle('cursor', 'crosshair');
+				dd.unlock();
+				break;
+
+			case 'pan' :
+				id += '-btn-pan';
+				img.setStyle('cursor', 'move');
+				dd.unlock();
+				break;
+
+			case 'query' :
+				id += '-btn-info';
+				img.setStyle('cursor', 'help');
+				dd.lock();
+				break;
+		}
+		Ext.getCmp(id).toggle(true);
+	},
+
 	getContainer : function() {
 		var container = Ext.getCmp('center-panel').getActiveTab();
 		return container;
@@ -605,4 +678,4 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	}
 });
 
-Ext.reg('mspanel', Ext.MapPanel);
+Ext.reg('mapanel', Ext.MapPanel);
