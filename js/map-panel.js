@@ -8,6 +8,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	dragBegin : null,
 	mouseBegin : null,
 	queryFunction : Ext.emptyFn,
+	queryList : new Ext.Panel({
+		title : 'Consultas',
+		border : false,
+		collapsed : true
+	}),
 
 	initComponent : function() {
 		/*
@@ -22,6 +27,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var cmb = new Ext.form.ComboBox({
 			id : 'size-combo',
 			hiddenName : 'map-size',
+			listClass : 'x-combo-list-small',
 			store : ds,
 			width : 100,
 			displayField : 'text',
@@ -107,6 +113,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				iconCls : 'icon-16-help-contents',
 				handler : function() {
 					this.setActiveAction('query');
+					Ext.getCmp(this.mapname + '-query').expand(true);
 				},
 				scope : this
 			}, '-', {
@@ -120,22 +127,20 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			}, '-', '<span id="' + this.mapname + '-scale">&nbsp;</span>']
 		});
 
-		var tabs = new Ext.TabPanel({
+		var tools = new Ext.Panel({
 			id : this.mapname + '-east',
 			region : 'east',
-			collapsible : false,
+			title : "Herramientas",
+			iconCls : 'icon-16-emblem-generic',
+			border : true,
 			collapsed : false,
-			border : false,
-			split : false,
+			collapsible : true,
 			width : 250,
-			minSize : 150,
-			maxSize : 250,
-			minTabWidth : 100,
-			tabWidth : 130,
-			enableTabScroll : true,
-			layoutOnTabChange : true,
-			defaults : {
-				autoScroll : true
+			margins : '0 5px 0 0',
+			split : true,
+			layout : 'accordion',
+			layoutConfig : {
+				animate : true
 			}
 		});
 
@@ -151,7 +156,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		this.layout = 'border';
 		this.frameElement = true;
 		this.border = false;
-		this.items = [navigation, tabs];
+		this.items = [navigation, tools];
 		this.height = this.getContainer().getEl().getHeight() - 2;
 
 		Ext.MapPanel.superclass.initComponent.call(this);
@@ -187,8 +192,10 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var cmb = new Ext.form.ComboBox({
 			id : panel.mapname + '-layers-combo',
 			hiddenName : panel.mapname + '-active-layer',
+			listClass : 'x-combo-list-small',
 			store : ds,
 			width : 120,
+			listWidth : '120',
 			fieldLabel : 'Capa',
 			displayField : 'text',
 			valueField : 'text',
@@ -197,20 +204,18 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			allowBlank : false,
 			mode : Ext.isIE ? 'local' : 'remote',
 			triggerAction : 'all',
-			emptyText : '---',
+			emptyText : '...',
 			selectOnFocus : true
 		});
 
 		var frm = new Ext.FormPanel({
 			id : panel.mapname + '-search-frm',
-			iconCls : 'icon-16-edit-find',
-			title : "Busqueda R&aacute;pida",
 			formId : 'frm-search',
-			labelWidth : 50,
-			height : 30,
+			bodyStyle : 'padding: 7px 0 0',
 			frame : true,
-			border : true,
+			border : false,
 			monitorValid : true,
+			labelWidth : 50,
 			labelAlign : 'right',
 			defaultType : 'textfield',
 			items : [cmb, {
@@ -247,7 +252,17 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			}]
 		});
 
-		return frm;
+		var p = new Ext.Panel({
+			iconCls : 'icon-16-edit-find',
+			title : "Busqueda R&aacute;pida",
+			layout: 'fit',
+			autoScroll : true,
+			border : false,
+			collapsed : true,
+			items : [frm]
+		});
+
+		return p;
 	},
 
 	showSearchResults : function(layer, search) {
@@ -377,7 +392,8 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var east = Ext.getCmp(this.mapname + '-east');
 		east.add(tree);
 		east.add(findForm);
-		east.setActiveTab(tree);
+		east.add(this.queryList());
+		east.doLayout();
 
 		var tip = Ext.getCmp(this.mapname + '-ttip');
 		if (tip) {
@@ -573,10 +589,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			id : this.mapname + "-tree",
 			iconCls : 'icon-16-emblem-photos',
 			title : "Leyenda",
+			collapsed : false,
 			useArrows : true,
 			autoScroll : true,
 			root : root,
-			border : true,
+			border : false,
 			animate : true,
 			rootVisible : true,
 			width : 200,

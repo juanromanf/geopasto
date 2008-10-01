@@ -106,6 +106,18 @@ class msMap {
 		return $arrayLayers;
 	}
 	
+	public function getActiveLayers() {
+		$all_layers = $this->getAllLayers ();
+		$arrayActives = array ();
+		
+		foreach ( $all_layers as $layer ) {
+			if ($layer->status == MS_ON) {
+				$arrayActives [] = $layer;
+			}
+		}
+		return $arrayActives;
+	}
+	
 	public function getLayerIcons($layer_name) {
 		
 		$arrayIcons = array ();

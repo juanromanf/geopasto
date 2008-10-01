@@ -84,5 +84,18 @@ class SII_Predios extends AppActiveRecord {
 		
 		return $demarcacion;
 	}
+	
+	public function getAmenazas() {
+		$obj = new SII_AmenazasPredios ( );
+		$rs = $obj->Find ( "numpredio = '" . $this->numpredio . "'" );
+		
+		$amenazas = array ();
+		foreach ( $rs as $r ) {
+			$a = new SII_PotAmenazas ( );
+			$a->Load ( "codamenaza = '" . $r->codamenaza . "'" );
+			$amenazas [] = $a;
+		}
+		return $amenazas;
+	}
 }
 ?>

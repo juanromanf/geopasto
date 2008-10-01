@@ -12,6 +12,15 @@
 	position: expression("absolute");
 }
 
+.x-form-cb-label {
+	width: 'auto' !important;
+	float: none !important;
+	clear: none !important;
+	display: inline !important;
+	margin-left: 4px;
+	font-size: 10px;
+}
+
 #container-login {
 	margin-left: 70%;
 	position: relative;

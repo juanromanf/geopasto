@@ -32,7 +32,8 @@ var MapaUsoSuelosUI = function() {
 				mapname : 'usosuelos',
 				mapfile : './map/usosuelos.map',
 				classUI : 'MapaUsoSuelosUI',
-				queryFunction : MapaUsoSuelosUI.getInfo
+				queryFunction : MapaUsoSuelosUI.getInfo,
+				queryList : MapaUsoSuelosUI.addQueryPanel
 			});
 
 			_getContainer().add(p);
@@ -40,91 +41,151 @@ var MapaUsoSuelosUI = function() {
 
 		}, // init end
 
+		addQueryPanel : function() {
+
+			var frm = new Ext.FormPanel({
+				id : 'usosuelos-qf',
+				formId : 'frm-query',
+				bodyStyle : 'padding: 7px 0 0',
+				frame : true,
+				border : false,
+				defaultType : 'radio',
+				labelWidth : 1,
+				labelSeparator : '&nbsp;',
+				items : [{
+					name : 'active-q',
+					boxLabel : '&iquest;Que Zona corresponde?',
+					checked : true,
+					inputValue : 'q-zona'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Que Comuna corresponde?',
+					inputValue : 'q-comuna'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Que Area Morfologica corresponde?',
+					inputValue : 'q-area-homo'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Que datos del Predio hay?',
+					inputValue : 'q-actividad'
+				}]
+			});
+
+			var qp = new Ext.Panel({
+				id : 'usosuelos-query',
+				iconCls : 'icon-16-help-contents',
+				title : 'Informacion util',
+				autoScroll : true,
+				layout : 'fit',
+				border : false,
+				collapsed : true,
+				items : [frm]
+			});
+
+			return qp;
+		},
+
 		getInfo : function(x, y) {
 
-			var record = new Ext.data.Record.create([, {
-				name : 'seccion'
-			}, {
-				name : 'property'
-			}, {
-				name : 'value'
-			}]);
+			var values = Ext.getCmp('usosuelos-qf').getForm().getValues();
+			var qId = values['active-q'];
+			var win = Ext.getCmp('info-win');
 
-			var ds = new Ext.data.GroupingStore({
-				autoLoad : true,
-				groupField : 'seccion',
-				sortInfo : {
-					field : 'seccion',
-					direction : "ASC"
-				},
-				reader : new Ext.data.JsonReader({}, record),
-				proxy : new Ext.data.XajaxProxy({
-					xjxcls : 'AppHome',
-					xjxmthd : 'exec'
-				}),
-				baseParams : {
-					action : 'MapaUsoSuelosUI.doQuery',
-					returnvalue : true,
-					enableajax : true,
-					args : [{
-						x : x,
-						y : y,
-						extent : xajax.$('usosuelos-ex').value
-					}]
-				}
-			});
+			if (!win) {
+				var record = new Ext.data.Record.create([, {
+					name : 'seccion'
+				}, {
+					name : 'property'
+				}, {
+					name : 'value'
+				}]);
 
-			var cm = new Ext.grid.ColumnModel([{
-				header : "&nbsp;",
-				dataIndex : 'property',
-				css : 'text-align: right; font-weight: bold;',
-				width : 120,
-				sortable : false,
-				fixed : true,
-				renderer : function(val) {
-					return val + ':';
-				}
-			}, {
-				header : "&nbsp;",
-				dataIndex : 'value',
-				sortable : false
-			}, {
-				header : "&nbsp;",
-				hidden : true,
-				dataIndex : 'seccion',
-				sortable : false
-			}]);
+				var ds = new Ext.data.GroupingStore({
+					autoLoad : true,
+					groupField : 'seccion',
+					sortInfo : {
+						field : 'seccion',
+						direction : "ASC"
+					},
+					reader : new Ext.data.JsonReader({}, record),
+					proxy : new Ext.data.XajaxProxy({
+						xjxcls : 'AppHome',
+						xjxmthd : 'exec'
+					}),
+					baseParams : {
+						action : 'MapaUsoSuelosUI.doQuery',
+						returnvalue : true,
+						enableajax : true,
+						args : [{
+							x : x,
+							y : y,
+							query : qId,
+							extent : xajax.$('usosuelos-ex').value
+						}]
+					}
+				});
 
-			var grid = new Ext.grid.GridPanel({
-				store : ds,
-				colModel : cm,
-				loadMask : true,
-				enableHdMenu : false,
-				view : new Ext.grid.GroupingView({
-					forceFit : true,
-					groupTextTpl : '{group}'
-				})
-			});
+				var cm = new Ext.grid.ColumnModel([{
+					header : "&nbsp;",
+					dataIndex : 'property',
+					css : 'text-align: right; font-weight: bold;',
+					width : 120,
+					sortable : false,
+					renderer : function(val) {
+						return val + ':';
+					}
+				}, {
+					header : "&nbsp;",
+					dataIndex : 'value',
+					sortable : false
+				}, {
+					header : "&nbsp;",
+					hidden : true,
+					dataIndex : 'seccion',
+					sortable : false
+				}]);
 
-			if (Ext.getCmp('info-win')) {
-				Ext.getCmp('info-win').close();
+				var grid = new Ext.grid.GridPanel({
+					id : 'info-grid',
+					store : ds,
+					colModel : cm,
+					loadMask : true,
+					enableHdMenu : false,
+					view : new Ext.grid.GroupingView({
+						forceFit : true,
+						groupTextTpl : '{group}'
+					})
+				});
+
+				win = new Ext.Window({
+					id : 'info-win',
+					iconCls : 'icon-16-help-contents',
+					layout : 'fit',
+					width : 400,
+					height : 250,
+					resizable : true,
+					autoScroll : true,
+					modal : false,
+					title : 'Informacion util',
+					closeAction : 'close',
+					plain : true,
+					items : grid
+				});
+				_getContainer().add(win);
+				_getContainer().doLayout();
+
+			} else {
+				var s = Ext.getCmp('info-grid').getStore();
+				s.baseParams.args = [{
+					x : x,
+					y : y,
+					query : qId,
+					extent : xajax.$('usosuelos-ex').value
+				}];
+
+				s.reload();
 			}
-
-			var win = new Ext.Window({
-				id : 'info-win',
-				iconCls : 'icon-16-help-contents',
-				layout : 'fit',
-				width : 400,
-				height : 250,
-				resizable : true,
-				autoScroll : true,
-				modal : false,
-				title : 'Informaci&oacute;n',
-				closeAction : 'close',
-				plain : true,
-				items : grid
-			});
-
 			win.show();
 		},
 
