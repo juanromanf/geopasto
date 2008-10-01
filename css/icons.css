@@ -18,6 +18,11 @@
 	background-repeat: no-repeat;
 }
 
+.icon-16-help-browser {
+	background-image: url(../img/16/help-browser.png) !important;
+	background-repeat: no-repeat;
+}
+
 .icon-16-expand-all {
 	background-image: url(../img/16/expand-all.gif) !important;
 }

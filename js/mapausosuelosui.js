@@ -67,7 +67,7 @@ var MapaUsoSuelosUI = function() {
 					inputValue : 'q-area-homo'
 				}, {
 					name : 'active-q',
-					boxLabel : '&iquest;Que datos del Predio hay?',
+					boxLabel : '&iquest;Que datos del Predio existen?',
 					inputValue : 'q-actividad'
 				}]
 			});
@@ -75,11 +75,26 @@ var MapaUsoSuelosUI = function() {
 			var qp = new Ext.Panel({
 				id : 'usosuelos-query',
 				iconCls : 'icon-16-help-contents',
-				title : 'Informacion util',
+				title : 'Informaci&oacute;n Util',
 				autoScroll : true,
 				layout : 'fit',
 				border : false,
 				collapsed : true,
+				tbar : [{
+					text : 'Ayuda',
+					iconCls : 'icon-16-help-browser',
+					handler : function() {
+
+						Ext.Msg.show({
+							icon : Ext.MessageBox.INFO,
+							buttons : Ext.Msg.OK,
+							title : 'Informaci&oacute;n Util: Ayuda',
+							msg : '1. Seleccione una de las consultas disponibles.<br>'
+									+ '2. Verifique que la herramienta consulta est&aacute; activa.<br>'
+									+ '3. Click en un punto del mapa para obtener una respuesta.'
+						});
+					}
+				}],
 				items : [frm]
 			});
 
@@ -164,16 +179,18 @@ var MapaUsoSuelosUI = function() {
 					layout : 'fit',
 					width : 400,
 					height : 250,
+					collapsible : true,
 					resizable : true,
 					autoScroll : true,
 					modal : false,
-					title : 'Informacion util',
+					title : 'Informaci&oacute;n Util',
 					closeAction : 'close',
 					plain : true,
 					items : grid
 				});
 				_getContainer().add(win);
 				_getContainer().doLayout();
+				win.center();
 
 			} else {
 				var s = Ext.getCmp('info-grid').getStore();

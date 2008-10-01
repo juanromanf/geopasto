@@ -24,12 +24,11 @@ class MapaUsoSuelosUI extends msMapLayout {
 	 * @param array $args
 	 * @param $args['x']: click X coord.
 	 * @param $args['y']: click Y coord.
+	 * @param $args['query']: query to execute.
 	 * @param $args['extent']: map extent.
 	 */
 	public function doQuery($args) {
-		/**
-		 * TODO: consolidar reporte de demarcacion.
-		 */
+		
 		try {
 			$click_x = $args ['x'];
 			$click_y = $args ['y'];
@@ -40,7 +39,6 @@ class MapaUsoSuelosUI extends msMapLayout {
 			$x = msMap::pixelToGeo ( $click_x, 0, $map->getMapWidth (), $extent [0], $extent [2] );
 			$y = msMap::pixelToGeo ( $click_y, 0, $map->getMapHeight (), $extent [1], $extent [3], true );
 			
-			// Capas activas en el momento de la consulta
 			$arrayInfo = array ();
 			
 			switch ($query) {

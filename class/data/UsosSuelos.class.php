@@ -47,10 +47,13 @@ class UsosSuelos extends AppActiveRecord {
 			$propietario = $predio->getPropietario ();
 			
 			$info [] = array ('seccion' => 'General', 'property' => 'Predio', 'value' => $numpredio );
-			$info [] = array ('seccion' => 'General', 'property' => 'C.C Propietario', 'value' => $propietario->getNumId () );
 			$info [] = array ('seccion' => 'General', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
+			$info [] = array ('seccion' => 'General', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
 			$info [] = array ('seccion' => 'General', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
 			$info [] = array ('seccion' => 'General', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
+			$info [] = array ('seccion' => 'General', 'property' => 'Manzana', 'value' => $predio->getManzana () );
+			$info [] = array ('seccion' => 'General', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+			$info [] = array ('seccion' => 'General', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1 , ',', '.') . ' m' );
 			
 			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area de actividad', 'value' => '(' . $this->getSiglaArea () . ') ' . htmlentities ( $this->getAreaActividad () ) );
 			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area mofologica homogenea', 'value' => $infoAreaH [0] ['value'] );

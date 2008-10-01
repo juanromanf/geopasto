@@ -52,79 +52,81 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		}, this);
 
 		var tb = new Ext.Toolbar({
-			items : ['&nbsp;Tama&ntilde;o del mapa: ', cmb, '-', {
-				text : '',
-				tooltip : 'Herramienta restaurar',
-				iconCls : 'icon-16-zoom-original',
-				handler : function() {
+			items : ['&nbsp;Tama&ntilde;o del mapa: ', cmb, '-',
+					'<span id="' + this.mapname + '-scale">&nbsp;</span>', '-',
+					{
+						text : '',
+						tooltip : 'Herramienta restaurar',
+						iconCls : 'icon-16-zoom-original',
+						handler : function() {
 
-					this.setActiveAction('pan');
-					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
-							+ '-oe').value;
-					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
-							+ '-img').width
-							/ 2;
-					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
-							+ '-img').height
-							/ 2;
-					this.onMouseClick();
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-pan',
-				text : '',
-				tooltip : 'Herramienta navegar',
-				iconCls : 'icon-16-zoom-best-fit',
-				pressed : true,
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					this.setActiveAction('pan');
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-zi',
-				text : '',
-				tooltip : 'Herramienta acercar',
-				iconCls : 'icon-16-zoom-in',
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					this.setActiveAction('zoom-in');
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-zo',
-				text : '',
-				tooltip : 'Herramienta alejar',
-				iconCls : 'icon-16-zoom-out',
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				handler : function() {
-					this.setActiveAction('zoom-out');
-				},
-				scope : this
-			}, '-', {
-				id : this.mapname + '-btn-info',
-				text : '',
-				tooltip : 'Herramienta consulta',
-				enableToggle : true,
-				toggleGroup : 'map-tools',
-				iconCls : 'icon-16-help-contents',
-				handler : function() {
-					this.setActiveAction('query');
-					Ext.getCmp(this.mapname + '-query').expand(true);
-				},
-				scope : this
-			}, '-', {
-				text : 'Cerrar',
-				tooltip : 'Cerrar esta pesta&ntilde;a',
-				iconCls : 'icon-16-dialog-close',
-				handler : function() {
-					this.closeTab();
-				},
-				scope : this
-			}, '-', '<span id="' + this.mapname + '-scale">&nbsp;</span>']
+							this.setActiveAction('pan');
+							xajax.$(this.mapname + '-ex').value = xajax
+									.$(this.mapname + '-oe').value;
+							xajax.$(this.mapname + '-x').value = xajax
+									.$(this.mapname + '-img').width
+									/ 2;
+							xajax.$(this.mapname + '-y').value = xajax
+									.$(this.mapname + '-img').height
+									/ 2;
+							this.onMouseClick();
+						},
+						scope : this
+					}, '-', {
+						id : this.mapname + '-btn-pan',
+						text : '',
+						tooltip : 'Herramienta navegar',
+						iconCls : 'icon-16-zoom-best-fit',
+						pressed : true,
+						enableToggle : true,
+						toggleGroup : 'map-tools',
+						handler : function() {
+							this.setActiveAction('pan');
+						},
+						scope : this
+					}, '-', {
+						id : this.mapname + '-btn-zi',
+						text : '',
+						tooltip : 'Herramienta acercar',
+						iconCls : 'icon-16-zoom-in',
+						enableToggle : true,
+						toggleGroup : 'map-tools',
+						handler : function() {
+							this.setActiveAction('zoom-in');
+						},
+						scope : this
+					}, '-', {
+						id : this.mapname + '-btn-zo',
+						text : '',
+						tooltip : 'Herramienta alejar',
+						iconCls : 'icon-16-zoom-out',
+						enableToggle : true,
+						toggleGroup : 'map-tools',
+						handler : function() {
+							this.setActiveAction('zoom-out');
+						},
+						scope : this
+					}, '-', {
+						id : this.mapname + '-btn-info',
+						text : '',
+						tooltip : 'Herramienta consulta',
+						enableToggle : true,
+						toggleGroup : 'map-tools',
+						iconCls : 'icon-16-help-contents',
+						handler : function() {
+							this.setActiveAction('query');
+							Ext.getCmp(this.mapname + '-query').expand(true);
+						},
+						scope : this
+					}, '-', {
+						text : 'Cerrar',
+						tooltip : 'Cerrar esta pesta&ntilde;a',
+						iconCls : 'icon-16-dialog-close',
+						handler : function() {
+							this.closeTab();
+						},
+						scope : this
+					}]
 		});
 
 		var tools = new Ext.Panel({
@@ -255,7 +257,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var p = new Ext.Panel({
 			iconCls : 'icon-16-edit-find',
 			title : "Busqueda R&aacute;pida",
-			layout: 'fit',
+			layout : 'fit',
 			autoScroll : true,
 			border : false,
 			collapsed : true,
@@ -588,7 +590,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var tree = new Ext.tree.TreePanel({
 			id : this.mapname + "-tree",
 			iconCls : 'icon-16-emblem-photos',
-			title : "Leyenda",
+			title : "Capas de Informaci&oacute;n",
 			collapsed : false,
 			useArrows : true,
 			autoScroll : true,
