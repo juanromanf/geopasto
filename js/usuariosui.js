@@ -33,6 +33,8 @@ var UsuariosUI = function() {
 			name : 'apellidos'
 		}, {
 			name : 'usuario'
+		}, {
+			name : 'passwd'
 		}]);
 
 		return _record;
@@ -62,14 +64,14 @@ var UsuariosUI = function() {
 			header : "Apellidos",
 			width : 100,
 			sortable : true,
-			renderer : Ext.util.Format.capitalize,
+			//renderer : Ext.util.Format.capitalize,
 			dataIndex : 'apellidos',
 			editor : false
 		}, {
 			header : "Nombres",
 			width : 100,
 			sortable : true,
-			renderer : Ext.util.Format.capitalize,
+			//renderer : Ext.util.Format.capitalize,
 			dataIndex : 'nombres',
 			editor : false
 		}, {
@@ -77,6 +79,13 @@ var UsuariosUI = function() {
 			width : 100,
 			sortable : true,
 			dataIndex : 'usuario',
+			editor : false
+		}, {
+			header : "contraseña",
+			width : 100,
+			sortable : true,
+			dataIndex : 'passwd',
+			hidden : true,
 			editor : false
 		}]);
 

@@ -45,7 +45,7 @@ var PermisosUI = function() {
 			header : "Nombres",
 			width : 100,
 			sortable : true,
-			renderer : Ext.util.Format.capitalize,
+			// renderer : Ext.util.Format.capitalize,
 			dataIndex : 'nombres',
 			editor : false
 		}, {

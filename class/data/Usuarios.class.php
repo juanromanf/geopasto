@@ -3,9 +3,71 @@
 class Usuarios extends AppActiveRecord {
 	public $_table = 'personas';
 	
+	private function Encriptar($cad) {
+		$resultado = '';
+		$cad = strrev ( $cad );
+		$cad = base64_encode ( $cad );
+		$n = floor ( strlen ( $cad ) / 4 );
+		for($i = 0; $i < 3; $i ++) {
+			$arreglo [$i] = substr ( $cad, $n * $i, $n );
+		}
+		$arreglo [3] = substr ( $cad, $n * 3, strlen ( $cad ) - $n * 3 );
+		for($j = 4; $j > 0; $j --) {
+			$cad = '';
+			for($k = 0; $k < $j; $k ++) {
+				$cad = $cad . $arreglo [$k];
+			}
+			$n = strlen ( $cad ) % $j;
+			$resultado .= $arreglo [$n];
+			$arreglo = $this->Descartar ( $arreglo, $n, $j - 1 );
+		}
+		return ($resultado);
+	
+	}
+	
+	private function Descartar($array, $n, $m) {
+		for($i = $n; $i < $m; $i ++) {
+			$array [$i] = $array [$i + 1];
+			$array [$i + 1] = '';
+		}
+		return ($array);
+	}
+	
+	private function desencriptar($cadena) {
+		$n = floor ( strlen ( $cadena ) / 4 );
+		$residuo = strlen ( $cadena ) % 4;
+		for($i = 0; $i < 4; $i ++) {
+			if ($n == $i) {
+				$arreglo [$i] = substr ( $cadena, $n * $i, $n + $residuo );
+			} else {
+				if ($i > $n) {
+					$arreglo [$i] = substr ( $cadena, $n * $i + $residuo, $n );
+				} else {
+					$arreglo [$i] = substr ( $cadena, $n * $i, $n );
+				}
+			}
+		}
+		for($j = 4; $j > 0; $j --) {
+			//armamos la cadena
+			$cadena = '';
+			for($k = 0; $k < $j; $k ++) {
+				$cadena = $cadena . $arreglo [$k];
+			}
+			$n = strlen ( $cadena ) % $j;
+			$resultado .= $arreglo [$n];
+			//descartarla
+			$arreglo = $this->Descartar ( $arreglo, $n, $j - 1 );
+		}
+		$resultado = base64_decode ( $resultado );
+		$resultado = strrev ( $resultado );
+		
+		return ($resultado);
+	}
+	//=================================================================================	
 	public function doLogin($data) {
 		$login = $data ['users_login'];
-		$passwd = $data ['users_passwd'];
+		$passwd = $this->Encriptar ( $data ['users_passwd'] );
+		//$passwd = $data ['users_passwd'];
 		$ok = $this->Load ( "usuario = '$login' and r ='$passwd'" );
 		if (! $ok) {
 			$js = "Ext.MessageBox.alert('Error','Compruebe su usuario y contrase&ntilde;a...');";
@@ -25,18 +87,19 @@ class Usuarios extends AppActiveRecord {
 	public static function getAllUsers($asJson = false) {
 		try {
 			$obj = new Usuarios ( );
-			$result = $obj->Find ( 'activo = '. 'true' .' order by apellidos, nombres asc' );
+			$result = $obj->Find ( 'activo = ' . 'true' . ' order by apellidos, nombres asc' );
 			
 			if ($asJson) {
-				$root = array ();
+				$root = array ( );
 				
 				foreach ( $result as $user ) {
-					$accordion = array ();
+					$accordion = array ( );
 					$accordion ['numide'] = $user->numide;
-					$accordion ['nombres'] = $user->nombres;
-					$accordion ['apellidos'] = $user->apellidos;
+					$accordion ['nombres'] = strtoupper ( $user->nombres );
+					$accordion ['apellidos'] = strtoupper ( $user->apellidos );
 					$accordion ['usuario'] = $user->usuario;
 					$accordion ['activo'] = $user->activo;
+					$accordion ['passwd'] = $user->desencriptar ( $user->r );
 					$root [] = $accordion;
 				}
 				return json_encode ( $root );
@@ -83,8 +146,8 @@ class Usuarios extends AppActiveRecord {
 			$msg = $e->getMessage ();
 			throw new Exception ( $msg );
 		}
-	}
-	
+	}*/
+/*
 	public function addUser($data) {
 		try {
 			$propertys = $data;
@@ -121,7 +184,8 @@ class Usuarios extends AppActiveRecord {
 			$this->Load ( 'id_user = ' . $data );
 			/*
 			 * Proteger integridad del sistema.
-			 *//*
+			 */
+/*
 			if ($this->locked == 1) {
 				throw new Exception ( "El Usuario '" . $this->name . "' no puede ser eliminado." );
 			}
