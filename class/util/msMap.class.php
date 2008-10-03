@@ -55,16 +55,40 @@ class msMap {
 		return $image->saveWebImage ();
 	}
 	
-	public function toogleLayer($layer_name, $status) {
+	public function toogleLayer($layer_name) {
+		
 		$layer = $this->getLayer ( $layer_name );
-		if ($status == 'true') {
-			$layer->set ( 'status', MS_ON );
-		} else {
-			$layer->set ( 'status', MS_OFF );
+		$status = ($layer->status == MS_ON) ? MS_OFF : MS_ON;
+		$layer->set ( 'status', $status );
+	}
+	
+	public function toogleLayerClass($layer_name, $class_name) {
+		
+		$layer = $this->getLayer ( $layer_name );
+		
+		for($i = 0; $i < $layer->numclasses; $i ++) {
+			$class = $layer->getClass ( $i );
+			
+			if ($class->name == $class_name) {
+				$status = ($class->status == MS_ON) ? MS_OFF : MS_ON;
+				$class->set ( 'status', $status );
+			}
+		}
+	}
+	
+	public function toggleAllLayerClasses($layer_name) {
+		
+		$layer = $this->getLayer ( $layer_name );
+		
+		for($i = 0; $i < $layer->numclasses; $i ++) {
+			$class = $layer->getClass ( $i );			
+			$status = ($class->status == MS_ON) ? MS_OFF : MS_ON;
+			$class->set ( 'status', $status );
 		}
 	}
 	
 	public function processAction($params) {
+		
 		$action = $params ['action'];
 		$extent = explode ( " ", $params ['extent'] );
 		$click_x = $params ['x'];

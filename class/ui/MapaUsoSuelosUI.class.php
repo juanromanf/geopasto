@@ -44,21 +44,43 @@ class MapaUsoSuelosUI extends msMapLayout {
 			switch ($query) {
 				case 'q-zona' :
 					$obj = new Zonas ( );
+					$info = $obj->getInfoXY ( $x, $y );
 					break;
 				
 				case 'q-comuna' :
 					$obj = new Comunas ( );
+					$info = $obj->getInfoXY ( $x, $y );
 					break;
 				
 				case 'q-area-homo' :
 					$obj = new AreasHomogeneas ( );
+					$info = $obj->getInfoXY ( $x, $y );
 					break;
 				
 				case 'q-actividad' :
 					$obj = new UsosSuelos ( );
+					$info = $obj->getInfoXY ( $x, $y );
+					break;
+				
+				case 'area-residencial' :
+					$uso = new UsosSuelos ( );
+					$area = $uso->getTotalAreaByActividad ( '1' );
+					$info [] = array ('seccion' => 'Area Residencial Total', 'property' => 'Superficie', 'value' => number_format ( $area, 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+					break;
+				
+				case 'area-comercial' :
+					$uso = new UsosSuelos ( );
+					$area = $uso->getTotalAreaByActividad ( '3' );
+					$info [] = array ('seccion' => 'Area Comercial Total', 'property' => 'Superficie', 'value' => number_format ( $area, 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+					break;
+				
+				case 'area-zonas-verdes' :
+					$uso = new UsosSuelos ( );
+					$area = $uso->getTotalAreaByActividad ( '25' );
+					$info [] = array ('seccion' => 'Area Zonas Verdes Total', 'property' => 'Superficie', 'value' => number_format ( $area, 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
 					break;
 			}
-			$info = $obj->getInfoXY ( $x, $y );
+			
 			$arrayInfo = array_merge ( $arrayInfo, $info );
 		
 		} catch ( Exception $e ) {

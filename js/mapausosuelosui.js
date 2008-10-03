@@ -69,6 +69,18 @@ var MapaUsoSuelosUI = function() {
 					name : 'active-q',
 					boxLabel : '&iquest;Que datos del Predio existen?',
 					inputValue : 'q-actividad'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Cual es el total del Area Comercial?',
+					inputValue : 'area-comercial'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Cual es el total del Area Residencial?',
+					inputValue : 'area-residencial'
+				}, {
+					name : 'active-q',
+					boxLabel : '&iquest;Cual es el total del Area Zonas Verdes?',
+					inputValue : 'area-zonas-verdes'
 				}]
 			});
 

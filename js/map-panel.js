@@ -212,19 +212,16 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 
 		var frm = new Ext.FormPanel({
 			id : panel.mapname + '-search-frm',
-			formId : 'frm-search',
 			bodyStyle : 'padding: 7px 0 0',
 			frame : true,
 			border : false,
-			monitorValid : true,
 			labelWidth : 50,
 			labelAlign : 'right',
 			defaultType : 'textfield',
 			items : [cmb, {
 				fieldLabel : 'Texto',
 				width : 120,
-				id : 'search-text',
-				name : 'search-value',
+				id : panel.mapname + 'search-text',
 				allowBlank : false
 			}, {
 				xtype : 'button',
@@ -233,12 +230,12 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				labelSeparator : '',
 				text : 'Buscar',
 				iconCls : 'icon-16-edit-find',
-				formBind : true,
 				isFormField : true,
 				handler : function() {
 
 					var layer = cmb.getValue();
-					var search = Ext.getCmp('search-text').getValue();
+					var search = Ext.getCmp(panel.mapname + 'search-text')
+							.getValue();
 
 					if (layer == '') {
 						Ext.MessageBox.alert('Busqueda rapida',
@@ -344,19 +341,6 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		ds.on("load", function(store, records, options) {
 			grid.reconfigure(store, grid.colModel);
 		});
-	},
-
-	getSelectedNode : function() {
-		var tree = Ext.getCmp(this.mapname + "-tree");
-		var node = tree.getSelectionModel().getSelectedNode();
-
-		if (!node) {
-			var root = tree.getRootNode();
-			tree.getSelectionModel().select(root);
-			node = tree.getSelectionModel().selectNext();
-		}
-
-		return node;
 	},
 
 	onRender : function(ct, position) {
@@ -546,6 +530,19 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 	},
 
+	getSelectedNode : function() {
+		var tree = Ext.getCmp(this.mapname + "-tree");
+		var node = tree.getSelectionModel().getSelectedNode();
+
+		if (!node) {
+			var root = tree.getRootNode();
+			tree.getSelectionModel().select(root);
+			node = tree.getSelectionModel().selectNext();
+		}
+
+		return node;
+	},
+
 	getLayersTree : function() {
 
 		var r = new Ext.data.Record.create([{
@@ -617,22 +614,90 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			}]
 		});
 
-		tree.on('checkchange', function(node, checked) {
-			var img = Ext.get(this.mapname + '-img');
-			img.setOpacity(0, true);
-			this.maskPanel(true);
+		var contextMenu = new Ext.menu.Menu({
+			id : 'popupMenu',
+			items : [{
+				text : 'Ocultar/Mostrar items',
+				iconCls : 'icon-16-draw-brush',
+				handler : function() {
 
-			xajax_AppHome.exec({
-				action : this.classUI + '.doAction',
-				enableajax : true,
-				args : [{
-					layer : node.text,
-					status : checked
-				}]
-			});
+					var n = tree.getSelectionModel().getSelectedNode();
+					tree.suspendEvents();
+					if (!n.isLeaf()) {
+						this.toggleItems(n, 'toggle-all-classes');
+					}
+					tree.resumeEvents();
+
+				},
+				scope : this
+			}]
+		});
+
+		tree.on('contextmenu', function(node, event) {
+			if (!node.isLeaf()) {
+				event.stopEvent();
+				tree.getSelectionModel().select(node);
+				contextMenu.showAt(event.getXY());
+			}
+		}, tree);
+
+		tree.on('checkchange', function(node, checked) {
+
+			tree.getSelectionModel().select(node);
+			var n = tree.getSelectionModel().getSelectedNode();
+
+			if (node.isLeaf()) {
+				this.toggleItems(n, 'toggle-class');
+			} else {
+				this.toggleItems(n, 'toggle-layer');
+			}
+
 		}, this);
 
 		return tree;
+	},
+
+	toggleItems : function(node, process) {
+
+		var params;
+		var img = Ext.get(this.mapname + '-img');
+		img.setOpacity(0, true);
+		this.maskPanel(true);
+
+		switch (process) {
+			case 'toggle-layer' :
+				params = [{
+					action : process,
+					layer : node.text
+				}];
+				break;
+
+			case 'toggle-class' :
+				params = [{
+					action : process,
+					layer : node.parentNode.text,
+					classi : node.text
+				}];
+				break;
+
+			case 'toggle-all-classes' :
+
+				node.eachChild(function(n) {
+					n.getUI().toggleCheck();
+				});
+
+				params = [{
+					action : process,
+					layer : node.text
+				}];
+				break;
+		}
+
+		xajax_AppHome.exec({
+			action : this.classUI + '.doAction',
+			enableajax : true,
+			args : params
+		});
 	},
 
 	maskPanel : function(enable) {

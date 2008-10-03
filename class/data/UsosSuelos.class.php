@@ -16,6 +16,20 @@ class UsosSuelos extends AppActiveRecord {
 		return $this->sigla;
 	}
 	
+	public function getTotalAreaByActividad($codactividad) {
+		
+		try {
+			$sql = "SELECT sum(area(the_geom)) FROM gis.usos_suelo u 
+					WHERE u.codareaactividad = '$codactividad'";
+			$db = AppSQL::getInstance ();
+			$rs = $db->Execute ( $sql );
+		
+		} catch ( Exception $e ) {
+			throw new Exception ( $e->getMessage () );
+		}
+		return $rs->fields [0];
+	}
+	
 	public function getInfoXY($x, $y) {
 		$toleracia = 20;
 		$x1 = $x - $toleracia;
@@ -46,17 +60,17 @@ class UsosSuelos extends AppActiveRecord {
 			
 			$propietario = $predio->getPropietario ();
 			
-			$info [] = array ('seccion' => 'General', 'property' => 'Predio', 'value' => $numpredio );
-			$info [] = array ('seccion' => 'General', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
-			$info [] = array ('seccion' => 'General', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
-			$info [] = array ('seccion' => 'General', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
-			$info [] = array ('seccion' => 'General', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
-			$info [] = array ('seccion' => 'General', 'property' => 'Manzana', 'value' => $predio->getManzana () );
-			$info [] = array ('seccion' => 'General', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
-			$info [] = array ('seccion' => 'General', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1 , ',', '.') . ' m' );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Predio', 'value' => $numpredio );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Manzana', 'value' => $predio->getManzana () );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+			$info [] = array ('seccion' => 'Detalles', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
 			
 			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area de actividad', 'value' => '(' . $this->getSiglaArea () . ') ' . htmlentities ( $this->getAreaActividad () ) );
-			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area mofologica homogenea', 'value' => $infoAreaH [0] ['value'] );
+			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area morfologica homogenea', 'value' => $infoAreaH [0] ['value'] );
 		
 		} else {
 			$info [] = array ('seccion' => 'Sin Resultados', 'property' => 'No se encontro informacion', 'value' => '...' );

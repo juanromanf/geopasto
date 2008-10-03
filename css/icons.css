@@ -1,4 +1,5 @@
 @CHARSET "ISO-8859-1";
+
 /*
 	Iconos CSS.
 	sintaxis : .icon-X-Y
@@ -15,6 +16,11 @@
 
 .icon-16-help-contents {
 	background-image: url(../img/16/help-contents.png) !important;
+	background-repeat: no-repeat;
+}
+
+.icon-16-draw-brush {
+	background-image: url(../img/16/draw-brush.png) !important;
 	background-repeat: no-repeat;
 }
 

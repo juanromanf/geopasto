@@ -62,14 +62,28 @@ abstract class msMapLayout extends AppPage {
 	public function doAction($args) {
 		$map = $this->getTempMap ();
 		
-		if (isset ( $args ['layer'] )) {
-			$layer_name = $args ['layer'];
-			$status = $args ['status'];
-			
-			$map->toogleLayer ( $layer_name, $status );
+		$action = isset ( $args ['action'] ) ? $args ['action'] : 'process';
 		
-		} else {
-			$map->processAction ( $args );
+		switch ($action) {
+			case 'toggle-layer' :
+				$layer_name = $args ['layer'];
+				$map->toogleLayer ( $layer_name );
+				break;
+			
+			case 'toggle-class' :
+				$layer_name = $args ['layer'];
+				$class_name = $args ['classi'];
+				$map->toogleLayerClass ( $layer_name, $class_name );
+				break;
+			
+			case 'toggle-all-classes' :
+				$layer_name = $args ['layer'];
+				$map->toggleAllLayerClasses ( $layer_name );
+				break;
+			
+			default :
+				$map->processAction ( $args );
+				break;
 		}
 		
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
@@ -105,6 +119,7 @@ abstract class msMapLayout extends AppPage {
 				$item ['text'] = $icon ['name'];
 				$item ['icon'] = $icon ['url'];
 				$item ['leaf'] = TRUE;
+				$item ['checked'] = TRUE;
 				
 				$node ['children'] [] = $item;
 			}
