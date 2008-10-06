@@ -19,6 +19,14 @@
 	background-repeat: no-repeat;
 }
 
+.icon-16-media-floppy {
+	background-image: url(../img/16/media-floppy.png) !important;
+}
+
+.icon-16-printer {
+	background-image: url(../img/16/printer.png) !important;
+}
+
 .icon-16-draw-brush {
 	background-image: url(../img/16/draw-brush.png) !important;
 	background-repeat: no-repeat;

@@ -72,7 +72,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 							this.onMouseClick();
 						},
 						scope : this
-					}, '-', {
+					}, {
 						id : this.mapname + '-btn-pan',
 						text : '',
 						tooltip : 'Herramienta navegar',
@@ -84,7 +84,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 							this.setActiveAction('pan');
 						},
 						scope : this
-					}, '-', {
+					}, {
 						id : this.mapname + '-btn-zi',
 						text : '',
 						tooltip : 'Herramienta acercar',
@@ -95,7 +95,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 							this.setActiveAction('zoom-in');
 						},
 						scope : this
-					}, '-', {
+					}, {
 						id : this.mapname + '-btn-zo',
 						text : '',
 						tooltip : 'Herramienta alejar',
@@ -119,11 +119,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 						},
 						scope : this
 					}, '-', {
-						text : 'Cerrar',
-						tooltip : 'Cerrar esta pesta&ntilde;a',
-						iconCls : 'icon-16-dialog-close',
+						text : '',
+						tooltip : 'Guardar mapa',
+						iconCls : 'icon-16-media-floppy',
 						handler : function() {
-							this.closeTab();
+							this.saveImage();
 						},
 						scope : this
 					}]
@@ -370,6 +370,85 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		return view;
 	},
 
+	saveImage : function() {
+		var img = this.getImage();
+		var url = "download.php?id=" + img.dom.src;
+		window.open(url, "_blank", 'width=150,height=70');
+	},
+
+	addImagePopup : function() {
+		var contextMenu = new Ext.menu.Menu({
+			items : [{
+				text : 'Restaurar',
+				iconCls : 'icon-16-zoom-original',
+				handler : function() {
+
+					this.setActiveAction('pan');
+					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
+							+ '-oe').value;
+					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
+							+ '-img').width
+							/ 2;
+					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
+							+ '-img').height
+							/ 2;
+					this.onMouseClick();
+				},
+				scope : this
+			}, {
+				text : 'Navegar',
+				iconCls : 'icon-16-zoom-best-fit',
+				handler : function() {
+					this.setActiveAction('pan');
+				},
+				scope : this
+			}, {
+				text : 'Acercar',
+				iconCls : 'icon-16-zoom-in',
+				handler : function() {
+					this.setActiveAction('zoom-in');
+				},
+				scope : this
+			}, {
+				text : 'Alejar',
+				tooltip : 'Herramienta alejar',
+				iconCls : 'icon-16-zoom-out',
+				handler : function() {
+					this.setActiveAction('zoom-out');
+				},
+				scope : this
+			}, '-', {
+				text : 'Consulta',
+				iconCls : 'icon-16-help-contents',
+				handler : function() {
+					this.setActiveAction('query');
+					Ext.getCmp(this.mapname + '-query').expand(true);
+				},
+				scope : this
+			}, '-', {
+				text : 'Guardar mapa',
+				iconCls : 'icon-16-media-floppy',
+				handler : function() {
+					this.saveImage();
+				},
+				scope : this
+			}, {
+				text : 'Imprimir mapa',
+				iconCls : 'icon-16-printer',
+				handler : function() {
+				},
+				scope : this
+			},]
+		});
+
+		var img = this.getImage();
+
+		img.on('contextmenu', function(event) {
+			event.stopEvent();
+			contextMenu.showAt(event.getXY());
+		});
+	},
+
 	addListeners : function() {
 
 		var tree = this.getLayersTree();
@@ -380,6 +459,8 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		east.add(findForm);
 		east.add(this.queryList());
 		east.doLayout();
+
+		this.addImagePopup();
 
 		var tip = Ext.getCmp(this.mapname + '-ttip');
 		if (tip) {

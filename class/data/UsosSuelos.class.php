@@ -60,14 +60,14 @@ class UsosSuelos extends AppActiveRecord {
 			
 			$propietario = $predio->getPropietario ();
 			
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Predio', 'value' => $numpredio );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Manzana', 'value' => $predio->getManzana () );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
-			$info [] = array ('seccion' => 'Detalles', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Predio', 'value' => $numpredio );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Manzana', 'value' => $predio->getManzana () );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
 			
 			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area de actividad', 'value' => '(' . $this->getSiglaArea () . ') ' . htmlentities ( $this->getAreaActividad () ) );
 			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area morfologica homogenea', 'value' => $infoAreaH [0] ['value'] );
