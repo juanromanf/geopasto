@@ -103,28 +103,30 @@ abstract class msMapLayout extends AppPage {
 		$tree = array ();
 		
 		foreach ( $arrayLayers as $layer ) {
-			$node = array ();
-			$node ['id'] = $map->getName () . '-l-' . $layer->name;
-			$node ['text'] = $layer->name;
-			$node ['iconCls'] = 'icon-16-view-presentation';
-			$node ['checked'] = $layer->status ? TRUE : FALSE;
-			$node ['expanded'] = FALSE;
-			$node ['leaf'] = FALSE;
-			$node ['children'] = array ();
-			
-			$arrayIcons = $map->getLayerIcons ( $layer->name );
-			
-			foreach ( $arrayIcons as $icon ) {
-				$item = array ();
-				$item ['text'] = $icon ['name'];
-				$item ['icon'] = $icon ['url'];
-				$item ['leaf'] = TRUE;
-				$item ['checked'] = TRUE;
+			if ($layer->name != 'Norte') {
+				$node = array ();
+				$node ['id'] = $map->getName () . '-l-' . $layer->name;
+				$node ['text'] = $layer->name;
+				$node ['iconCls'] = 'icon-16-view-presentation';
+				$node ['checked'] = $layer->status ? TRUE : FALSE;
+				$node ['expanded'] = FALSE;
+				$node ['leaf'] = FALSE;
+				$node ['children'] = array ();
 				
-				$node ['children'] [] = $item;
+				$arrayIcons = $map->getLayerIcons ( $layer->name );
+				
+				foreach ( $arrayIcons as $icon ) {
+					$item = array ();
+					$item ['text'] = $icon ['name'];
+					$item ['icon'] = $icon ['url'];
+					$item ['leaf'] = TRUE;
+					$item ['checked'] = TRUE;
+					
+					$node ['children'] [] = $item;
+				}
+				
+				$tree [] = $node;
 			}
-			
-			$tree [] = $node;
 		}
 		return json_encode ( $tree );
 	}
@@ -231,7 +233,7 @@ abstract class msMapLayout extends AppPage {
 				
 				//-- class
 				$class = ms_newClassObj ( $layer );
-				$class->set ( "name", htmlentities ( $display ) );
+				$class->set ( "name", $this->cleanText ( $display ) );
 				$class->setExpression ( "([$cls_item] $op $key)" );
 				
 				//-- label
@@ -258,6 +260,19 @@ abstract class msMapLayout extends AppPage {
 			}
 		}
 		$this->saveTempMap ( $map );
+	}
+	
+	private function cleanText($text) {
+		$text = strtolower ( $text );
+		$text = str_replace ( 'á', 'a', $text );
+		$text = str_replace ( 'é', 'e', $text );
+		$text = str_replace ( 'í', 'i', $text );
+		$text = str_replace ( 'ó', 'o', $text );
+		$text = str_replace ( 'ú', 'u', $text );
+		$text = str_replace ( 'ñ', 'n', $text );
+		$text = str_replace ( 'Ñ', 'N', $text );
+		
+		return strtoupper ( $text );
 	}
 }
 ?>

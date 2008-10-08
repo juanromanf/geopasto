@@ -8,7 +8,7 @@ LAYER
     STATUS ON
     TRANSPARENCY 100
     CLASS
-       NAME "Perimetro"
+       NAME "PERIMETRO URBANO"
        STYLE
          SYMBOL SOLIDO
          SIZE 6

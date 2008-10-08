@@ -43,4 +43,6 @@ MAP
   INCLUDE "layer-comunas.map"
   INCLUDE "layer-usosuelos.map"
   
+  INCLUDE "layer-north.map"
+  
 END

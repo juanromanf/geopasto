@@ -44,5 +44,7 @@ MAP
   INCLUDE "layer-areas-homogeneas.map"
   INCLUDE "layer-rios.map"
   INCLUDE "layer-amenazas.map"
+  
+  INCLUDE "layer-north.map"
 
 END

@@ -1,3 +1,10 @@
+SYMBOL #North Arrow
+	NAME "northarrow"
+	TYPE pixmap
+	IMAGE "northarrow.png"
+END
+
+
 SYMBOL
 	NAME "LINEA_45"
 	TYPE VECTOR

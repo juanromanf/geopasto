@@ -1,0 +1,14 @@
+LAYER
+	NAME "Norte"
+	STATUS ON
+	TRANSFORM FALSE
+	TYPE POINT
+	FEATURE
+		POINTS
+			30 30 
+		END
+	END
+	CLASS
+	SYMBOL "northarrow"
+	END      
+END

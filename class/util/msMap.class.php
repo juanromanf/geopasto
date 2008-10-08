@@ -3,6 +3,7 @@
 class msMap {
 	
 	private $filename;
+	private $tmp_file;
 	private $mapObj;
 	
 	public function __construct($map_file_path) {
@@ -20,6 +21,14 @@ class msMap {
 	
 	public function getName() {
 		return $this->mapObj->name;
+	}
+	
+	public function getMsObj() {
+		return $this->mapObj;
+	}
+	
+	public function getLegend() {
+		return $this->mapObj->legend;
 	}
 	
 	public function getLayer($layer_name) {
@@ -42,6 +51,10 @@ class msMap {
 		return $this->mapObj->scale;
 	}
 	
+	public function getWebImagePath() {
+		return $this->mapObj->web->imagepath;
+	}
+	
 	public function getExtent($as_string = false) {
 		if ($as_string) {
 			$ext = $this->mapObj->extent->minx . " " . $this->mapObj->extent->miny . " " . $this->mapObj->extent->maxx . " " . $this->mapObj->extent->maxy;
@@ -50,8 +63,23 @@ class msMap {
 		return $this->mapObj->extent;
 	}
 	
+	/**
+	 * Dibuja el mapa.
+	 *
+	 * @return string | url de la imagen
+	 */
 	public function drawMap() {
 		$image = $this->mapObj->draw ();
+		return $image->saveWebImage ();
+	}
+	
+	/**
+	 * Dibuja las convenciones del mapa.
+	 *
+	 * @return string | url de la imagen
+	 */
+	public function drawLegend() {
+		$image = $this->mapObj->drawLegend ();
 		return $image->saveWebImage ();
 	}
 	
@@ -81,7 +109,7 @@ class msMap {
 		$layer = $this->getLayer ( $layer_name );
 		
 		for($i = 0; $i < $layer->numclasses; $i ++) {
-			$class = $layer->getClass ( $i );			
+			$class = $layer->getClass ( $i );
 			$status = ($class->status == MS_ON) ? MS_OFF : MS_ON;
 			$class->set ( 'status', $status );
 		}
@@ -190,7 +218,12 @@ class msMap {
 		return $dfPosGeo;
 	}
 	
+	public function getTmpFile() {
+		return $this->tmp_file;
+	}
+	
 	public function saveMapState($file_path) {
+		$this->tmp_file = $file_path;
 		$this->mapObj->save ( $file_path );
 	}
 }

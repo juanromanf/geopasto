@@ -126,6 +126,14 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 							this.saveImage();
 						},
 						scope : this
+					}, {
+						text : '',
+						tooltip : 'Imprimir mapa',
+						iconCls : 'icon-16-printer',
+						handler : function() {
+							this.printImage();
+						},
+						scope : this
 					}]
 		});
 
@@ -162,6 +170,177 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		this.height = this.getContainer().getEl().getHeight() - 2;
 
 		Ext.MapPanel.superclass.initComponent.call(this);
+	},
+
+	getActiveAction : function() {
+		return xajax.$(this.mapname + '-action').value;
+	},
+
+	setActiveAction : function(action) {
+		var id = this.mapname;
+		xajax.$(this.mapname + '-action').value = action;
+
+		var dd = Ext.dd.DragDropMgr.getDDById(this.mapname + '-img');
+		var img = this.getImage();
+
+		switch (action) {
+			case 'zoom-in' :
+				id = id + '-btn-zi';
+				img.setStyle('cursor', 'crosshair');
+				dd.unlock();
+				break;
+
+			case 'zoom-out' :
+				id = id + '-btn-zo';
+				img.setStyle('cursor', 'crosshair');
+				dd.unlock();
+				break;
+
+			case 'pan' :
+				id = id + '-btn-pan';
+				img.setStyle('cursor', 'move');
+				dd.unlock();
+				break;
+
+			case 'query' :
+				id = id + '-btn-info';
+				img.setStyle('cursor', 'help');
+				dd.lock();
+				break;
+		}
+		Ext.getCmp(id).toggle(true);
+	},
+
+	addImagePopup : function() {
+		var contextMenu = new Ext.menu.Menu({
+			items : [{
+				text : 'Restaurar',
+				iconCls : 'icon-16-zoom-original',
+				handler : function() {
+
+					this.setActiveAction('pan');
+					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
+							+ '-oe').value;
+					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
+							+ '-img').width
+							/ 2;
+					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
+							+ '-img').height
+							/ 2;
+					this.onMouseClick();
+				},
+				scope : this
+			}, {
+				text : 'Navegar',
+				iconCls : 'icon-16-zoom-best-fit',
+				handler : function() {
+					this.setActiveAction('pan');
+				},
+				scope : this
+			}, {
+				text : 'Acercar',
+				iconCls : 'icon-16-zoom-in',
+				handler : function() {
+					this.setActiveAction('zoom-in');
+				},
+				scope : this
+			}, {
+				text : 'Alejar',
+				tooltip : 'Herramienta alejar',
+				iconCls : 'icon-16-zoom-out',
+				handler : function() {
+					this.setActiveAction('zoom-out');
+				},
+				scope : this
+			}, '-', {
+				text : 'Consulta',
+				iconCls : 'icon-16-help-contents',
+				handler : function() {
+					this.setActiveAction('query');
+					Ext.getCmp(this.mapname + '-query').expand(true);
+				},
+				scope : this
+			}, '-', {
+				text : 'Guardar mapa',
+				iconCls : 'icon-16-media-floppy',
+				handler : function() {
+					this.saveImage();
+				},
+				scope : this
+			}, {
+				text : 'Imprimir mapa',
+				iconCls : 'icon-16-printer',
+				handler : function() {
+					this.printImage();
+				},
+				scope : this
+			}]
+		});
+
+		var img = this.getImage();
+		img.on('contextmenu', function(event) {
+			event.stopEvent();
+			contextMenu.showAt(event.getXY());
+		});
+	},
+
+	addListeners : function() {
+
+		var tree = this.getLayersTree();
+		var findForm = this.getSearchForm(this);
+
+		var east = Ext.getCmp(this.mapname + '-east');
+		east.add(tree);
+		east.add(findForm);
+		east.add(this.queryList());
+		east.doLayout();
+
+		var tip = Ext.getCmp(this.mapname + '-ttip');
+		if (tip) {
+			tip.destroy();
+		}
+		new Ext.ToolTip({
+			id : this.mapname + '-ttip',
+			target : this.mapname + '-img',
+			header : true,
+			width : 100,
+			height : 20,
+			dismissDelay : 0,
+			showDelay : 50,
+			trackMouse : true
+		});
+
+		var view = this.getView();
+		var img = this.getImage();
+		this.imageBegin = [img.getLeft(), img.getTop()];
+
+		img.on('load', function() {
+			img.setOpacity(1, true);
+		});
+
+		var w = (img.getWidth() + 10) + "px";
+		var h = (img.getHeight() + 10) + "px";
+
+		view.setStyle('width', w);
+		view.setStyle('height', h);
+		view.setStyle('position', 'relative');
+		view.setStyle('overflow', 'hidden');
+		view.setStyle('margin', '5px auto 5px auto');
+		view.setStyle('border', '1px solid #CCCCCC');
+		img.setStyle('margin', '1px');
+		img.setStyle('cursor', 'move');
+
+		view.addListener('click', this.onMouseClick, this);
+		view.addListener('mousewheel', this.onMouseWheel, this);
+		view.addListener('mousemove', this.onMouseMove, this);
+
+		var dd = new Ext.dd.DD(img);
+		dd.onMouseDown = this.onMouseDown.createDelegate(this);
+		dd.onDrag = this.onDragImage.createDelegate(this);
+		dd.startDrag = this.onStartDrag.createDelegate(this);
+		dd.endDrag = this.onEndDrag.createDelegate(this);
+
+		this.addImagePopup();
 	},
 
 	getSearchForm : function(panel) {
@@ -370,143 +549,20 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		return view;
 	},
 
+	getTmpFile : function() {
+		var f = xajax.$(this.mapname + '-tmp-file').value;
+		return f;
+	},
+
 	saveImage : function() {
 		var img = this.getImage();
 		var url = "download.php?id=" + img.dom.src;
 		window.open(url, "_blank", 'width=150,height=70');
 	},
 
-	addImagePopup : function() {
-		var contextMenu = new Ext.menu.Menu({
-			items : [{
-				text : 'Restaurar',
-				iconCls : 'icon-16-zoom-original',
-				handler : function() {
-
-					this.setActiveAction('pan');
-					xajax.$(this.mapname + '-ex').value = xajax.$(this.mapname
-							+ '-oe').value;
-					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
-							+ '-img').width
-							/ 2;
-					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
-							+ '-img').height
-							/ 2;
-					this.onMouseClick();
-				},
-				scope : this
-			}, {
-				text : 'Navegar',
-				iconCls : 'icon-16-zoom-best-fit',
-				handler : function() {
-					this.setActiveAction('pan');
-				},
-				scope : this
-			}, {
-				text : 'Acercar',
-				iconCls : 'icon-16-zoom-in',
-				handler : function() {
-					this.setActiveAction('zoom-in');
-				},
-				scope : this
-			}, {
-				text : 'Alejar',
-				tooltip : 'Herramienta alejar',
-				iconCls : 'icon-16-zoom-out',
-				handler : function() {
-					this.setActiveAction('zoom-out');
-				},
-				scope : this
-			}, '-', {
-				text : 'Consulta',
-				iconCls : 'icon-16-help-contents',
-				handler : function() {
-					this.setActiveAction('query');
-					Ext.getCmp(this.mapname + '-query').expand(true);
-				},
-				scope : this
-			}, '-', {
-				text : 'Guardar mapa',
-				iconCls : 'icon-16-media-floppy',
-				handler : function() {
-					this.saveImage();
-				},
-				scope : this
-			}, {
-				text : 'Imprimir mapa',
-				iconCls : 'icon-16-printer',
-				handler : function() {
-				},
-				scope : this
-			},]
-		});
-
-		var img = this.getImage();
-
-		img.on('contextmenu', function(event) {
-			event.stopEvent();
-			contextMenu.showAt(event.getXY());
-		});
-	},
-
-	addListeners : function() {
-
-		var tree = this.getLayersTree();
-		var findForm = this.getSearchForm(this);
-
-		var east = Ext.getCmp(this.mapname + '-east');
-		east.add(tree);
-		east.add(findForm);
-		east.add(this.queryList());
-		east.doLayout();
-
-		this.addImagePopup();
-
-		var tip = Ext.getCmp(this.mapname + '-ttip');
-		if (tip) {
-			tip.destroy();
-		}
-		new Ext.ToolTip({
-			id : this.mapname + '-ttip',
-			target : this.mapname + '-img',
-			header : true,
-			width : 100,
-			height : 20,
-			dismissDelay : 0,
-			showDelay : 50,
-			trackMouse : true
-		});
-
-		var view = this.getView();
-		var img = this.getImage();
-		this.imageBegin = [img.getLeft(), img.getTop()];
-
-		img.on('load', function() {
-			img.setOpacity(1, true);
-		});
-
-		var w = (img.getWidth() + 10) + "px";
-		var h = (img.getHeight() + 10) + "px";
-
-		view.setStyle('width', w);
-		view.setStyle('height', h);
-		view.setStyle('position', 'relative');
-		view.setStyle('overflow', 'hidden');
-		view.setStyle('margin', '5px auto 5px auto');
-		view.setStyle('border', '1px solid #CCCCCC');
-		img.setStyle('margin', '1px');
-		img.setStyle('cursor', 'move');
-
-		view.addListener('click', this.onMouseClick, this);
-		view.addListener('mousewheel', this.onMouseWheel, this);
-		view.addListener('mousemove', this.onMouseMove, this);
-
-		var dd = new Ext.dd.DD(img);
-		dd.onMouseDown = this.onMouseDown.createDelegate(this);
-		dd.onDrag = this.onDragImage.createDelegate(this);
-		dd.startDrag = this.onStartDrag.createDelegate(this);
-		dd.endDrag = this.onEndDrag.createDelegate(this);
-
+	printImage : function() {
+		var url = "templates/print.php?map=" + this.getTmpFile();
+		window.open(url, "_blank", 'width=150,height=70');
 	},
 
 	onStartDrag : function(x, y) {
@@ -791,46 +847,6 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				this.doLayout();
 			}
 		}
-	},
-
-	getActiveAction : function() {
-		return xajax.$(this.mapname + '-action').value;
-	},
-
-	setActiveAction : function(action) {
-		var id = this.mapname;
-		xajax.$(this.mapname + '-action').value = action;
-
-		var dd = Ext.dd.DragDropMgr.getDDById(this.mapname + '-img');
-		var img = this.getImage();
-		var ttip = Ext.getCmp(this.mapname + '-ttip');
-
-		switch (action) {
-			case 'zoom-in' :
-				id += '-btn-zi';
-				img.setStyle('cursor', 'crosshair');
-				dd.unlock();
-				break;
-
-			case 'zoom-out' :
-				id += '-btn-zo';
-				img.setStyle('cursor', 'crosshair');
-				dd.unlock();
-				break;
-
-			case 'pan' :
-				id += '-btn-pan';
-				img.setStyle('cursor', 'move');
-				dd.unlock();
-				break;
-
-			case 'query' :
-				id += '-btn-info';
-				img.setStyle('cursor', 'help');
-				dd.lock();
-				break;
-		}
-		Ext.getCmp(id).toggle(true);
 	},
 
 	getContainer : function() {

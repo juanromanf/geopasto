@@ -16,7 +16,9 @@ class AppHome extends AppPage {
 			
 			$debugConfig = Config::getByKey ( 'debug' );
 			$debug = ($debugConfig->value == 'true') ? TRUE : FALSE;
+			
 			$xajax = new xajax ( );
+			$xajax->configure ( 'javascript URI', 'include/xajax' );
 			$xajax->configure ( 'waitCursor', false );
 			$xajax->configure ( 'debug', $debug );
 			
@@ -33,7 +35,7 @@ class AppHome extends AppPage {
 			$themeConfig = Config::getByKey ( 'theme' );
 			
 			$this->tpl->assign ( 'theme_name', $themeConfig->value );
-			$this->tpl->assign ( 'xajax_js', $xajax->getJavascript ( INCLUDE_DIR . 'xajax/' ) );
+			$this->tpl->assign ( 'xajax_js', $xajax->getJavascript () );
 		}
 		
 		$this->tpl->assign ( 'page_title', '.:: Pasto - Sistema de Informacion Geografica ::.' );
@@ -146,7 +148,7 @@ class AppHome extends AppPage {
 			 * 	Si existe el archivo con el nombre 'NombreClase.js',
 			 *  cargar dinamicamente para su uso.
 			 */
-			$js_file = APP_DIR . 'js/' . strtolower ( $class ) . '.js';
+			$js_file = 'js/' . strtolower ( $class ) . '.js';
 			
 			if (file_exists ( $js_file )) {
 				$objResponse->includeScriptOnce ( $js_file );
@@ -195,12 +197,12 @@ class AppHome extends AppPage {
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 					});";
-			$objResponse->script($js);
-//			$target = "error-div";
-//			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
-//			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
-//			$output = $this->tpl->fetch ( 'app.error.html' );
-//			$objResponse->prepend ( $target, $property, $output );
+			$objResponse->script ( $js );
+			//			$target = "error-div";
+		//			$this->tpl->assign ( 'error_date', date ( 'Y-m-d h:i:s a' ) );
+		//			$this->tpl->assign ( 'error_msg', addslashes ( $e->getMessage () ) );
+		//			$output = $this->tpl->fetch ( 'app.error.html' );
+		//			$objResponse->prepend ( $target, $property, $output );
 		}
 		
 		return $objResponse;
