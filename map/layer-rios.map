@@ -10,7 +10,7 @@ LAYER
     LABELITEM nombre
       
     CLASS
-       NAME "Rios Principales"
+       NAME "RIOS PRINCIPALES"
        STYLE         
          OUTLINECOLOR 0 123 255
        END

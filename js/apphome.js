@@ -262,13 +262,17 @@ var AppHome = function() {
 
 			var west = Ext.getCmp('west-panel');
 			var center = Ext.getCmp('center-panel');
-			
+
 			west.on('expand', function(panel) {
 				center.doLayout();
 			});
-			
+
 			west.on('collapse', function(panel) {
 				center.doLayout();
+			});
+
+			Ext.EventManager.onWindowResize(function() {
+				MainWindow.doLayout();
 			});
 
 			xajax_AppHome.exec({

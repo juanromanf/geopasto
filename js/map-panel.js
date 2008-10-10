@@ -761,6 +761,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 					var n = tree.getSelectionModel().getSelectedNode();
 					tree.suspendEvents();
 					if (!n.isLeaf()) {
+						n.expand();
 						this.toggleItems(n, 'toggle-all-classes');
 					}
 					tree.resumeEvents();
