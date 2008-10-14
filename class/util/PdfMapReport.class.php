@@ -4,7 +4,7 @@ class PdfMapReport extends FPDF {
 	private $map;
 	
 	public function __construct(msMap $map) {
-		parent::FPDF ();
+		parent::FPDF ( 'l', 'mm', 'letter' );
 		
 		$this->setMap ( $map );
 		$this->AddPage ();
@@ -64,28 +64,53 @@ class PdfMapReport extends FPDF {
 	
 	private function drawFrame() {
 		// build frame
-		$margin = 10;
+		$margin = 5;
 		$this->SetLineWidth ( .5 );
 		
-		// margen
-		$this->Rect ( $margin, $margin, $this->w - ($margin * 2), $this->h - ($margin * 2) );
-		// titulo
-		$this->Rect ( $margin, $margin, $this->w - ($margin * 2), 20 );
+		// Titulo mapa
+		//		$this->RoundedRect ( $margin, $margin, $this->w - ($margin * 2) - 57, 10, 1.5 );
 		
-		// mapa
-		$this->Rect ( $margin, 20 + $margin, $this->w - ($margin * 2), 142 );
+
+		// Marco del logo
+		$this->RoundedRect ( $this->w - $margin - 55, $margin, 55, 55, 3 );
 		
-		$this->SetFont ( 'Arial', 'B', 13 );
-		//Move to the right
-		$this->Cell ( 80 );
+		// Marco del mapa de referencia
+		$this->RoundedRect ( $this->w - $margin - 55, 62, 55, 103, 3 );
+		
+		// Marco del mapa
+		$this->RoundedRect ( $margin, $margin, $this->w - ($margin * 2) - 57, 160, 1.5 );
+		
+		// Marco obsevaciones
+		$this->RoundedRect ( $margin, 167, $this->w - ($margin * 2), 45, 1.5 );
+		
+		$this->SetFont ( 'Arial', 'B', 10 );
 		
 		//Title
-		$this->Cell ( 30, 15, 'SISTEMA DE INFORMACION GEOGRAFICA', 0, 0, 'C' );
+		$this->Cell ( $this->w - $margin - 55 );
+		$this->Cell ( 35, 6, 'SISTEMA DE INFORMACIÓN', 0, 0, 'C' );
 		$this->Ln ( 5 );
-		$this->Cell ( 80 );
-		$this->Cell ( 30, 15, 'ALCALDIA DE PASTO', 0, 0, 'C' );
 		
-		$this->Image ( '../img/logo4pdf.jpg', 13, 12 );
+		$this->Cell ( $this->w - $margin - 55 );
+		$this->Cell ( 35, 6, 'GEOGRÁFICA', 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$this->Cell ( $this->w - $margin - 55 );
+		$this->Cell ( 35, 60, 'ALCALDIA DE PASTO', 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$this->Cell ( $this->w - $margin - 55 );
+		$this->Cell ( 35, 90, 'UBICACIÓN', 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$this->Cell ( $this->w - $margin - 55 );
+		$this->Cell ( 35, 90, 'GENERAL', 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$this->SetXY ( 7, 170 );
+		$this->Cell ( 35, 10, 'OBSERVACIONES', 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$this->Image ( '../img/logo4pdf.jpg', $this->w - 40, 25 );
 	}
 	
 	private function parseImage($img_path) {
@@ -107,14 +132,20 @@ class PdfMapReport extends FPDF {
 		
 		$image_map = $this->parseImage ( $map->drawMap () );
 		$image_legend = $this->parseImage ( $map->drawLegend () );
+		$image_reference = $this->parseImage ( $map->drawReferenceMap () );
 		
-		$w = 530;
+		$this->Cell ( $this->w - 60 );
+		$this->SetXY ( 230, 150 );
+		$this->Cell ( 35, 10, 'ESCALA 1 : ' . round ( $map->getMapScale () ), 0, 0, 'C' );
+		$this->Ln ( 5 );
+		
+		$w = 595;
 		$h = $w * .75;
-		$this->Image ( $image_map ['url'], 11, 31, $w / $this->k, $h / $this->k );
+		$this->Image ( $image_map ['url'], 6, 6, $w / $this->k, $h / $this->k );
 		
 		$w = $image_legend ['w'];
 		$h = ($image_legend ['h'] > 300) ? 300 : $image_legend ['h'];
-		$this->Image ( $image_legend ['url'], 15, 175, $w / $this->k, $h / $this->k );
+		$this->Image ( $image_reference ['url'], $this->w - 54, 90 );
 	}
 }
 ?>
