@@ -6,6 +6,7 @@ abstract class msMapLayout extends AppPage {
 		$mapfile = $args ['map'];
 		
 		$mapObj = new msMap ( $mapfile );
+		$mapObj->drawReferenceMap ();
 		
 		if (! isset ( $_SESSION [$this->mapname . '_temp'] )) {
 			$_SESSION [$this->mapname . '_temp'] = $this->mapname . '_temp_' . time () . '.map';
@@ -18,6 +19,7 @@ abstract class msMapLayout extends AppPage {
 		$output = $this->tpl->fetch ( $template );
 		
 		$js = "Ext.getCmp('" . $mapObj->getName () . "-panel').maskPanel(false); ";
+		$this->getXajaxResponse ()->assign ( $mapObj->getName () . '-reference', 'src', $mapObj->drawReferenceMap());
 		$this->getXajaxResponse ()->assign ( $mapObj->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $mapObj->getMapScale (), 0 ) );
 		$this->getXajaxResponse ()->script ( $js );
 		
@@ -38,6 +40,25 @@ abstract class msMapLayout extends AppPage {
 		$msMapObj->saveMapState ( $_SESSION [$this->mapname . '_temp'] );
 	}
 	
+	public function processSymbols() {
+		// override this method
+	}
+	
+	public function restoreMap($map_file) {
+		$map = new msMap ( $map_file );
+		$map->saveMapState ( '../tmp/' . $_SESSION [$this->mapname . '_temp'] );
+		$this->processSymbols ();
+		
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-reference', 'src', $map->drawReferenceMap());
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
+		
+		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
+		$js .= "Ext.getCmp('" . $map->getName () . "-panel').reloadLayersTree();";
+		$this->getXajaxResponse ()->script ( $js );
+	}
+	
 	public function resizeMap($size) {
 		$map = $this->getTempMap ();
 		list ( $w, $h ) = explode ( "x", $size );
@@ -48,8 +69,9 @@ abstract class msMapLayout extends AppPage {
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'width', $map->getMapWidth () );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'height', $map->getMapHeight () );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
-		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.width', ($w + 10) . "px" );
-		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.height', ($h + 10) . "px" );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-reference', 'src', $map->drawReferenceMap());
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.width', ($w + 2) . "px" );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-div', 'style.height', ($h + 2) . "px" );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		
@@ -61,7 +83,7 @@ abstract class msMapLayout extends AppPage {
 	
 	public function doAction($args) {
 		$map = $this->getTempMap ();
-		
+		$map->drawReferenceMap ();
 		$action = isset ( $args ['action'] ) ? $args ['action'] : 'process';
 		
 		switch ($action) {
@@ -87,6 +109,7 @@ abstract class msMapLayout extends AppPage {
 		}
 		
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-img', 'src', $map->drawMap () );
+		$this->getXajaxResponse ()->assign ( $map->getName () . '-reference', 'src', $map->drawReferenceMap());
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-scale', 'innerHTML', 'Escala: 1:' . round ( $map->getMapScale (), 0 ) );
 		$this->getXajaxResponse ()->assign ( $map->getName () . '-ex', 'value', $map->getExtent ( TRUE ) );
 		
@@ -120,7 +143,7 @@ abstract class msMapLayout extends AppPage {
 					$item ['text'] = $icon ['name'];
 					$item ['icon'] = $icon ['url'];
 					$item ['leaf'] = TRUE;
-					$item ['checked'] = TRUE;
+					$item ['checked'] = $icon ['status'];
 					
 					$node ['children'] [] = $item;
 				}
@@ -132,14 +155,14 @@ abstract class msMapLayout extends AppPage {
 	}
 	
 	public function quickSearch($args) {
-		$layer = $args ['layer'];
+		$layer_name = $args ['layer'];
 		$text = $args ['text'];
 		
 		$map = $this->getTempMap ();
-		$mapLayer = $map->getLayer ( $layer );
+		$mapLayer = $map->getLayer ( $layer_name );
 		list ( $the_geom, $table ) = explode ( " from ", $mapLayer->data );
 		
-		$class = str_replace ( " ", "", $layer );
+		$class = str_replace ( " ", "", $layer_name );
 		$record = new $class ( );
 		$fields = $record->GetAttributeNames ();
 		
@@ -154,7 +177,17 @@ abstract class msMapLayout extends AppPage {
 		$db = AppSQL::getInstance ();
 		$results = $record->Find ( $where );
 		
+		// new layer for results
+		$layer = ms_newLayerObj ( $map->getMsObj () );
+		$layer->set ( 'name', "Busqueda en $layer_name: $text" );
+		$layer->set ( 'type', $mapLayer->type );
+		$layer->set ( 'connectiontype', $mapLayer->connectiontype );
+		$layer->set ( 'connection', $mapLayer->connection );
+		$layer->set ( 'data', $mapLayer->data );
+		$layer->set ( 'status', MS_ON );
+		
 		$rows = array ();
+		$i = 0;
 		foreach ( $results as $rec ) {
 			$node = array ();
 			foreach ( $fields as $field ) {
@@ -169,7 +202,22 @@ abstract class msMapLayout extends AppPage {
 			$node ['extent'] = $str;
 			
 			$rows [] = $node;
+			
+			// Resaltar resultados
+			//-- class
+			$gid = $rec->gid;
+			$class = ms_newClassObj ( $layer );
+			$class->set ( "name", "RESULTADO " . ++ $i );
+			$class->setExpression ( "([gid] = $gid)" );
+			
+			//-- style
+			$style = ms_newStyleObj ( $class );
+			$style->set ( 'symbolname', 'border2' );
+			$style->set ( 'size', 2 );
+			$style->color->setRGB ( 255, 0, 0 );
 		}
+		
+		$this->saveTempMap ( $map );
 		
 		$_reader_fields = array ();
 		foreach ( $fields as $field ) {

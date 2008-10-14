@@ -9,7 +9,7 @@ LAYER
     TRANSPARENCY 100
     LABELITEM numpredio
     #LABELMINSCALE 5607
-    LABELMAXSCALE 705
+    LABELMAXSCALE 315
     
     CLASS
        NAME "Deslizamientos"

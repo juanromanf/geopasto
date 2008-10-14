@@ -7,14 +7,17 @@ class MapaAmenazasUI extends msMapLayout {
 	public function createLayout($args) {
 		
 		$output = parent::createLayout ( $args );
+		$this->processSymbols ();
+		return $output;
+	}
+	
+	public function processSymbols() {
 		$layers = array ();
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Comunas', 'clsprefix' => 'Comuna ', 'clsdisplay' => 'num_comuna', 'clsitem' => 'num_comuna' );
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Areas Homogeneas', 'clsprefix' => '', 'clsdisplay' => 'nombre', 'clsitem' => 'id_area' );
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Amenazas', 'clsprefix' => '', 'clsdisplay' => 'descripcion', 'clsitem' => 'codamenaza' );
 		
 		$this->addSymbols ( $layers );
-		
-		return $output;
 	}
 	
 	/**

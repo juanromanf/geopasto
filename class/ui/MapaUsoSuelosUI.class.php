@@ -7,6 +7,11 @@ class MapaUsoSuelosUI extends msMapLayout {
 	public function createLayout($args) {
 		
 		$output = parent::createLayout ( $args );
+		$this->processSymbols ();
+		return $output;
+	}
+	
+	public function processSymbols() {
 		$layers = array ();
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Zonas', 'clsprefix' => 'Zona ', 'clsdisplay' => 'num_zona', 'clsitem' => 'num_zona' );
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Comunas', 'clsprefix' => 'Comuna ', 'clsdisplay' => 'num_comuna', 'clsitem' => 'num_comuna' );
@@ -14,8 +19,6 @@ class MapaUsoSuelosUI extends msMapLayout {
 		$layers [] = array ('map' => 'usosuelos', 'layer' => 'Usos Suelos', 'clsprefix' => '', 'clsdisplay' => 'areaactividad', 'clsitem' => 'codareaactividad' );
 		
 		$this->addSymbols ( $layers );
-		
-		return $output;
 	}
 	
 	/**

@@ -56,7 +56,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 					'<span id="' + this.mapname + '-scale">&nbsp;</span>', '-',
 					{
 						text : '',
-						tooltip : 'Herramienta restaurar',
+						tooltip : 'Herramienta vista completa',
 						iconCls : 'icon-16-zoom-original',
 						handler : function() {
 
@@ -128,13 +128,13 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 						scope : this
 					}, {
 						text : '',
-						tooltip : 'Imprimir mapa',
+						tooltip : 'Exportar mapa a PDF',
 						iconCls : 'icon-16-printer',
 						handler : function() {
 							this.printImage();
 						},
 						scope : this
-					}]
+					}, '-', '<span id="' + this.mapname + '-coord"></span>']
 		});
 
 		var tools = new Ext.Panel({
@@ -214,7 +214,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 	addImagePopup : function() {
 		var contextMenu = new Ext.menu.Menu({
 			items : [{
-				text : 'Restaurar',
+				text : 'Vista completa',
 				iconCls : 'icon-16-zoom-original',
 				handler : function() {
 
@@ -268,7 +268,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				},
 				scope : this
 			}, {
-				text : 'Imprimir mapa',
+				text : 'Exportar a PDF',
 				iconCls : 'icon-16-printer',
 				handler : function() {
 					this.printImage();
@@ -295,31 +295,43 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		east.add(this.queryList());
 		east.doLayout();
 
-		var tip = Ext.getCmp(this.mapname + '-ttip');
-		if (tip) {
-			tip.destroy();
-		}
-		new Ext.ToolTip({
-			id : this.mapname + '-ttip',
-			target : this.mapname + '-img',
-			header : true,
-			width : 100,
-			height : 20,
-			dismissDelay : 0,
-			showDelay : 50,
-			trackMouse : true
+		/**
+		 * Reference map window.
+		 */
+		var win = new Ext.Window({
+			layout : 'fit',
+			width : 138,
+			height : 164,
+			resizable : false,
+			collapsible : true,
+			autoScroll : true,
+			closable : false,
+			modal : false,
+			title : 'Ubicaci&oacute;n',
+			closeAction : 'close',
+			plain : true,
+			html : '<img id="' + this.mapname
+					+ '-reference" src="map/res/reference-01.png"/>'
 		});
+
+		var container = this.getContainer();
+		container.add(win);
+		container.doLayout();
+		win.setPosition(10, 30);
+		win.show();
 
 		var view = this.getView();
 		var img = this.getImage();
 		this.imageBegin = [img.getLeft(), img.getTop()];
 
 		img.on('load', function() {
-			img.setOpacity(1, true);
+			img.setOpacity(1, {
+				duration : 0.25
+			});
 		});
 
-		var w = (img.getWidth() + 10) + "px";
-		var h = (img.getHeight() + 10) + "px";
+		var w = (img.getWidth() + 2) + "px";
+		var h = (img.getHeight() + 2) + "px";
 
 		view.setStyle('width', w);
 		view.setStyle('height', h);
@@ -505,8 +517,9 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var win = new Ext.Window({
 			layout : 'fit',
 			width : 300,
-			height : 170,
+			height : 200,
 			resizable : true,
+			collapsible : true,
 			autoScroll : true,
 			modal : false,
 			title : layer + ' : Resultados para "' + search + '"',
@@ -515,11 +528,15 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			items : grid
 		});
 
+		var container = this.getContainer();
+		container.add(win);
+		container.doLayout();
 		win.show();
 
 		ds.on("load", function(store, records, options) {
 			grid.reconfigure(store, grid.colModel);
-		});
+			this.reloadLayersTree();
+		}, this);
 	},
 
 	onRender : function(ct, position) {
@@ -614,21 +631,19 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		xajax.$(this.mapname + '-x').value = x;
 		xajax.$(this.mapname + '-y').value = y;
 
-		var tip = Ext.getCmp(this.mapname + '-ttip');
-		var title = "<center>(" + Math.round(x) + ", " + Math.round(y)
-				+ ")</center>";
-		tip.setTitle(title);
+		x = this.pixelToGeo(x, false);
+		y = this.pixelToGeo(y, true);
+
+		xajax.$(this.mapname + '-coord').innerHTML = "X: " + x + " Y: " + y;
 	},
 
 	onMouseWheel : function(e) {
 		var delta = e.getWheelDelta();
-		if (delta < 0) {
+		if (delta > 0) {
 			this.setActiveAction('zoom-in');
 		} else {
 			this.setActiveAction('zoom-out');
 		}
-		var img = this.getImage();
-		this.imageBegin = [img.getLeft(), img.getTop()];
 		this.onMouseClick();
 		this.setActiveAction('pan');
 		e.stopEvent();
@@ -645,14 +660,16 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			this.queryFunction(x, y);
 			return;
 		}
-
-		var img = this.getImage();
-		img.setOpacity(0, true);
 		this.maskPanel(true);
 
-		var js = "var img = Ext.get('" + this.mapname + "-img');" + "img.setX("
-				+ this.imageBegin[0] + "); img.setY(" + this.imageBegin[1]
-				+ ");";
+		var img = this.getImage();
+		img.setOpacity(0, {
+			duration : 0.25,
+			callback : function() {
+				img.setLeftTop(0, 0);
+			},
+			scope : img
+		});
 
 		xajax_AppHome.exec({
 			action : this.classUI + '.doAction',
@@ -662,8 +679,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				extent : xajax.$(this.mapname + '-ex').value,
 				x : x,
 				y : y
-			}],
-			jscallback : js
+			}]
 		});
 	},
 
@@ -678,6 +694,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		}
 
 		return node;
+	},
+
+	reloadLayersTree : function() {
+		var tree = Ext.getCmp(this.mapname + '-tree');
+		tree.root.reload();
 	},
 
 	getLayersTree : function() {
@@ -736,12 +757,45 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			containerScroll : true,
 			tbar : [{
 				text : '',
+				tooltip : 'Resfrescar las capas del mapa',
+				iconCls : 'icon-16-view-refresh',
+				handler : function() {
+					/**
+					 * Recargar arbol de capas, nueva capa de resultados.
+					 */
+					tree.root.reload();
+					this.setActiveAction('pan');
+					xajax.$(this.mapname + '-x').value = xajax.$(this.mapname
+							+ '-img').width
+							/ 2;
+					xajax.$(this.mapname + '-y').value = xajax.$(this.mapname
+							+ '-img').height
+							/ 2;
+					this.onMouseClick();
+				},
+				scope : this
+			}, {
+				text : '',
+				tooltip : 'Restaura el mapa su estado inicial',
+				iconCls : 'icon-16-document-export',
+				handler : function() {
+					this.maskPanel(true);
+
+					xajax_AppHome.exec({
+						action : this.classUI + '.restoreMap',
+						enableajax : true,
+						args : [this.mapfile]
+					});
+				},
+				scope : this
+			}, '-', {
+				text : '',
 				tooltip : 'Expandir todas las capas',
 				iconCls : 'icon-16-expand-all',
 				handler : function() {
 					tree.expandAll();
 				}
-			}, '-', {
+			}, {
 				text : '',
 				tooltip : 'Contraer todas las capas',
 				iconCls : 'icon-16-collapse-all',
@@ -754,7 +808,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var contextMenu = new Ext.menu.Menu({
 			id : 'popupMenu',
 			items : [{
-				text : 'Ocultar/Mostrar items',
+				text : 'Alternar todos',
 				iconCls : 'icon-16-draw-brush',
 				handler : function() {
 
@@ -848,6 +902,46 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 				this.doLayout();
 			}
 		}
+	},
+
+	pixelToGeo : function(coord, vertical) {
+		var img = this.getImage();
+		var minPix, maxPix;
+		var minGeo, maxGeo;
+		var dfDeltaPix;
+		var extent = String(xajax.$(this.mapname + '-ex').value).split(" ");
+
+		if (!vertical) {
+			// X coord
+			minPix = 0;
+			maxPix = img.getWidth();
+
+			minGeo = extent[0];
+			maxGeo = extent[2];
+
+			dfDeltaPix = coord - minPix;
+		} else {
+			// Y coord
+			minPix = 0;
+			maxPix = img.getHeight();
+
+			minGeo = extent[1];
+			maxGeo = extent[3];
+
+			dfDeltaPix = maxPix - coord;
+		}
+
+		// calcula el ancho geografico y en pixels
+		var dfWidthGeo = maxGeo - minGeo;
+		var dfWidthPix = maxPix - minPix;
+
+		// calcula la relacion
+		var dfPixToGeo = dfWidthGeo / dfWidthPix;
+		var dfDeltaGeo = dfDeltaPix * dfPixToGeo;
+
+		var dfPosGeo = Number(minGeo) + Number(dfDeltaGeo);
+
+		return dfPosGeo.toFixed(2);
 	},
 
 	getContainer : function() {

@@ -49,6 +49,10 @@
 	background-image: url(../img/16/view-preview.png) !important;
 }
 
+.icon-16-view-refresh {
+	background-image: url(../img/16/view-refresh.png) !important;
+}
+
 .icon-16-view-presentation {
 	background-image: url(../img/16/view-presentation.png) !important;
 }
@@ -119,6 +123,10 @@
 
 .icon-16-document-encrypt {
 	background-image: url(../img/16/document-encrypt.png) !important;
+}
+
+.icon-16-document-export {
+	background-image: url(../img/16/document-export.png) !important;
 }
 
 .icon-16-document-decrypt {

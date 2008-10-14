@@ -73,6 +73,11 @@ class msMap {
 		return $image->saveWebImage ();
 	}
 	
+	public function drawReferenceMap() {
+		$image = $this->mapObj->drawReferenceMap ();
+		return $image->saveWebImage ();
+	}
+	
 	/**
 	 * Dibuja las convenciones del mapa.
 	 *
@@ -180,8 +185,8 @@ class msMap {
 			$classObj = $layerObj->getClass ( $i );
 			$imageObj = $classObj->createLegendIcon ( 16, 18 );
 			$url = $imageObj->saveWebImage ();
-			
-			$arrayIcons [] = array ('name' => $classObj->name, "url" => $url );
+			$status = ($classObj->status == MS_ON) ? TRUE : FALSE;
+			$arrayIcons [] = array ('name' => $classObj->name, 'status' => $status, 'url' => $url );
 		}
 		
 		return $arrayIcons;
