@@ -8,12 +8,40 @@ class UsosSuelos extends AppActiveRecord {
 		parent::__construct ( $xajaxResponse, FALSE, $keys );
 	}
 	
+	public function getCodAreaActividad() {
+		return $this->codareaactividad;
+	}
+	
 	public function getAreaActividad() {
 		return $this->areaactividad;
 	}
 	
 	public function getSiglaArea() {
 		return $this->sigla;
+	}
+	
+	/**
+	 * Enter description here...
+	 *
+	 * @return SII_PotUsosAreaActividad
+	 */
+	public function getUsosPrincipales() {
+		$obj = new SII_PotUsosAreaActividad ( );
+		$rs = $obj->Find ( 'codareaactividad = ' . $this->getCodAreaActividad () . " and tipousu = 'P'" );
+		
+		return $rs;
+	}
+	
+	/**
+	 * Enter description here...
+	 *
+	 * @return SII_PotUsosAreaActividad
+	 */
+	public function getUsosCondicionados() {
+		$obj = new SII_PotUsosAreaActividad ( );
+		$rs = $obj->Find ( 'codareaactividad = ' . $this->getCodAreaActividad () . " and tipousu = 'C'" );
+		
+		return $rs;
 	}
 	
 	public function getTotalAreaByActividad($codactividad) {
@@ -60,17 +88,28 @@ class UsosSuelos extends AppActiveRecord {
 			
 			$propietario = $predio->getPropietario ();
 			
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Predio', 'value' => $numpredio );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Manzana', 'value' => $predio->getManzana () );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Predio', 'value' => $numpredio );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Manzana', 'value' => $predio->getManzana () );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Area morfologica homogenea', 'value' => $infoAreaH [0] ['value'] );
+			$info [] = array ('seccion' => '1. Reglamentacion P.O.T', 'property' => 'Area de actividad', 'value' => '(' . $this->getSiglaArea () . ') ' . htmlentities ( $this->getAreaActividad () ) );
 			
-			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area de actividad', 'value' => '(' . $this->getSiglaArea () . ') ' . htmlentities ( $this->getAreaActividad () ) );
-			$info [] = array ('seccion' => 'Normatividad', 'property' => 'Area morfologica homogenea', 'value' => $infoAreaH [0] ['value'] );
+			$usosP = $this->getUsosPrincipales ();
+			foreach ( $usosP as $uso ) {
+				/* @var $uso SII_PotUsosAreaActividad */
+				$info [] = array ('seccion' => '2. Usos principales', 'property' => 'Sigla', 'value' => $uso->getSigla (), 'extra' => htmlentities ( $uso->getImpacto ()->getDescripcion () ) );
+			}
+			
+			$usosC = $this->getUsosCondicionados ();
+			foreach ( $usosC as $uso ) {
+				/* @var $uso SII_PotUsosAreaActividad */
+				$info [] = array ('seccion' => '3. Usos condicionados', 'property' => 'Sigla', 'value' => $uso->getSigla (), 'extra' => htmlentities ( $uso->getImpacto ()->getDescripcion () ) );
+			}
 		
 		} else {
 			$info [] = array ('seccion' => 'Sin Resultados', 'property' => 'No se encontro informacion', 'value' => '...' );

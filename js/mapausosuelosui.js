@@ -36,10 +36,177 @@ var MapaUsoSuelosUI = function() {
 				queryList : MapaUsoSuelosUI.addQueryPanel
 			});
 
+			p.on('panelReady', MapaUsoSuelosUI.addCustomButtons);
+
 			_getContainer().add(p);
 			_getContainer().doLayout();
 
 		}, // init end
+
+		addCustomButtons : function(oPanel) {
+			var tb = oPanel.getTopToolbar();
+
+			tb.addButton({
+				text : 'Edicion OFF',
+				pressed : false,
+				enableToggle : true,
+				listeners : {
+					toggle : function(btn, pressed) {
+						if (pressed) {
+							this.setText('Edicion ON');
+							oPanel.queryFunction = MapaUsoSuelosUI.editInfoXY;
+
+						} else {
+							this.setText('Edicion OFF');
+							oPanel.queryFunction = MapaUsoSuelosUI.getInfo;
+						}
+					}
+				}
+			});
+		},
+
+		editInfoXY : function(x, y) {
+
+			var win = Ext.getCmp('edit-win');
+
+			if (!win) {
+				var record = new Ext.data.Record.create([{
+					name : 'codareaactividad'
+				}, {
+					name : 'areaactividad'
+				}]);
+
+				var ds = new Ext.data.Store({
+					autoLoad : true,
+					reader : new Ext.data.JsonReader({
+						id : 'codareaactividad'
+					}, record),
+					proxy : new Ext.data.XajaxProxy({
+						xjxcls : 'AppHome',
+						xjxmthd : 'exec'
+					}),
+					baseParams : {
+						action : 'SII_PotAreasActividad.getAll',
+						returnvalue : true,
+						args : [true]
+					}
+				});
+
+				oPanel = Ext.getCmp('usosuelos-panel');
+				x = oPanel.pixelToGeo(x, false);
+				y = oPanel.pixelToGeo(y, true);
+
+				var cmb = new Ext.form.ComboBox({
+					id : 'areas-combo',
+					hiddenName : 'codareaactividad',
+					fieldLabel : 'Area Actividad',
+					store : ds,
+					valueField : 'codareaactividad',
+					displayField : 'areaactividad',
+					width : 220,
+					editable : false,
+					allowBlank : false,
+					selectOnFocus : true,
+					mode : Ext.isIE ? 'local' : 'remote',
+					triggerAction : 'all',
+					loadingText : 'Cargando...',
+					emptyText : 'Seleccione...'
+				});
+
+				var frm = new Ext.FormPanel({
+					id : 'edit-frm',
+					bodyStyle : 'padding: 7px 0 0',
+					frame : true,
+					border : false,
+					monitorValid : true,
+					labelWidth : 100,
+					labelAlign : 'right',
+					defaultType : 'textfield',
+					items : [cmb, {
+						id : 'txt-predio',
+						readyOnly : true,
+						allowBlank : false,
+						fieldLabel : 'Predio',
+						width : 220
+					}],
+					buttons : [{
+						formBind : true,
+						text : 'Guardar',
+						handler : function() {
+							var predio = Ext.getCmp('txt-predio').getValue();
+							var codarea = cmb.getValue();
+
+							xajax_AppHome.exec({
+								action : 'InfoPredios.modify',
+								enableajax : true,
+								args : [predio, codarea]
+							});
+						}
+					}, {
+						text : 'Cancelar',
+						handler : function() {
+							win.close();
+						}
+					}]
+				});
+
+				var record1 = new Ext.data.Record.create([{
+					name : 'gid'
+				}, {
+					name : 'numpredio'
+				}, {
+					name : 'codareaactividad'
+				}, {
+					name : 'areaactividad'
+				}]);
+
+				var ds1 = new Ext.data.Store({
+					reader : new Ext.data.JsonReader({}, record1),
+					proxy : new Ext.data.XajaxProxy({
+						xjxcls : 'AppHome',
+						xjxmthd : 'exec'
+					}),
+					baseParams : {
+						action : 'InfoPredios.getInfoXY',
+						returnvalue : true,
+						args : [x, y]
+					}
+				});
+
+				win = new Ext.Window({
+					id : 'edit-win',
+					iconCls : 'icon-16-help-contents',
+					layout : 'fit',
+					width : 400,
+					height : 150,
+					resizable : false,
+					autoScroll : true,
+					modal : false,
+					title : 'Edicion',
+					closeAction : 'close',
+					items : [frm]
+				});
+
+				win.on('show', function(oWin) {
+					ds1.load({
+						callback : function(r, options, sucess) {
+
+							Ext.getCmp('txt-predio').setValue(r[0]
+									.get('numpredio'));
+
+							// Ext.getCmp('areas-combo').selectByValue(r[0]
+							// .get('codareaactividad'));
+						}
+					});
+				});
+
+				_getContainer().add(win);
+				_getContainer().doLayout();
+				win.center();
+			}
+
+			win.show();
+		},
 
 		addQueryPanel : function() {
 
@@ -126,6 +293,8 @@ var MapaUsoSuelosUI = function() {
 					name : 'property'
 				}, {
 					name : 'value'
+				}, {
+					name : 'extra'
 				}]);
 
 				var ds = new Ext.data.GroupingStore({
@@ -185,12 +354,52 @@ var MapaUsoSuelosUI = function() {
 					})
 				});
 
+				// display extra details
+				grid.on('cellclick', function(g, rowIndex, columnIndex, e) {
+
+					var r = g.getStore().getAt(rowIndex);
+					var data = r.get('extra');
+					if (data) {
+
+						// define a template to use for the detail view
+						var tplMarkup = [
+								'<div class="x-panel-header" style="margin: 5px">{value}</div>',
+								'<p style="text-align: justify; margin: 8px;">{extra}<p/>'];
+						var siglaTpl = new Ext.Template(tplMarkup);
+
+						var oWin = new Ext.Window({
+							id : 'detail-win',
+							iconCls : 'icon-16-help-contents',
+							layout : 'fit',
+							width : 400,
+							height : 250,
+							collapsible : false,
+							resizable : true,
+							autoScroll : true,
+							modal : true,
+							title : 'Detalles',
+							closeAction : 'close',
+							plain : true,
+							items : [{
+								id : 'extra-panel',
+								xtype : 'panel'
+							}]
+						});
+
+						oWin.show(g);
+
+						var detailPanel = Ext.getCmp('extra-panel');
+						siglaTpl.overwrite(detailPanel.body, r.data);
+					}
+
+				});
+
 				win = new Ext.Window({
 					id : 'info-win',
 					iconCls : 'icon-16-help-contents',
 					layout : 'fit',
 					width : 400,
-					height : 250,
+					height : 300,
 					collapsible : true,
 					resizable : true,
 					autoScroll : true,

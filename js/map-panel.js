@@ -157,12 +157,14 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var navigation = new Ext.Panel({
 			region : 'center',
 			border : false,
-			tbar : tb,
 			autoScroll : true,
 			iconCls : 'icon-16-home',
 			html : '<div id="' + this.mapname + '-div">&nbsp;</div>'
 		});
-
+		
+		this.addEvents('panelReady');
+		
+		this.tbar = tb;
 		this.layout = 'border';
 		this.frameElement = true;
 		this.border = false;
@@ -282,6 +284,11 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 			event.stopEvent();
 			contextMenu.showAt(event.getXY());
 		});
+		
+		/**
+		 * Firing panelReady for use.
+		 */
+		this.fireEvent('panelReady', this);
 	},
 
 	addListeners : function() {
