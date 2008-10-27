@@ -41,19 +41,7 @@ var UsuariosUI = function() {
 	}
 
 	function _getColumnModel() {
-		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), /*
-																			 * {
-																			 * header :
-																			 * "Id",
-																			 * width :
-																			 * 40,
-																			 * hidden :
-																			 * true,
-																			 * sortable :
-																			 * true,
-																			 * dataIndex :
-																			 * 'id' },
-																			 */
+		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), 
 		{
 			header : 'Identificacion',
 			width : 70,
@@ -64,14 +52,12 @@ var UsuariosUI = function() {
 			header : "Apellidos",
 			width : 100,
 			sortable : true,
-			//renderer : Ext.util.Format.capitalize,
 			dataIndex : 'apellidos',
 			editor : false
 		}, {
 			header : "Nombres",
 			width : 100,
 			sortable : true,
-			//renderer : Ext.util.Format.capitalize,
 			dataIndex : 'nombres',
 			editor : false
 		}, {
@@ -229,7 +215,6 @@ var UsuariosUI = function() {
 				items : login
 			});
 
-			Ext.get('container-login').center(Ext.getBody());
 			Ext.EventManager.onWindowResize(function() {
 				Ext.getCmp('pass_txt').focus();
 				Ext.getCmp('user_txt').focus();

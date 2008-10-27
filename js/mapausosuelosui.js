@@ -124,7 +124,7 @@ var MapaUsoSuelosUI = function() {
 					defaultType : 'textfield',
 					items : [cmb, {
 						id : 'txt-predio',
-						readyOnly : true,
+						readOnly : true,
 						allowBlank : false,
 						fieldLabel : 'Predio',
 						width : 220
@@ -135,6 +135,9 @@ var MapaUsoSuelosUI = function() {
 						handler : function() {
 							var predio = Ext.getCmp('txt-predio').getValue();
 							var codarea = cmb.getValue();
+							
+							xajax.$('usosuelos-x').value = xajax.$('usosuelos-img').width / 2;
+							xajax.$('usosuelos-y').value = xajax.$('usosuelos-img').height / 2;
 
 							xajax_AppHome.exec({
 								action : 'InfoPredios.modify',

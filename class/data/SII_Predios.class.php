@@ -35,34 +35,6 @@ class SII_Predios extends AppActiveRecord {
 		return $rs->fields [0];
 	}
 	
-	public function getAreaM2() {
-		try {
-			$sql = "SELECT area(the_geom) FROM gis.predios p 
-					WHERE p.num_predial = '$this->numpredio'";
-			$db = AppSQL::getInstance ();
-			$rs = $db->Execute ( $sql );
-		
-		} catch ( Exception $e ) {
-			throw new Exception ( $e->getMessage () );
-		}
-		
-		return $rs->fields [0];
-	}
-	
-	public function getPerimetro() {
-		try {
-			$sql = "SELECT perimeter(the_geom) FROM gis.predios p 
-					WHERE p.num_predial = '$this->numpredio'";
-			$db = AppSQL::getInstance ();
-			$rs = $db->Execute ( $sql );
-		
-		} catch ( Exception $e ) {
-			throw new Exception ( $e->getMessage () );
-		}
-		
-		return $rs->fields [0];
-	}
-	
 	public function getDireccion() {
 		return $this->direccion;
 	}

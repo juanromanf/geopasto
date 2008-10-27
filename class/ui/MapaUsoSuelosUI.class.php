@@ -67,7 +67,7 @@ class MapaUsoSuelosUI extends msMapLayout {
 				
 				case 'area-residencial' :
 					$uso = new UsosSuelos ( );
-					$area = $uso->getTotalAreaByActividad ( '1' );
+					$area = $uso->getTotalAreaByActividad ( '8' );
 					$info [] = array ('seccion' => 'Area Residencial Total', 'property' => 'Superficie', 'value' => number_format ( $area, 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
 					break;
 				
