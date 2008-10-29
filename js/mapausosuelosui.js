@@ -42,7 +42,7 @@ var MapaUsoSuelosUI = function() {
 			_getContainer().doLayout();
 
 		}, // init end
-
+/*
 		addCustomButtons : function(oPanel) {
 			var tb = oPanel.getTopToolbar();
 
@@ -210,7 +210,7 @@ var MapaUsoSuelosUI = function() {
 
 			win.show();
 		},
-
+*/
 		addQueryPanel : function() {
 
 			var frm = new Ext.FormPanel({

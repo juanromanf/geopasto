@@ -26,23 +26,26 @@ class Amenazas extends AppActiveRecord {
 		$numpredio = $rs->fields [0];
 		
 		if ($numpredio) {
-			$predio = new SII_Predios ( );
+			$predio1 = new SII_Predios ( );
+			$predio = new UsosSuelos();
+			
+			$predio1->Load ( "numpredio = '$numpredio'" );
 			$predio->Load ( "numpredio = '$numpredio'" );
 			$this->Load ( "numpredio = '$numpredio'" );
 			
-			$amenazas = $predio->getAmenazas ();
+			$amenazas = $predio1->getAmenazas ();
 			
 			$comuna = new Comunas ( );
 			$infoComuna = $comuna->getInfoXY ( $x, $y );
 			
-			$propietario = $predio->getPropietario ();
+			$propietario = $predio1->getPropietario ();
 			
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Predio', 'value' => $numpredio );
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Propietario', 'value' => implode ( " ", array ($propietario->getApellidos (), $propietario->getNombres () ) ) );
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'C.C o NIT', 'value' => $propietario->getNumId () );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Direccion', 'value' => $predio->getDireccion () );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Direccion', 'value' => $predio1->getDireccion () );
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Comuna', 'value' => $infoComuna [0] ['value'] );
-			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Manzana', 'value' => $predio->getManzana () );
+			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Manzana', 'value' => $predio1->getManzana () );
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Superficie', 'value' => number_format ( $predio->getAreaM2 (), 1, ',', '.' ) . ' m<small><sup>2</sup></small>' );
 			$info [] = array ('seccion' => 'Datos del Predio', 'property' => 'Perimetro', 'value' => number_format ( $predio->getPerimetro (), 1, ',', '.' ) . ' m' );
 			
