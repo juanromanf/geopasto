@@ -1,10 +1,17 @@
-<div class="x-panel-header" style="margin: 5px">	
-	<span class="x-panel-header-text">
-		Saludos <b>|-- $user_name --|</b>... Su sesi&oacute;n inici&oacute;  a las |-- $user_time --|.</small> <br>
-		Cuando finalize sus actividades en el sistema no olvide cerrar 
-		su sesi&oacute;n haciendo click   
-		<a href="#" style="color: #FFF; text-decoration: none" onclick="xajax_AppHome.exec({action:'Usuarios.doLogout',enableajax:true})">
-			aqu&iacute;.
+<div class="x-panel-header" style="height: 80px; width: 99%; ">
+	<img src="img/logo-01.png" height="80px" style="margin: 1x; float: left; padding-right: 10px;">	
+	
+	<div style="float: right;">
+		Inicio de sesi&oacute;n  a las |-- $user_time --|.<br>
+		<a href="#" style="color: #FFF; float: right; text-decoration: none;" onclick="xajax_AppHome.exec({action:'Usuarios.doLogout',enableajax:true})">
+				[Cerrar Sesi&oacute;n]
 		</a>
-	</span>
-</div> 
+	</div>	
+	
+	<div>
+		Saludos <b>|-- $user_name --|</b>...<br><br>
+		Para acceder a los m&oacute;dulos del sistema, puede hacer click en la barra que se encuentra a la izquierda.<br>
+		Una vez finalize sus actividades en el sistema no olvide cerrar su sesi&oacute;n.
+	</div>
+	
+</div>

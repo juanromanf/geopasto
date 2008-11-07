@@ -65,16 +65,22 @@ class Usuarios extends AppActiveRecord {
 	}
 	//=================================================================================	
 	public function doLogin($data) {
-		$login = $data ['users_login'];
-		$passwd = $this->Encriptar ( $data ['users_passwd'] );
-		//$passwd = $data ['users_passwd'];
-		$ok = $this->Load ( "usuario = '$login' and r ='$passwd'" );
-		if (! $ok) {
-			$js = "Ext.MessageBox.alert('Error','Compruebe su usuario y contrase&ntilde;a...');";
-			$this->getXajaxResponse ()->script ( $js );
-		} else {
-			AppSession::setData ( $this );
-			$this->getXajaxResponse ()->redirect ( './' );
+		try {
+			$login = $data ['users_login'];
+			$passwd = $this->Encriptar ( $data ['users_passwd'] );
+			$ok = $this->Load ( "usuario = '$login' and r ='$passwd'" );
+			
+			if (! $ok) {
+				$js = "Ext.getCmp('frmPanel').getEl().unmask();";
+				$this->getXajaxResponse ()->script ( $js );
+				throw new Exception("Compruebe su nombre de usuario y contrase&ntilde;a...");
+				
+			} else {
+				AppSession::setData ( $this );
+				$this->getXajaxResponse ()->redirect ( './' );
+			}
+		} catch ( Exception $e ) {
+			throw new Exception ( $e->getMessage() );
 		}
 	}
 	
@@ -90,10 +96,10 @@ class Usuarios extends AppActiveRecord {
 			$result = $obj->Find ( 'activo = ' . 'true' . ' order by apellidos, nombres asc' );
 			
 			if ($asJson) {
-				$root = array ( );
+				$root = array ();
 				
 				foreach ( $result as $user ) {
-					$accordion = array ( );
+					$accordion = array ();
 					$accordion ['numide'] = $user->numide;
 					$accordion ['nombres'] = strtoupper ( $user->nombres );
 					$accordion ['apellidos'] = strtoupper ( $user->apellidos );

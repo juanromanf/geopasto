@@ -41,8 +41,7 @@ var UsuariosUI = function() {
 	}
 
 	function _getColumnModel() {
-		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), 
-		{
+		_colmodel = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			header : 'Identificacion',
 			width : 70,
 			dataIndex : 'numide',
@@ -119,12 +118,13 @@ var UsuariosUI = function() {
 					dateFormat : 'Y-m-d',
 					minLength : 1
 				})]
-			/*
-			 * , listeners : { afteredit : function(obj) { xajax_AppHome.exec({
-			 * action : 'Usuarios.updateUser', enableajax : true, args : [[{ key :
-			 * 'id', value : obj.record.get('id') }, { key : obj.field, value :
-			 * obj.value }]] }); } }
-			 */
+					/*
+					 * , listeners : { afteredit : function(obj) {
+					 * xajax_AppHome.exec({ action : 'Usuarios.updateUser',
+					 * enableajax : true, args : [[{ key : 'id', value :
+					 * obj.record.get('id') }, { key : obj.field, value :
+					 * obj.value }]] }); } }
+					 */
 			});
 
 			var tb = new Ext.Toolbar({
@@ -197,6 +197,13 @@ var UsuariosUI = function() {
 					iconCls : 'icon-16-document-decrypt',
 					formBind : true,
 					handler : function() {
+
+						/*
+						 * mask form on submit
+						 */
+						Ext.getCmp('frmPanel').getEl().mask('Comprobando...',
+								'x-mask-loading');
+
 						xajax_AppHome.exec({
 							action : 'Usuarios.doLogin',
 							enableajax : true,
@@ -207,6 +214,7 @@ var UsuariosUI = function() {
 			});
 
 			var p = new Ext.Panel({
+				id : 'frmPanel',
 				title : 'Iniciar Sesion',
 				renderTo : 'container-login',
 				iconCls : 'icon-16-document-encrypt',
