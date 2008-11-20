@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * 
+ * @package util
+ *
+ */
 abstract class msMapLayout extends AppPage {
 	
 	public function createLayout($args) {
@@ -35,15 +39,23 @@ abstract class msMapLayout extends AppPage {
 		$map = new msMap ( 'tmp/' . $_SESSION [$this->mapname . '_temp'] );
 		return $map;
 	}
-	
+	/**
+	 * Funcion para guardar el estado del mapa
+	 *
+	 * @param msMap $msMapObj
+	 */
 	public function saveTempMap(msMap $msMapObj) {
 		$msMapObj->saveMapState ( $_SESSION [$this->mapname . '_temp'] );
 	}
-	
+
 	public function processSymbols() {
 		// override this method
 	}
-	
+	/**
+	 * Funcion para restaurar el mapa
+	 *
+	 * @param String $map_file
+	 */
 	public function restoreMap($map_file) {
 		$map = new msMap ( $map_file );
 		$map->saveMapState ( '../tmp/' . $_SESSION [$this->mapname . '_temp'] );
@@ -58,7 +70,11 @@ abstract class msMapLayout extends AppPage {
 		$js .= "Ext.getCmp('" . $map->getName () . "-panel').reloadLayersTree();";
 		$this->getXajaxResponse ()->script ( $js );
 	}
-	
+	/**
+	 * Funcion para cambiar el tamano del mapa
+	 *
+	 * @param Integer $size
+	 */
 	public function resizeMap($size) {
 		$map = $this->getTempMap ();
 		list ( $w, $h ) = explode ( "x", $size );
@@ -80,7 +96,12 @@ abstract class msMapLayout extends AppPage {
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
-	
+	/**
+	 * Funcion para identificar la accion
+	 * a realizar sobre el mapa
+	 *
+	 * @param array $args
+	 */
 	public function doAction($args) {
 		$map = $this->getTempMap ();
 		$map->drawReferenceMap ();
@@ -118,7 +139,12 @@ abstract class msMapLayout extends AppPage {
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
-	
+	/**
+	 * Retorna todas las capa que estan presentes
+	 * en el mapa
+	 *
+	 * @return String as JSON
+	 */
 	public function getLayers() {
 		$map = $this->getTempMap ();
 		
@@ -153,7 +179,14 @@ abstract class msMapLayout extends AppPage {
 		}
 		return json_encode ( $tree );
 	}
-	
+	/**
+	 * Funcion que se encarga de hacer una busqueda rapida
+	 * y ubicar sobre el mapa en una capa definida por el usuario
+	 * 
+	 *
+	 * @param Array $args
+	 * @return String JSON
+	 */
 	public function quickSearch($args) {
 		$layer_name = $args ['layer'];
 		$text = $args ['text'];
@@ -243,7 +276,13 @@ abstract class msMapLayout extends AppPage {
 		
 		return json_encode ( $json );
 	}
-	
+
+	/**
+	 * 
+	 * Adicionar las convenciones pertenecientes a 
+	 * cada una de las capas del mapa
+	 * @param array $layers
+	 */
 	protected function addSymbols($layers) {
 		
 		$map = $this->getTempMap ();
@@ -310,6 +349,13 @@ abstract class msMapLayout extends AppPage {
 		$this->saveTempMap ( $map );
 	}
 	
+	/**
+	 * Permite hacer un remplazo de caracteres 
+	 * y visualizarlos en Mayusculas
+	 *
+	 * @param String $text
+	 * @return String
+	 */
 	private function cleanText($text) {
 		$text = strtolower ( $text );
 		$text = str_replace ( 'á', 'a', $text );

@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla propietariospredios
+ * 
+ * @package data
+ *
+ */
 class SII_Propietarios extends AppActiveRecord {
 	public $_table = 'public.propietariospredios';
 	

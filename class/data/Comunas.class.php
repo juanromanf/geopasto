@@ -1,8 +1,22 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla gis
+ * 
+ * @package data
+ *
+ */
 class Comunas extends AppActiveRecord {
 	public $_table = 'gis.comunas';
-	
+	/**
+	 * Toma las coordenadas del click en la 
+	 * que se encuentra para realizar la consulta
+	 *
+	 * @param int $x
+	 * @param int $y
+	 * @return array
+	 */
 	public function getInfoXY($x, $y) {
 		$toleracia = 20;
 		$x1 = $x - $toleracia;

@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de la tabla de Amenazas
+ * 
+ * @package data
+ *
+ */
 class Amenazas extends AppActiveRecord {
 	public $_table = 'gis.amenazas';
 	
@@ -7,7 +13,14 @@ class Amenazas extends AppActiveRecord {
 		$keys = array ('oid' );
 		parent::__construct ( $xajaxResponse, FALSE, $keys );
 	}
-	
+	/**
+	 * Toma las coordenadas del click en la 
+	 * que se encuentra para realizar la consulta
+	 *
+	 * @param int $x
+	 * @param int $y
+	 * @return array
+	 */
 	public function getInfoXY($x, $y) {
 		$toleracia = 20;
 		$x1 = $x - $toleracia;

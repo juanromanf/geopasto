@@ -1,8 +1,21 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla configuraciones
+ * 
+ * @package data
+ *
+ */
 class Config extends AppActiveRecord {
 	public $_table = 'app.configuraciones';
-	
+	/**
+	 * Maneja todas las variables de configuracion
+	 * de la herramienta
+	 * 	 *
+	 * @param Bolean $asJson
+	 * @return string JSON | array objetos Config
+	 */
 	public static function getAllValues($asJson = false) {
 		try {
 			$obj = new Config();
@@ -29,7 +42,12 @@ class Config extends AppActiveRecord {
 		
 		return $result;
 	}
-	
+	/**
+	 * Busca el identificador de la variable
+	 *
+	 * @param int $key
+	 * @return Config
+	 */
 	public static function getByKey($key) {
 		try {
 			$obj = new Config();
@@ -41,6 +59,12 @@ class Config extends AppActiveRecord {
 		
 		return $obj;
 	}
+	/**
+	 * Asignar un nuevo item de configuracion
+	 *
+	 * @param int $key
+	 * @param string $value
+	 */
 	
 	public static function setValue($key, $value) {
 		try {

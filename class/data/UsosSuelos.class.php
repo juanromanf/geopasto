@@ -1,25 +1,59 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla usos_suelo
+ * 
+ * @package data
+ *
+ */
 class UsosSuelos extends AppActiveRecord {
 	public $_table = 'gis.usos_suelo';
-	
+	/**
+	 * Constructor de la clase
+	 *
+	 * @param xajaxResponse $xajaxResponse
+	 */
 	public function __construct($xajaxResponse = false) {
 		$keys = array ('gid', 'numpredio' );
 		parent::__construct ( $xajaxResponse, FALSE, $keys );
 	}
-	
+	/**
+	 * Retorna el codigo del Area de actividad
+	 * estipulad@s en el POT para el 
+	 * municipio de Pasto
+	 * 
+	 * @return String
+	 */
 	public function getCodAreaActividad() {
 		return $this->codareaactividad;
 	}
-	
+		/**
+	 * Retorna el Area de actividad
+	 * estipulad@s en el POT para el 
+	 * municipio de Pasto
+	 * 
+	 * @return String
+	 */
 	public function getAreaActividad() {
 		return $this->areaactividad;
 	}
-	
+		/**
+	 * Retorna la sigladel Area de actividad
+	 * estipulad@s en el POT para el 
+	 * municipio de Pasto
+	 * 
+	 * @return String
+	 */
 	public function getSiglaArea() {
 		return $this->sigla;
 	}
-	
+	/**
+	 * Retorna el Area en metros cuadrados
+	 * que corresponde al predio
+	 * 
+	 * @return Float
+	 */
 	public function getAreaM2() {
 		try {
 			$sql = "SELECT area(the_geom) FROM gis.predios p 
@@ -33,7 +67,12 @@ class UsosSuelos extends AppActiveRecord {
 		
 		return $rs->fields [0];
 	}
-	
+	/**
+	 * Retorna el permimetro
+	 * correspondiente al predio en metros
+	 * 
+	 * @return Float
+	 */
 	public function getPerimetro() {
 		try {
 			$sql = "SELECT perimeter(the_geom) FROM gis.predios p 
@@ -49,8 +88,11 @@ class UsosSuelos extends AppActiveRecord {
 	}
 	
 	/**
-	 * Enter description here...
-	 *
+	 
+	 * Retorna los usos principales 
+	 * del predio estipulad@s en el 
+	 * POT para el municipio de Pasto
+	 * 
 	 * @return SII_PotUsosAreaActividad
 	 */
 	public function getUsosPrincipales() {
@@ -61,7 +103,9 @@ class UsosSuelos extends AppActiveRecord {
 	}
 	
 	/**
-	 * Enter description here...
+	 * Retorna los usos Concicionados
+	 * del predio estipulad@s en el 
+	 * POT para el municipio de Pasto
 	 *
 	 * @return SII_PotUsosAreaActividad
 	 */
@@ -71,7 +115,14 @@ class UsosSuelos extends AppActiveRecord {
 		
 		return $rs;
 	}
-	
+	/**
+	 * REtorna el total del area
+	 * que tiene una actividad definida 
+	 * en metros cuadrados
+	 *
+	 * @param String $codactividad
+	 * @return Float
+	 */
 	public function getTotalAreaByActividad($codactividad) {
 		
 		try {
@@ -85,7 +136,14 @@ class UsosSuelos extends AppActiveRecord {
 		}
 		return $rs->fields [0];
 	}
-	
+	/**
+	 * Toma las coordenadas del click en la 
+	 * que se encuentra para realizar la consulta
+	 *
+	 * @param int $x
+	 * @param int $y
+	 * @return array
+	 */
 	public function getInfoXY($x, $y) {
 		$toleracia = 20;
 		$x1 = $x - $toleracia;
@@ -93,7 +151,7 @@ class UsosSuelos extends AppActiveRecord {
 		$x2 = $x + $toleracia;
 		$y2 = $y + $toleracia;
 		
-		$info = array ();
+		$info = array ( );
 		// Spatial SQL para layers tipo Polygon
 		$query = "SELECT numpredio FROM gis.usos_suelo t
 						 WHERE the_geom && 'BOX3D($x1 $y1, $x2 $y2)'::box3d AND

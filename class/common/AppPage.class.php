@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Clase abstracta para el manejo de las diferentes
+ * ventanas de la interfaz de la herramienta
+ *
+ * @package common
+ */
 abstract class AppPage {
 	/**
 	 * Nombre del Objeto.
@@ -55,32 +62,59 @@ abstract class AppPage {
 			return $this->tpl->fetch ( $template_file );
 		}
 	}
-	
+	/**
+	 * Genera la plantilla index
+	 *
+	 * @param boolean $output
+	 * @return string contenido HTML de la plantilla
+	 */
 	public function Index($output = false) {
 		
 		$template_file = 'index.html';
 		return $this->renderTemplate ( $template_file, $output );
 	
 	}
-	
+	/**
+	 * Genera la plantilla de Adicion
+	 *
+	 * @param boolean $output
+	 * @return string contenido HTML de la plantilla
+	 */
 	public function DisplayAdd($output = false) {
 		
 		$template_file = 'add.html';
 		return $this->renderTemplate ( $template_file, $output );
 	}
-	
+	/**
+	 * Genera la plantilla de Edicion
+	 *
+	 * @param boolean $output
+	 * @return string contenido HTML de la plantilla
+	 */
 	public function DisplayEdit($output = false) {
 		
 		$template_file = 'edit.html';
 		return $this->renderTemplate ( $template_file, $output );
 	}
 	
+	/**
+	 * Genera la plantilla de borrado
+	 *
+	 * @param boolean $output
+	 * @return string contenido HTML de la plantilla
+	 */
 	public function DisplayDelete($output = false) {
 		
 		$template_file = 'delete.html';
 		return $this->renderTemplate ( $template_file, $output );
 	}
 	
+	/**
+	 * Genera la plantilla para la vista
+	 *
+	 * @param boolean $output
+	 * @return string contenido HTML de la plantilla
+	 */
 	public function DisplayView($output = false) {
 		
 		$template_file = 'view.html';

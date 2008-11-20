@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla convenciones
+ * 
+ * @package data
+ *
+ */
 class Convenciones extends AppActiveRecord {
 	public $_table = 'app.convenciones';
 	

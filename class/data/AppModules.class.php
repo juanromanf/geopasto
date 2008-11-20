@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos 
+ * de la tabla modulos
+ * 
+ * @package data
+ *
+ */
 class AppModules extends AppActiveRecord {
 	public $_table = "app.modulos";
 	
@@ -192,7 +199,12 @@ class AppModules extends AppActiveRecord {
 		}
 		return $result;
 	}
-	
+	/**
+	 * Pregunta si el usuario tiene permisos de acceso al modulo
+	 *
+	 * @param int $id_user
+	 * @return boolean
+	 */
 	public function isAllowed($id_user) {
 		$obj = new Permisos ( );
 		$permisos = $obj->getRigths ( $id_user );

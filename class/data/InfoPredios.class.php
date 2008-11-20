@@ -1,8 +1,22 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla informacion_predios
+ * 
+ * @package data
+ *
+ */
 class InfoPredios extends AppActiveRecord {
 	public $_table = 'app.informacion_predios';
-	
+	/**
+	 * Toma las coordenadas del click en la 
+	 * que se encuentra para realizar la consulta
+	 *
+	 * @param int $x
+	 * @param int $y
+	 * @return array
+	 */
 	public function getInfoXY($x, $y) {
 		$toleracia = 20;
 		$x1 = $x - $toleracia;
@@ -35,6 +49,14 @@ class InfoPredios extends AppActiveRecord {
 		
 		return json_encode ( $info );
 	}
+
+	/**
+	 * Permite hacer una modificacion del 
+	 * area de actividad de un predio
+	 *
+	 * @param int $numpredio
+	 * @param int $codareaactividad
+	 */
 	
 	public function modify($numpredio, $codareaactividad) {
 		try {

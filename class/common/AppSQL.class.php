@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * 
+ * En esta clase se encarga de la abstraccion de la base de datos
+ * 
+ * @package common
+ *
+ */
 class AppSQL {
 
 	public function __construct() { }

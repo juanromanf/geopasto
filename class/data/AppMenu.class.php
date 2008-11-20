@@ -1,11 +1,24 @@
 <?php
-
+/**
+ * 
+ * Clase encargada de la construccion de los
+ * modulos y menus que se presentan en la interfaz
+ * de la herramienta
+ * 
+ * @package data
+ *
+ */
 class AppMenu {
 	
 	public function __construct() {
 	
 	}
-	
+	/**
+	 * Retorna todos los modulos que componen el menu
+	 * como un array de objetos o como formato JSON.
+	 *
+	 * @return modulos
+	 */
 	public function getModules() {
 		
 		try {
@@ -14,7 +27,9 @@ class AppMenu {
 			$root = array ( );
 			
 			foreach ( $result as $module ) {
-				/* @var $module AppModules */
+				/**
+				 * @var $module AppModules 
+				 */
 				if ($module->isAllowed ( AppSession::getData () )) {
 					$accordion = array ( );
 					
@@ -33,7 +48,14 @@ class AppMenu {
 		}
 		return json_encode ( $root );
 	}
-	
+	/**
+	 *  Retorna todos los items del modulo que forman al
+	 *  menu como un array de objetos o como 
+	 *  formato JSON.
+	 *
+	 * @param int $id_modulo
+	 * @return Arbol del menu
+	 */
 	public function getMenuTree($id_module) {
 		try {
 			list ( $prefix, $id ) = explode ( '-', $id_module );
@@ -43,7 +65,9 @@ class AppMenu {
 			$menus = $objModule->getMenus ();
 			
 			foreach ( $menus as $item ) {
-				/* @var $item AppModuleMenus */
+				/**
+				 *  @var $item AppModuleMenus
+				 */
 				if ($item->isAllowed ( AppSession::getData () )) {
 					$node = array ( );
 					

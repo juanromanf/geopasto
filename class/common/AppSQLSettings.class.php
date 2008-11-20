@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * 
+ * Clase que se encarga de la configuracion de la conexion al SGBD
+ * 
+ * @package common
+ *
+ */
 class AppSQLSettings {
 	private $driver;
 	private $host;

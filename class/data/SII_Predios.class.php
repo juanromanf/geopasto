@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla predios
+ * 
+ * @package data
+ *
+ */
 class SII_Predios extends AppActiveRecord {
 	public $_table = 'public.predios';
 	
@@ -19,7 +26,12 @@ class SII_Predios extends AppActiveRecord {
 		
 		return $propietario->getPersona ();
 	}
-	
+	/**
+	 * Retorna la ultima solicitud hecha al predio
+	 *
+	 * @param String $tiposolicitud
+	 * @return array SII_predios
+	 */
 	private function getUltimaSolicitud($tiposolicitud = 1) {
 		try {
 			$sql = "SELECT max(s1.codsolicitud) FROM p_pot_solicitudes s1 
@@ -34,7 +46,11 @@ class SII_Predios extends AppActiveRecord {
 		
 		return $rs->fields [0];
 	}
-	
+	/**
+	 * Retorna la direccion del predio
+	 *
+	 * @return String
+	 */
 	public function getDireccion() {
 		return $this->direccion;
 	}

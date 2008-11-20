@@ -1,16 +1,33 @@
 <?php
-
+/**
+ * 
+ * Es una clase que implementa el patron de 
+ * msMapLayout para mostrar la pagina de MapaAmenazas
+ * 
+ * @package ui
+ * 
+ */
 class MapaAmenazasUI extends msMapLayout {
 	protected $name = "mapa-amenazas";
 	protected $mapname = "amenazas";
-	
+	/**
+	 * Crea la interfaz de usuario 
+	 * para el trabajo del mapa
+	 *
+	 * @param array $args
+	 * @return String que contiene el HTML
+	 */
 	public function createLayout($args) {
 		
 		$output = parent::createLayout ( $args );
 		$this->processSymbols ();
 		return $output;
 	}
-	
+	/**
+	 * 
+	 * Carga los simbolos pertenecientes al mapa
+	 *
+	 */
 	public function processSymbols() {
 		$layers = array ();
 		$layers [] = array ('map' => 'amenazas', 'layer' => 'Comunas', 'clsprefix' => 'Comuna ', 'clsdisplay' => 'num_comuna', 'clsitem' => 'num_comuna' );

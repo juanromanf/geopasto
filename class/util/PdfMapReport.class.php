@@ -1,8 +1,20 @@
 <?php
-
+/**
+ * 
+ * Es una clase que implementa el patron de 
+ * FPDF para mostrar el (los) mapas en formato PDF
+ * 
+ * @package util
+ * 
+ */
 class PdfMapReport extends FPDF {
 	private $map;
-	
+	/**
+	 * 
+	 * Constructor de la Clase
+	 *
+	 * @param msMap $map
+	 */
 	public function __construct(msMap $map) {
 		parent::FPDF ( 'l', 'mm', 'letter' );
 		
@@ -11,15 +23,22 @@ class PdfMapReport extends FPDF {
 		$this->drawFrame ();
 		$this->addImages ();
 	}
-	
+	/**
+	 * Funcion para realizarla presentacion del informe
+	 *
+	 * @param Integer $x
+	 * @param Integer $y
+	 * @param Integer $w
+	 * @param Integer $h
+	 * @param Integer $r
+	 * @param String $style
+	 */
 	public function RoundedRect($x, $y, $w, $h, $r, $style = '') {
 		$k = $this->k;
 		$hp = $this->h;
 		if ($style == 'F')
-			$op = 'f';
-		elseif ($style == 'FD' or $style == 'DF')
-			$op = 'B';
-		else
+			$op = 'f'; elseif ($style == 'FD' or $style == 'DF')
+			$op = 'B'; else
 			$op = 'S';
 		$MyArc = 4 / 3 * (sqrt ( 2 ) - 1);
 		$this->_out ( sprintf ( '%.2F %.2F m', ($x + $r) * $k, ($hp - $y) * $k ) );
@@ -42,12 +61,26 @@ class PdfMapReport extends FPDF {
 		$this->_Arc ( $xc - $r, $yc - $r * $MyArc, $xc - $r * $MyArc, $yc - $r, $xc, $yc - $r );
 		$this->_out ( $op );
 	}
-	
+	/**
+	 * Funcion para realizar los detalles de presentacion
+	 *
+	 * @param Integer $x1
+	 * @param Integer $y1
+	 * @param Integer $x2
+	 * @param Integer $y2
+	 * @param Integer $x3
+	 * @param Integer $y3
+	 */
 	private function _Arc($x1, $y1, $x2, $y2, $x3, $y3) {
 		$h = $this->h;
 		$this->_out ( sprintf ( '%.2F %.2F %.2F %.2F %.2F %.2F c ', $x1 * $this->k, ($h - $y1) * $this->k, $x2 * $this->k, ($h - $y2) * $this->k, $x3 * $this->k, ($h - $y3) * $this->k ) );
 	}
-	
+	/**
+	 * Agrega la instancia de la clase msMAp utilizada para 
+	 * el reporte
+	 *
+	 * @param msMap $mapObj
+	 */
 	public function setMap(msMap $mapObj) {
 		$this->map = $mapObj;
 	}
@@ -61,7 +94,10 @@ class PdfMapReport extends FPDF {
 	public function getMapObj() {
 		return $this->map;
 	}
-	
+	/**
+	 * Crea el frame del reporte
+	 *
+	 */
 	private function drawFrame() {
 		// build frame
 		$margin = 5;
@@ -112,7 +148,12 @@ class PdfMapReport extends FPDF {
 		
 		$this->Image ( '../img/logo4pdf.jpg', $this->w - 40, 25 );
 	}
-	
+	/**
+	 * Convierte la imagen del mapa png2gif
+	 *
+	 * @param String $img_path
+	 * @return array
+	 */
 	private function parseImage($img_path) {
 		$tmp_path = $this->getMapObj ()->getWebImagePath ();
 		
@@ -125,7 +166,10 @@ class PdfMapReport extends FPDF {
 		
 		return (array ('url' => $save_to, 'w' => $w, 'h' => $h ));
 	}
-	
+	/**
+	 * Inserta las imagenes que van en el documento tipo PDF
+	 *
+	 */
 	private function addImages() {
 		
 		$map = $this->getMapObj ();

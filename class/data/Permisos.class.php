@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla seguridad
+ * 
+ * @package data
+ *
+ */
 class Permisos extends AppActiveRecord {
 	public $_table = 'app.seguridad';
 	

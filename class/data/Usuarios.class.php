@@ -1,8 +1,22 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla personas para extraer los usuarios
+ * activos en el sistema
+ * 
+ * @package data
+ *
+ */
 class Usuarios extends AppActiveRecord {
 	public $_table = 'personas';
-	
+	/**
+	 * Funcion para encriptar la
+	 * contraseña de acceso del usuario
+	 *
+	 * @param String $cad
+	 * @return String
+	 */
 	private function Encriptar($cad) {
 		$resultado = '';
 		$cad = strrev ( $cad );
@@ -24,7 +38,15 @@ class Usuarios extends AppActiveRecord {
 		return ($resultado);
 	
 	}
-	
+	/**
+	 * Funcion para quitar 'basura'
+	 * de la contrasena del usuario
+	 *
+	 * @param array $array
+	 * @param float $n
+	 * @param Integer $m
+	 * @return array
+	 */
 	private function Descartar($array, $n, $m) {
 		for($i = $n; $i < $m; $i ++) {
 			$array [$i] = $array [$i + 1];
@@ -32,7 +54,13 @@ class Usuarios extends AppActiveRecord {
 		}
 		return ($array);
 	}
-	
+	/**
+	 * Funcion para desencriptar la
+	 * contraseña del usuario
+	 *
+	 * @param String $cadena
+	 * @return String
+	 */
 	private function desencriptar($cadena) {
 		$n = floor ( strlen ( $cadena ) / 4 );
 		$residuo = strlen ( $cadena ) % 4;
@@ -64,6 +92,11 @@ class Usuarios extends AppActiveRecord {
 		return ($resultado);
 	}
 	//=================================================================================	
+	/**
+	 * Evalua los datos de ingreso del usuario
+	 *
+	 * @param array $data
+	 */
 	public function doLogin($data) {
 		try {
 			$login = $data ['users_login'];
@@ -73,33 +106,42 @@ class Usuarios extends AppActiveRecord {
 			if (! $ok) {
 				$js = "Ext.getCmp('frmPanel').getEl().unmask();";
 				$this->getXajaxResponse ()->script ( $js );
-				throw new Exception("Compruebe su nombre de usuario y contrase&ntilde;a...");
-				
+				throw new Exception ( "Compruebe su nombre de usuario y contrase&ntilde;a..." );
+			
 			} else {
 				AppSession::setData ( $this );
 				$this->getXajaxResponse ()->redirect ( './' );
 			}
 		} catch ( Exception $e ) {
-			throw new Exception ( $e->getMessage() );
+			throw new Exception ( $e->getMessage () );
 		}
 	}
-	
+	/**
+	 * Cierra la sesion del usuario Activo
+	 *
+	 */
 	public function doLogout() {
 		
 		AppSession::destroy ();
 		$this->getXajaxResponse ()->redirect ( './' );
 	}
-	
+	/**
+	 * Retorna todos los usuarios activos
+	 * en el sistema
+	 *
+	 * @param Boolean $asJson
+	 * @return  string JSON | array objetos Usuarios
+	 */
 	public static function getAllUsers($asJson = false) {
 		try {
 			$obj = new Usuarios ( );
 			$result = $obj->Find ( 'activo = ' . 'true' . ' order by apellidos, nombres asc' );
 			
 			if ($asJson) {
-				$root = array ();
+				$root = array ( );
 				
 				foreach ( $result as $user ) {
-					$accordion = array ();
+					$accordion = array ( );
 					$accordion ['numide'] = $user->numide;
 					$accordion ['nombres'] = strtoupper ( $user->nombres );
 					$accordion ['apellidos'] = strtoupper ( $user->apellidos );

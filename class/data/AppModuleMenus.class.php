@@ -1,8 +1,18 @@
 <?php
-
+/**
+ * 
+ * Clase que maneja los datos de la tabla de menus
+ * @package data
+ *
+ */
 class AppModuleMenus extends AppActiveRecord {
 	public $_table = "app.menus";
-	
+	/**
+	 * Verifica si el usuario tiene acceso a algun item del menu
+	 *
+	 * @param int $id_user
+	 * @return Bolean
+	 */
 	public function isAllowed($id_user) {
 		$obj = new Permisos();
 		$permisos = $obj->Find("numide = $id_user and id_menu = ". $this->id_menu);

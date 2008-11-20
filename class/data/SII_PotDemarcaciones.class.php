@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * 
+ * Clase encargada del manejo de los datos
+ * de la tabla p_pot_demarcaciones
+ * 
+ * @package data
+ *
+ */
 class SII_PotDemarcaciones extends AppActiveRecord {
 	public $_table = 'public.p_pot_demarcaciones';
 	
@@ -15,8 +22,10 @@ class SII_PotDemarcaciones extends AppActiveRecord {
 	}
 	
 	/**
-	 * Enter description here...
-	 *
+	 * Retorna el area de Actividad
+	 * estipuladas en el POT para el 
+	 * municipio de Pasto
+	 * 
 	 * @return SII_PotAreasActividad
 	 */
 	public function getAreaActividad() {
@@ -26,8 +35,11 @@ class SII_PotDemarcaciones extends AppActiveRecord {
 	}
 	
 	/**
-	 * Enter description here...
+	 * Retorna el Tratamiento
 	 *
+	 * estipulados en el POT para el 
+	 * municipio de Pasto
+	 * 
 	 * @return SII_PotTratamientos
 	 */
 	public function getTratamiento() {
@@ -37,8 +49,10 @@ class SII_PotDemarcaciones extends AppActiveRecord {
 	}
 	
 	/**
-	 * Enter description here...
-	 *
+	 * Retorna el nombre del Subsector
+	 * estipulados en el POT para el 
+	 * municipio de Pasto
+	 * 
 	 * @return SII_PotSubSectores
 	 */
 	public function getSubSector() {
@@ -46,22 +60,35 @@ class SII_PotDemarcaciones extends AppActiveRecord {
 		$subsector->Load ( "codsubsector = '" . $this->codsubsector . "'" );
 		return $subsector;
 	}
-	
+	/**
+	 * Retorna el indice de ocupacion
+	 *
+	 * @return unknown
+	 */
 	public function getIocupacion() {
 		return $this->iocupacion;
 	}
-	
+	/**
+	 * Retorna el indice de construccion
+	 *
+	 * @return unknown
+	 */
 	public function getIconstruccion() {
 		return $this->iconstruccion;
 	}
-	
+	/**
+	 * Retorna el indice de Cesion
+	 *
+	 * @return unknown
+	 */	
 	public function getIcesion() {
 		return $this->icesion;
 	}
 	
 	/**
-	 * Enter description here...
-	 *
+	 * Retorna la tipologia de la via
+	 * estipulados en el POT para el 
+	 * municipio de Pasto
 	 * @return SII_PotTipologiaVias
 	 */
 	public function getTipologia() {
@@ -69,7 +96,11 @@ class SII_PotDemarcaciones extends AppActiveRecord {
 		$tipologia->Load ( "codtipologia = '" . $this->codtipologiavia . "'" );
 		return $tipologia;	
 	}
-	
+	/**
+	 * Retorna la distancia del eje
+	 *
+	 * @return SII_PotDemarcaciones
+	 */
 	public function getDistanciaEje() {
 		return $this->eje;
 	}
