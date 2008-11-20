@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Clase controladora que delega 
+ * las funciones a las otras clases 
+ * para la presentacion de la herramienta
+ *
+ * @package common
+ */
 class AppHome extends AppPage {
 	
 	protected $name = 'App';
