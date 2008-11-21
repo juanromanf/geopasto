@@ -815,7 +815,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		var contextMenu = new Ext.menu.Menu({
 			id : 'popupMenu',
 			items : [{
-				text : 'Alternar todos',
+				text : 'Ocultar/mostrar todos',
 				iconCls : 'icon-16-draw-brush',
 				handler : function() {
 
@@ -833,7 +833,7 @@ Ext.MapPanel = Ext.extend(Ext.Panel, {
 		});
 
 		tree.on('contextmenu', function(node, event) {
-			if (!node.isLeaf()) {
+			if (!node.isLeaf() && node.text !='Capas') {
 				event.stopEvent();
 				tree.getSelectionModel().select(node);
 				contextMenu.showAt(event.getXY());

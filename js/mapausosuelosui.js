@@ -367,7 +367,7 @@ var MapaUsoSuelosUI = function() {
 						// define a template to use for the detail view
 						var tplMarkup = [
 								'<div class="x-panel-header" style="margin: 5px">{value}</div>',
-								'<p style="text-align: justify; margin: 8px;">{extra}<p/>'];
+								'<p style="text-align: justify; margin: 8px; color: #000000;">{extra}<p/>'];
 						var siglaTpl = new Ext.Template(tplMarkup);
 
 						var oWin = new Ext.Window({
