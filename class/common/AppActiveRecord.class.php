@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * ADOB_Active_Record para el acceso de Datos
+ * Clase que implementa el patron
+ * Active Record para el manejo a bases de datos.
  * 
  * @package common
  */
@@ -37,10 +37,12 @@ class AppActiveRecord extends ADODB_Active_Record {
 	public function getXajaxResponse() {
 		return $this->xResponse;
 	}
+	
 	/**
-	 * Convertir paramatros en un Array
+	 * Construye un array asociativo con los nombres de los atributos de una tupla
+	 * y sus respectivos valores.
 	 *
-	 * @return json
+	 * @return array 
 	 */
 	public function toArray() {
 		$fields = $this->GetAttributeNames ();

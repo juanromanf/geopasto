@@ -1,11 +1,10 @@
 <?php
 /**
  * 
- * Configuracion Sistema de Templates Smarty
+ * Clase que provee el acceso al motor de plantillas Smarty.
+ * 
  * @package common
- *
  */
-
 class AppTemplate extends Smarty {
 	
 	function __construct() {

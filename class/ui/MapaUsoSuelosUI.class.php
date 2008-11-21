@@ -1,21 +1,20 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * msMapLayout para mostrar la pagina de MapaUsoSuelos
+ * Clase responsable de la construccion de la interfaz del
+ * mapa de usos de suelo.
  * 
  * @package ui
- * 
  */
 class MapaUsoSuelosUI extends msMapLayout {
 	protected $name = "mapa-usosuelos";
 	protected $mapname = "usosuelos";
+	
 	/**
-	 * Crea la interfaz de usuario 
-	 * para el trabajo del mapa
+	 * Crea la interfaz de usuario para el area de trabajo del mapa.
 	 *
-	 * @param array $args
-	 * @return String que contiene el HTML
+	 * @param array $args ['mapname'] nombre del archivo de definicion del mapa.
+	 * @return String HTML con los elementos de la disposicion de las herramientas de la interfaz.
 	 */
 	public function createLayout($args) {
 		
@@ -23,10 +22,10 @@ class MapaUsoSuelosUI extends msMapLayout {
 		$this->processSymbols ();
 		return $output;
 	}
+	
 	/**
 	 * 
-	 * Carga los simbolos pertenecientes al mapa
-	 *
+	 * Procesa las convenciones correspondientes a cada capa del mapa.
 	 */
 	public function processSymbols() {
 		$layers = array ();
@@ -39,7 +38,7 @@ class MapaUsoSuelosUI extends msMapLayout {
 	}
 	
 	/**
-	 * Consulta demarcacion urbanistica.
+	 * Delega la ejecucion de las consultas disponibles dentro del mapa.
 	 *
 	 * @param array $args
 	 * @param $args['x']: click X coord.

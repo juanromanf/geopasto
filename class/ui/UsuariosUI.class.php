@@ -1,21 +1,20 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * AppPage para mostrar la pagina de Inicio de Sesion
+ * Clase responsable de la construccion de la interfaz 
+ * de administracion de usuarios del sistema.
  * 
  * @package ui
- * 
  */
 class UsuariosUI extends AppPage {
 
 	protected $name = 'Usuarios';
 	/**
 	 * 
-	 * Crea la interfaz de usuario 
-	 * para realizar el ingreso al sistema
+	 * Renderiza la plantilla para la contruccion de la interfaz
+	 * de ingreso al sistema. 
 	 * 
-	 * @return String que contiene el HTML
+	 * @return string HTML con la composicion del formulario de ingreso al sistema.
 	 */
 	public function displayLogin() {
 		$template = 'login.html';

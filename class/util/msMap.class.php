@@ -1,17 +1,19 @@
 <?php
 /**
  * 
- * Clase encargada de realizar el manejo sobre el mapa
+ * Clase que encapsula el acceso al API PHP/MapScript para la manipulacion
+ * de las fucionalidades del servidor de mapas.
+ * 
  * @package util
- *
  */
 class msMap {
 	
 	private $filename;
 	private $tmp_file;
 	private $mapObj;
+	
 	/**
-	 * Constructor de la clase
+	 * Constructor de la clase.
 	 *
 	 * @param String $map_file_path
 	 */
@@ -19,100 +21,112 @@ class msMap {
 		$this->filename = $map_file_path;
 		$this->mapObj = ms_newMapObj ( $map_file_path );
 	}
+	
 	/**
-	 * Asigna el ancho del mapa
+	 * Asigna el ancho del mapa.
 	 *
 	 * @param Integer $w
 	 */
 	public function setWidth($w) {
 		$this->mapObj->set ( 'width', $w );
 	}
+	
 	/**
-	 * Asigna el alto del mapa
+	 * Asigna el alto del mapa.
 	 * 
 	 * @param Integer $h
 	 */
 	public function setHeight($h) {
 		$this->mapObj->set ( 'height', $h );
 	}
+	
 	/**
-	 * Retorna el nombre del mapa
+	 * Retorna el nombre del mapa.
 	 *
 	 * @return String
 	 */
 	public function getName() {
 		return $this->mapObj->name;
 	}
+	
 	/**
-	 * Retorna un objeto MsMap
+	 * Retorna un objeto que contiene la configuracion del mapa.
 	 *
 	 * @return MsMap
 	 */
 	public function getMsObj() {
 		return $this->mapObj;
 	}
+	
 	/**
-	 * Retorna la leyenda del mapa
+	 * Retorna un objeto que representa la leyenda del mapa.
 	 *
 	 * @return String
 	 */
 	public function getLegend() {
 		return $this->mapObj->legend;
 	}
+	
 	/**
-	 * Retorna el nombre de la capa 
+	 * Retorna un objeto que representa una capa del mapa. 
 	 *
-	 * @param String $layer_name
-	 * @return String
+	 * @param string $layer_name nombre de la capa.
+	 * @return layerObj
 	 */
 	public function getLayer($layer_name) {
 		return $this->mapObj->getLayerByName ( $layer_name );
 	}
+	
 	/**
-	 * Retorna el numero de las capas qeu forman el mapa
+	 * Retorna el numero de las capas que contiene el mapa.
 	 *
-	 * @return Integer
+	 * @return integer
 	 */
 	public function getNumLayers() {
 		return $this->mapObj->numlayers;
 	}
+	
 	/**
-	 * Retorna el ancho de la presentacion del mapa
+	 * Retorna el ancho del mapa.
 	 *
-	 * @return Integer
+	 * @return integer
 	 */
 	public function getMapWidth() {
 		return $this->mapObj->width;
 	}
+	
 	/**
-	 * Retorna el Alto de la presentacion del mapa
+	 * Retorna el alto del mapa.
 	 *
-	 * @return Integer
+	 * @return integer
 	 */
 	public function getMapHeight() {
 		return $this->mapObj->height;
 	}
+	
 	/**
-	 * Retorna la Escala del mapa visualizado
+	 * Retorna la escala actual del mapa.
 	 *
-	 * @return Integer
+	 * @return integer
 	 */
 	public function getMapScale() {
 		return $this->mapObj->scale;
 	}
+	
 	/**
-	 * Retorna la ruta del mapa
+	 * Retorna la ruta a la carpeta de cache del servidor de mapas.
 	 *
 	 * @return String
 	 */
 	public function getWebImagePath() {
 		return $this->mapObj->web->imagepath;
 	}
+	
 	/**
-	 * Retorna el tamano total de la presentacion del mapa
+	 * Retorna el area actual de visualizacion del mapa. 
 	 *
-	 * @param Boolean $as_string
-	 * @return String
+	 * @param boolean $as_string TRUE retorna el resultado como una cadena separada por espacios.
+	 * @return string | array
 	 */
 	public function getExtent($as_string = false) {
 		if ($as_string) {
@@ -125,16 +139,17 @@ class msMap {
 	/**
 	 * Dibuja el mapa.
 	 *
-	 * @return string | url de la imagen
+	 * @return string url de la imagen producida por el servidor de mapas.
 	 */
 	public function drawMap() {
 		$image = $this->mapObj->draw ();
 		return $image->saveWebImage ();
 	}
+	
 	/**
-	 * Dibuja el mapa de referencia
+	 * Dibuja el mapa de referencia.
 	 *
-	 * @return String url de imagen referencia del mapa
+	 * @return string url de imagen referencia del mapa producida por el servidor de mapas.
 	 */
 	public function drawReferenceMap() {
 		$image = $this->mapObj->drawReferenceMap ();
@@ -144,16 +159,17 @@ class msMap {
 	/**
 	 * Dibuja las convenciones del mapa.
 	 *
-	 * @return string | url de la imagen
+	 * @return string url de la imagen producida por el servidor de mapas.
 	 */
 	public function drawLegend() {
 		$image = $this->mapObj->drawLegend ();
 		return $image->saveWebImage ();
 	}
+	
 	/**
-	 * Intecambia el estatus de la capa
+	 * Intecambia el estado de la capa entre visible y no visible.
 	 *
-	 * @param String $layer_name
+	 * @param string $layer_name nombre de la capa.
 	 */
 	public function toogleLayer($layer_name) {
 		
@@ -161,13 +177,12 @@ class msMap {
 		$status = ($layer->status == MS_ON) ? MS_OFF : MS_ON;
 		$layer->set ( 'status', $status );
 	}
+	
 	/**
-	 * Intercambia el estatus 
-	 * de los items que componen
-	 * la capa
+	 * Intercambia el estado de los items de una capa entre visibles y no visibles. 
 	 *
-	 * @param String $layer_name
-	 * @param String $class_name
+	 * @param string $layer_name nombre de la capa.
+	 * @param string $class_name nombre de la clase. 
 	 */
 	public function toogleLayerClass($layer_name, $class_name) {
 		
@@ -182,11 +197,11 @@ class msMap {
 			}
 		}
 	}
+	
 	/**
-	 * Intercambia el estatus toda 
-	 * la capa
+	 * Intercambia el estado de todos los items de una capa entre visibles y no visibles. 
 	 *
-	 * @param String $layer_name
+	 * @param String $layer_name nombre de la capa.
 	 */
 	public function toggleAllLayerClasses($layer_name) {
 		
@@ -198,8 +213,15 @@ class msMap {
 			$class->set ( 'status', $status );
 		}
 	}
+	
 	/**
-	 * Controla la accion de zoom enel mapa
+	 * Procesa la acciones que el usuario realiza sobre el mapa, desplazamiento,
+	 * acercamiento y alejamiento.
+	 * 
+	 * $params['action']: accion a ejecutar.
+	 * $params['extent']: area actual de visualizacion del mapa.
+	 * $params['x']: coordenada X del click del usuario.
+	 * $params['y']: coordenada Y del click del usuario.
 	 *
 	 * @param array $params
 	 */
@@ -235,8 +257,9 @@ class msMap {
 		
 		$this->mapObj->zoompoint ( $zoom, $ptoNewCenter, $this->getMapWidth (), $this->getMapHeight (), $my_extent );
 	}
+	
 	/**
-	 * Retorna todas las capas componentes del mapa
+	 * Retorna todas las capas que conforman el mapa.
 	 *
 	 * @return array $arrayLayers
 	 */
@@ -251,7 +274,7 @@ class msMap {
 	}
 	
 	/**
-	 * Retorna las Capas que esten activas dentro del mapa
+	 * Retorna las capas del mapa que esten visibles.
 	 *
 	 * @return array $arrayActives
 	 */
@@ -268,10 +291,10 @@ class msMap {
 	}
 	
 	/**
-	 * Retorna las imagenes de los iconos de la capa correspondiente
+	 * Crea las imagenes correspondientes a la leyenda de cada capa del mapa.
 	 *
-	 * @param String $layer_name
-	 * @return array $arrayIcons
+	 * @param string $layer_name nombre de la capa.
+	 * @return array $arrayIcons array con la ruta a las imagenes y nombre de los items.
 	 */
 	public function getLayerIcons($layer_name) {
 		
@@ -320,18 +343,21 @@ class msMap {
 		
 		return $dfPosGeo;
 	}
+	
 	/**
-	 * Retorna un archivo temporal
+	 * Retorna el nombre del archivo temporal donde se almacena
+	 * el estado actual del mapa.
 	 *
-	 * @return msMap
+	 * @return string ruta del archivo.
 	 */
 	public function getTmpFile() {
 		return $this->tmp_file;
 	}
+	
 	/**
-	 * Guarda el estado actual del mapa
+	 * Almacena el estado actual del mapa.
 	 *
-	 * @param String $file_path
+	 * @param string $file_path ruta al archivo temporal.
 	 */
 	public function saveMapState($file_path) {
 		$this->tmp_file = $file_path;

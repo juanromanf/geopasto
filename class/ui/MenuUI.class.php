@@ -1,11 +1,10 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * AppPage para mostrar la pagina de Menu
+ * Clase responsable de la construccion de la interfaz
+ * para la administracion del menu del sistema.
  * 
  * @package ui
- * 
  */
 class MenuUI extends AppPage {
 	protected $name = "menu";

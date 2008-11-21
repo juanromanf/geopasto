@@ -1,21 +1,25 @@
 <?php
 /**
  * 
- * En esta clase se encarga de la abstraccion de la base de datos
+ * Clase responsable de proveer la capa de abstraccion de bases de datos,
+ * mediante el framework ADODB.
  * 
  * @package common
  *
  */
+
 class AppSQL {
-
-	public function __construct() { }
-
+	
+	public function __construct() {
+	}
+	
 	/**
-	 * Connections Factory method, get a instance of database connection profile. 
+	 * Retorna una instancia de la conexion a la base de datos de acuerdo al
+	 * perfil definido. Soporta multiples conexiones.
 	 *
 	 * @return ADOConnection
 	 */
-	public static function getInstance($connection_name = 'default') {	
+	public static function getInstance($connection_name = 'default') {
 		
 		/**
 		 * Add connections here.
@@ -24,24 +28,22 @@ class AppSQL {
 		
 		switch ($connection_name) {
 			case 'default' :
-				$settings = new AppSQLSettings('postgres', 'localhost', 'postgres', 'postgres', 'geopasto');
+				$settings = new AppSQLSettings ( 'postgres', 'localhost', 'postgres', 'postgres', 'geopasto' );
 				break;
 		}
 		
-		try {		
+		try {
 			/* @var db ADOConnection */
-			$db =& ADONewConnection( $settings->getDriver() );
-			ADOdb_Active_Record::SetDatabaseAdapter($db);
+			$db = & ADONewConnection ( $settings->getDriver () );
+			ADOdb_Active_Record::SetDatabaseAdapter ( $db );
 			
-			$db->Connect($settings->getHost(), $settings->getUser(), $settings->getPassword(), $settings->getDatabase());
-
-			return $db;
-
-		} catch (Exception $e) {
-			var_dump($e);
-			adodb_backtrace($e->getTrace());
-			return NULL;
+			$db->Connect ( $settings->getHost (), $settings->getUser (), $settings->getPassword (), $settings->getDatabase () );
+		
+		} catch ( Exception $e ) {
+			var_dump ( $e );
+			adodb_backtrace ( $e->getTrace () );
 		}
+		return $db;
 	}
 }
 ?>

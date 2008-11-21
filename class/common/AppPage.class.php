@@ -2,8 +2,8 @@
 
 /**
  * 
- * Clase abstracta para el manejo de las diferentes
- * ventanas de la interfaz de la herramienta
+ * Clase abstracta para la manipulacion de las plantillas requeridas
+ * para la construccion de las distintas interfaces del sistema.
  *
  * @package common
  */
@@ -48,7 +48,7 @@ abstract class AppPage {
 	 * Renderiza una platilla y retorna el HTML generado.
 	 *
 	 * @param string $template_file ruta archivo template.
-	 * @param bool $output mostrar en pantalla el contenido de la plantilla.
+	 * @param bool $output enviar el contenido de la plantilla al navegador o retornarlo en una variable.
 	 * @return string contenido HTML de la plantilla.
 	 */
 	public function renderTemplate($template_file, $output = false) {
@@ -62,8 +62,10 @@ abstract class AppPage {
 			return $this->tpl->fetch ( $template_file );
 		}
 	}
+	
 	/**
-	 * Genera la plantilla index
+	 * Renderiza la plantilla Index, punto de entrada para cada una de las interfaces
+	 * dentro del sistema.
 	 *
 	 * @param boolean $output
 	 * @return string contenido HTML de la plantilla
@@ -75,7 +77,8 @@ abstract class AppPage {
 	
 	}
 	/**
-	 * Genera la plantilla de Adicion
+	 * Renderiza la plantilla de Adicion correspondiente a cada una de
+	 * la interfaces de manipulacion de datos.
 	 *
 	 * @param boolean $output
 	 * @return string contenido HTML de la plantilla
@@ -85,8 +88,10 @@ abstract class AppPage {
 		$template_file = 'add.html';
 		return $this->renderTemplate ( $template_file, $output );
 	}
+	
 	/**
-	 * Genera la plantilla de Edicion
+	 * Renderiza la plantilla de Edicion correspondiente a cada una de
+	 * la interfaces de manipulacion de datos.
 	 *
 	 * @param boolean $output
 	 * @return string contenido HTML de la plantilla
@@ -98,7 +103,8 @@ abstract class AppPage {
 	}
 	
 	/**
-	 * Genera la plantilla de borrado
+	 * Renderiza la plantilla de Eliminacion correspondiente a cada una de
+	 * la interfaces de manipulacion de datos.
 	 *
 	 * @param boolean $output
 	 * @return string contenido HTML de la plantilla
@@ -110,7 +116,8 @@ abstract class AppPage {
 	}
 	
 	/**
-	 * Genera la plantilla para la vista
+	 * Renderiza la plantilla de Presentacion correspondiente a cada una de
+	 * la interfaces de manipulacion de datos.
 	 *
 	 * @param boolean $output
 	 * @return string contenido HTML de la plantilla

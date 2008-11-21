@@ -1,9 +1,8 @@
 <?php
 /**
- * Clase controladora que delega 
- * las funciones a las otras clases 
- * para la presentacion de la herramienta
- *
+ * Clase controladora, delega las responsabilidades
+ * para la ejecucion de procesos dentro del sistema.
+ * 
  * @package common
  */
 class AppHome extends AppPage {
@@ -48,7 +47,8 @@ class AppHome extends AppPage {
 	}
 	
 	/**
-	 * Render Application layout (main page).
+	 * Renderiza la plantilla utilizada para construir la disposicion de 
+	 * los elemntos que utiliza en la interfaz principal.
 	 *
 	 * @param boolean $output Catch result or show into browser.
 	 * @return string HTML content.
@@ -58,6 +58,12 @@ class AppHome extends AppPage {
 		return $this->renderTemplate ( $template_file, $output );
 	}
 	
+	/**
+	 * Renderiza la plantilla utilizada para el mensaje de bienvenida
+	 * cuando el usuario ingresa al sistema.
+	 *
+	 * @return string HTML
+	 */	
 	public function DisplayWelcome() {
 		$template_file = 'welcome.html';
 		
@@ -70,10 +76,11 @@ class AppHome extends AppPage {
 	}
 	
 	/**
-	 * Method to validate if action (Class and method) exist. 
+	 * Valida la existencia de una clase y el metodo requeridos para
+	 * ejecutar una determinada accion dentro del sistema. 
 	 *
-	 * @param string $action
-	 * @return boolean
+	 * @param string $action Formato NombreClase.Metodo
+	 * @return boolean 
 	 */
 	private static function isValidAction($action) {
 		list ( $class, $method ) = explode ( '.', $action );
@@ -92,7 +99,8 @@ class AppHome extends AppPage {
 	}
 	
 	/**
-	 *	Ejecuta una accion espeficada con los siguientes parametros:
+	 *	Ejecuta una accion dentro del sistema espeficada 
+	 *  con los siguientes parametros:
 	 * 	$params[action]		= Accion a ejecutar 'Clase.Metodo'.
 	 *  $params[target]		= Id del elemento HTML a actualizar mediante ajax.
 	 * 	$params[property]	= Propiedad del elemento a actualizar.

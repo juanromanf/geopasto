@@ -1,11 +1,11 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * AppPage para mostrar la pagina de Convenciones
+ * Clase responsable de la construccion de la interfaz
+ * para la administracion de las convenciones de los mapas
+ * que se encuentran en el sistema.
  * 
  * @package ui
- * 
  */
 class ConvencionesUI extends AppPage {
 	protected $name = "convenciones";

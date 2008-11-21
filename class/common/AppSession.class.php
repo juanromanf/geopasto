@@ -1,16 +1,18 @@
 <?php
 /**
  * 
- * Esta clase maneja lo concerniente a la sesion de usuario
+ * Clase para la administracion de las sesiones de los usuarios
+ * del sistema.
+ * 
  * @package common
- *
  */
 class AppSession {
 	
 	public function __construct() {
 	}
+	
 	/**
-	 * Permite crear la sesion del usuario
+	 * Inicializa la session del usuario.
 	 *
 	 */
 	public static function startSession() {
@@ -23,10 +25,11 @@ class AppSession {
 		
 		session_start ();
 	}
+	
 	/**
-	 * Asigna el ID al usuario 
+	 * Almacena el identificador del usuario que ingresa al sistema. 
 	 *
-	 * @param array $user
+	 * @param Usuarios $user instancia de la clase Usuarios.
 	 */
 	public static function setData($user) {
 		
@@ -34,7 +37,7 @@ class AppSession {
 	}
 	
 	/**
-	 * Retorna el ID del usuario logeado.
+	 * Retorna el identificador del usuario activo.
 	 *
 	 * @return int
 	 */
@@ -42,18 +45,20 @@ class AppSession {
 		
 		return $_SESSION ['USER_ID'];
 	}
+	
 	/**
-	 * Finaliza la sesion del usuario
+	 * Finaliza la sesion del usuario.
 	 *
 	 */
 	public static function destroy() {
 		
 		session_destroy ();
 	}
+	
 	/**
-	 * Valida la sesion del usuario 
+	 * Veirifica la validez de la session del usuario dentro del sistema. 
 	 *
-	 * @return bolean
+	 * @return boolean
 	 */
 	public static function isValid() {
 		

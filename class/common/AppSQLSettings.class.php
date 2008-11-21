@@ -1,7 +1,7 @@
 <?php
 /**
  * 
- * Clase que se encarga de la configuracion de la conexion al SGBD
+ * Clase para la configuracion de la conexion a las bases de datos.
  * 
  * @package common
  *

@@ -1,11 +1,10 @@
 <?php
 /**
  * 
- * Es una clase que implementa el patron de 
- * AppPage para mostrar la pagina de Permisos
+ * Clase responsable de la construccion de la interfaz 
+ * para la administracion de los privilegios de acceso al sistema.
  * 
  * @package ui
- * 
  */
 class PermisosUI extends AppPage {
 

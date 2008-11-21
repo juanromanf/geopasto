@@ -1,11 +1,19 @@
 <?php
 /**
+ * Clase abstracta responsable de la contruccion las
+ * herramientas y procesar las acciones que el usuario realiza
+ * sobre los distintos mapas que se encuentran el sistema.
  * 
  * @package util
- *
  */
 abstract class msMapLayout extends AppPage {
 	
+	/**
+	 * Crea la estructura de la interfaz comun para todos los mapas del sistema.
+	 *
+	 * @param array $args $arg['mapname'] nombre del archivo de configuracion del mapa.
+	 * @return string HTML con los elementos que componen la interfaz.
+	 */
 	public function createLayout($args) {
 		$mapfile = $args ['map'];
 		
@@ -29,8 +37,9 @@ abstract class msMapLayout extends AppPage {
 		
 		return $output;
 	}
+	
 	/**
-	 * Retorna un objeto de la Clase msMap, desde el archivo
+	 * Retorna una intancia de la Clase msMap, desde el archivo
 	 * temporal donde se almacena el estado actual.
 	 *
 	 * @return msMap
@@ -39,22 +48,29 @@ abstract class msMapLayout extends AppPage {
 		$map = new msMap ( 'tmp/' . $_SESSION [$this->mapname . '_temp'] );
 		return $map;
 	}
+	
 	/**
-	 * Funcion para guardar el estado del mapa
+	 * Almacena el estado del mapa.
 	 *
 	 * @param msMap $msMapObj
 	 */
 	public function saveTempMap(msMap $msMapObj) {
 		$msMapObj->saveMapState ( $_SESSION [$this->mapname . '_temp'] );
 	}
-
+	
+	/**
+	 * Procesa las convenciones correspondientes a cada capa del mapa.
+	 * Debe ser sobre cargado en las clases derivadas.
+	 *
+	 */
 	public function processSymbols() {
 		// override this method
 	}
+	
 	/**
-	 * Funcion para restaurar el mapa
+	 * Funcion para restaurar el mapa a su estado inicial.
 	 *
-	 * @param String $map_file
+	 * @param string $map_file ruta al archivo de definicion del mapa.
 	 */
 	public function restoreMap($map_file) {
 		$map = new msMap ( $map_file );
@@ -70,10 +86,11 @@ abstract class msMapLayout extends AppPage {
 		$js .= "Ext.getCmp('" . $map->getName () . "-panel').reloadLayersTree();";
 		$this->getXajaxResponse ()->script ( $js );
 	}
+	
 	/**
-	 * Funcion para cambiar el tamano del mapa
+	 * Cambia el tamano del mapa.
 	 *
-	 * @param Integer $size
+	 * @param string $size 640x480 - 800x600 ...
 	 */
 	public function resizeMap($size) {
 		$map = $this->getTempMap ();
@@ -96,9 +113,9 @@ abstract class msMapLayout extends AppPage {
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
+	
 	/**
-	 * Funcion para identificar la accion
-	 * a realizar sobre el mapa
+	 * Delega las acciones ejecutadas sobre el mapa por parte del usuario.  
 	 *
 	 * @param array $args
 	 */
@@ -139,11 +156,12 @@ abstract class msMapLayout extends AppPage {
 		$js = "Ext.getCmp('" . $map->getName () . "-panel').maskPanel(false);";
 		$this->getXajaxResponse ()->script ( $js );
 	}
+	
 	/**
-	 * Retorna todas las capa que estan presentes
-	 * en el mapa
+	 * Contruye un string en formato JSON que contiene la estructura de arbol
+	 * que representa las capas que componen el mapa.
 	 *
-	 * @return String as JSON
+	 * @return string
 	 */
 	public function getLayers() {
 		$map = $this->getTempMap ();
@@ -179,13 +197,18 @@ abstract class msMapLayout extends AppPage {
 		}
 		return json_encode ( $tree );
 	}
+	
 	/**
-	 * Funcion que se encarga de hacer una busqueda rapida
-	 * y ubicar sobre el mapa en una capa definida por el usuario
+	 * Se encarga de realizar una busqueda rapida sobre el mapa
+	 * con los requerimientos del usuario.
+	 * Retorna un string en formato JSON con los resultados para su
+	 * presentacion.
 	 * 
-	 *
-	 * @param Array $args
-	 * @return String JSON
+	 * $args['layer']: capa donde se realiza la busqueda.
+	 * $args['text']: texto a buscar.
+	 * 
+	 * @param array $args
+	 * @return string JSON con los resultados.
 	 */
 	public function quickSearch($args) {
 		$layer_name = $args ['layer'];
@@ -279,8 +302,14 @@ abstract class msMapLayout extends AppPage {
 
 	/**
 	 * 
-	 * Adicionar las convenciones pertenecientes a 
-	 * cada una de las capas del mapa
+	 * Adiciona las convenciones pertenecientes a cada una de las capas del mapa.
+	 * 
+	 * $layers[]['map']: nombre del mapa.
+	 * $layers[]['layer']: nombre de la capa.
+	 * $layers[]['clsitem']: nombre del atributo que define los nombres de los items de cada capa.
+	 * $layers[]['clsprefix']: prefijo para los nombres de los items.
+	 * $layers[]['clsdisplay']: nombre del atributo que sera mostrado como informacion en el mapa.
+	 * 
 	 * @param array $layers
 	 */
 	protected function addSymbols($layers) {
@@ -350,11 +379,10 @@ abstract class msMapLayout extends AppPage {
 	}
 	
 	/**
-	 * Permite hacer un remplazo de caracteres 
-	 * y visualizarlos en Mayusculas
+	 * Permite hacer una limpieza de caracteres con acentos.
 	 *
-	 * @param String $text
-	 * @return String
+	 * @param string $text
+	 * @return string
 	 */
 	private function cleanText($text) {
 		$text = strtolower ( $text );
