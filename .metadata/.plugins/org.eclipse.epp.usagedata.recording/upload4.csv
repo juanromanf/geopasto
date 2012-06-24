@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+java.specification.vendor,sysinfo,,,"Oracle Corporation",1340505611062
+java.specification.version,sysinfo,,,"1.7",1340505611062
+java.vendor,sysinfo,,,"Oracle Corporation",1340505611062
+java.version,sysinfo,,,"1.7.0_04",1340505611062
+java.vm.info,sysinfo,,,"mixed mode, sharing",1340505611062
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1340505611062
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1340505611062
+java.vm.specification.vendor,sysinfo,,,"Oracle Corporation",1340505611062
+java.vm.specification.version,sysinfo,,,"1.7",1340505611062
+java.vm.vendor,sysinfo,,,"Oracle Corporation",1340505611062
+java.vm.version,sysinfo,,,"23.0-b21",1340505611062
+activated,view,org.eclipse.php.ui,2.1.1.v20090914-1400,"org.eclipse.php.ui.explorer",1340505613812
+activated,view,org.eclipse.php.ui,2.1.1.v20090914-1400,"org.eclipse.php.ui.explorer",1340505613953
+closed,view,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.internal.introview",1340505613984
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1340505647203
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1340505654296
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1340505655515
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1340505655656
+executed,command,org.eclipse.debug.ui,3.5.1.v20090811_r351,"org.eclipse.debug.ui.commands.OpenRunConfigurations",1340505655671
+started,bundle,org.eclipse.rse.services,3.1.1.v200909160005,"org.eclipse.rse.services",1340505660078
+started,bundle,org.eclipse.rse.core,3.1.1.v200909160005,"org.eclipse.rse.core",1340505660093
+started,bundle,org.eclipse.rse.ui,3.1.1.v200909160005,"org.eclipse.rse.ui",1340505660468
+started,bundle,org.eclipse.rse.files.ui,3.1.1.v200908061445,"org.eclipse.rse.files.ui",1340505660468
+started,bundle,org.eclipse.rse.subsystems.files.core,3.1.1.v200909160005,"org.eclipse.rse.subsystems.files.core",1340505660484
+started,bundle,org.eclipse.search,3.5.1.r351_v20090708-0800,"org.eclipse.search",1340505660500
